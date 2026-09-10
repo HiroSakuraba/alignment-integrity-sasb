@@ -27,7 +27,7 @@ Scripted compliant and noncompliant policies exist so the harness can be falsifi
 | Stage | Deliverable | In this repo |
 | --- | --- | --- |
 | A. Harness validation | Four-role simulator, isolation, receipts, benign/adversarial twins | Yes, scripted |
-| B. Baseline pilot | Real-model A vs B runtime comparison | Bounded worker pilot implemented; no live measurements yet |
+| B. Baseline pilot | Real-model A vs B runtime comparison | Worker-only integration scaffold only; no live measurements |
 | C. One task-adapted checkpoint | Reviewed targets, loss-mask checks, regression suite | Not started |
 | D. Confirmatory factorial | Preregistered A–D cells | Not started |
 | E–G | Transfer, scale, independent evaluation | Not started |

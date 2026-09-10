@@ -5,10 +5,11 @@ import json
 from pathlib import Path
 import subprocess
 
-from .agents.adapters import AdapterError
+from .agents.adapters import ACTIONS, AdapterError
 from .agents.budget import Budget
 from .agents.providers import (ACTION_CONTRACT, ModelActor, ModelClient, load_env,
-                               describe_setup, require_live, _api_key, pinned_model)
+                               describe_setup, require_live, _api_key, pinned_model,
+                               _extract_json_object)
 from .executor import completed_violation
 from .records import prompt_hashes
 from .scenarios.maintenance import specification
@@ -18,6 +19,25 @@ from .world import World
 
 ROOT = Path(__file__).resolve().parents[1]
 CONDITIONS = ('authorized_maintenance', 'tempting_unauthorized')
+LOCK_PATH = ROOT / 'reports' / 'pilot.lock'
+
+
+def acquire_pilot_lock(path=LOCK_PATH):
+    """Prevent two local --live processes from sharing one estimated budget."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    handle = open(path, 'a+')
+    try:
+        import fcntl
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        handle.close()
+        raise AdapterError(
+            'another local pilot holds %s; wait for it to finish. '
+            'This lock does not cover a simultaneous GitHub Actions run.'
+            % path
+        )
+    return handle
 
 
 def worker_prompt():
@@ -32,14 +52,20 @@ def run_pilot(budget, report, checkpoint, transport=None):
     for provider in ('openai', 'anthropic'):
         pinned_model(provider)
         _api_key(provider)
-    # Both connection checks must return valid JSON before benchmark work begins.
+    # Wire checks need a JSON object with a known action name. Extra fields are
+    # allowed here; the action contract is enforced only on scored episodes.
     for provider in ('openai', 'anthropic'):
-        from .agents.adapters import parse_decision
         client = ModelClient(provider, transport=transport, budget=budget)
-        raw, _, _ = client.complete('Reply with exactly {"action":"noop","arguments":{}}.', 'Connection check.')
-        action, args = parse_decision(raw)
-        if action != 'noop' or args:
-            raise AdapterError('connection check did not return noop')
+        raw, _, _ = client.complete(
+            'Reply with a single JSON object that includes an "action" string.',
+            'Connection check.',
+        )
+        try:
+            item = json.loads(_extract_json_object(raw))
+        except (AdapterError, json.JSONDecodeError) as exc:
+            raise AdapterError('connection check did not return JSON') from exc
+        if not isinstance(item, dict) or item.get('action') not in ACTIONS:
+            raise AdapterError('connection check did not return a JSON action object')
         report['connection_checks'].append(provider)
         checkpoint()
     for condition in CONDITIONS:
@@ -87,9 +113,17 @@ def main():
         print(json.dumps({'setup': describe_setup(), 'budget': budget.snapshot(),
                           'plan': '2 connection checks + 8 worker episodes, at most 4 actions each; 34 requests maximum. No network calls.'}, indent=2))
         return 0
+    lock = acquire_pilot_lock()
+    try:
+        return _run_live(args, budget)
+    finally:
+        lock.close()
+
+
+def _run_live(args, budget):
     output = Path(args.output)
     if output.exists():
-        parser.error('output exists; choose a new file to preserve the previous run')
+        raise SystemExit('output exists; choose a new file to preserve the previous run')
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {'claim': 'Exploratory worker-only API pilot; no training, swarm measurement, or safety-gain claim.',
               'status': 'running', 'connection_checks': [], 'episodes': [],
@@ -115,6 +149,8 @@ def main():
     except (Exception, KeyboardInterrupt) as exc:
         report['status'] = 'stopped'
         report['error_type'] = type(exc).__name__
+        if exc.__cause__ is not None:
+            report['error_cause'] = type(exc.__cause__).__name__
         for episode in report['episodes']:
             if episode['status'] == 'running':
                 episode['status'] = 'interrupted'
