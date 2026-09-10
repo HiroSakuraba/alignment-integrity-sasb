@@ -1,7 +1,7 @@
 # Research framework
 
-The full HTML document belongs at [research-framework.html](research-framework.html).
+The 10 September 2026 document *Alignment Integrity in Heterogeneous AI Systems* is in the repository root:
 
-It is the 10 September 2026 framework *Alignment Integrity in Heterogeneous AI Systems* (SASB). Tracking issue: https://github.com/HiroSakuraba/alignment-integrity-sasb/issues/4
+[stable_persona_alignment_ai_swarms_framework.html](../stable_persona_alignment_ai_swarms_framework.html)
 
-Until that file is committed, use the local copy from the authoring session (`stable_persona_alignment_ai_swarms_framework.html`) or the summary in the repository README.
+Open that file in a browser. `docs/research-framework.html` redirects to it.

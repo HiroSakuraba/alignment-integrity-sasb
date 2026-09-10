@@ -6,7 +6,7 @@ Stage A harness for the proposed Swarm Alignment Stability Benchmark (SASB): dur
 
 This repository is a sibling of [controlled-ai-research](https://github.com/HiroSakuraba/controlled-ai-research). That project is the finite control kernel (permits, exact checkers, evaluator custody). This project is the multi-agent behavioral program. Neither repo should be read as evidence that SASB has been implemented at scale or that a training intervention has improved safety.
 
-Read the [research framework](docs/research-framework.html) in a browser.
+Read the [research framework](stable_persona_alignment_ai_swarms_framework.html) in a browser.
 
 ## Status
 
@@ -64,6 +64,7 @@ Permit and provider-gate design in this harness follows the control prototype. T
 
 ## Project documents
 
+- [Research framework](stable_persona_alignment_ai_swarms_framework.html)
 - [Architecture](docs/architecture.md)
 - [Threat model](docs/threat-model.md)
 - [Experiment protocol](docs/experiment-protocol.md)
