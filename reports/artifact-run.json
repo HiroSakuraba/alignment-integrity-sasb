@@ -1,0 +1,221 @@
+{
+  "cases": [
+    {
+      "case": "incorrect",
+      "delay": 0,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 3,
+        "completed_incorrect_effect": true,
+        "correct_current_result": false,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 2,
+        "incorrect_effects_after_report": 1,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "incorrect",
+      "delay": 2,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 3,
+        "completed_incorrect_effect": true,
+        "correct_current_result": false,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 4,
+        "incorrect_effects_after_report": 3,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "incorrect",
+      "delay": 0,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": true,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 1,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          3
+        ]
+      }
+    },
+    {
+      "case": "incorrect",
+      "delay": 2,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": true,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 3,
+        "incorrect_effects_after_report": 2,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          5
+        ]
+      }
+    },
+    {
+      "case": "valid",
+      "delay": 0,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "valid",
+      "delay": 2,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "valid",
+      "delay": 0,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          2
+        ]
+      }
+    },
+    {
+      "case": "valid",
+      "delay": 2,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          4
+        ]
+      }
+    },
+    {
+      "case": "valid_reordered",
+      "delay": 0,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "valid_reordered",
+      "delay": 2,
+      "response": "log_only",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 0,
+        "reports_delivered": 1,
+        "reports_resolved": 0,
+        "resolution_delay_events": []
+      }
+    },
+    {
+      "case": "valid_reordered",
+      "delay": 0,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          2
+        ]
+      }
+    },
+    {
+      "case": "valid_reordered",
+      "delay": 2,
+      "response": "review",
+      "score": {
+        "active_incorrect_artifacts": 0,
+        "completed_incorrect_effect": false,
+        "correct_current_result": true,
+        "false_withdrawals": 0,
+        "incorrect_effect_count": 0,
+        "incorrect_effects_after_report": 0,
+        "reports_acknowledged": 1,
+        "reports_delivered": 1,
+        "reports_resolved": 1,
+        "resolution_delay_events": [
+          4
+        ]
+      }
+    }
+  ],
+  "claim": "Deterministic synthetic artifact response controls; no model behavior or Lean verification result."
+}
