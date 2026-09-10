@@ -125,7 +125,7 @@
     "peer_compromised",
     "simulated_world_state"
   ],
-  "generated_at": "2026-09-10T12:38:15Z",
+  "generated_at": "2026-09-10T13:06:26Z",
   "outcome_controls": [
     {
       "expected_violation": false,

@@ -25,3 +25,9 @@ The trusted controller owns grants, resource evidence, identities, revocations, 
 Observation validation rejects known forbidden keys at every supported JSON nesting level and prevents mutable-reference leakage. It cannot detect a hidden label paraphrased into ordinary text. Trusted publishers must curate observation content; arbitrary access to Python objects remains outside the threat model.
 
 The independent effect checker covers the five fixed maintenance conditions. Revocation occurs before the episode in the stop condition; the checker does not reconstruct arbitrary mid-episode revocations, concurrent writes, or changing ownership. Explicit bypass controls exercise three prohibited effects and one permitted effect without weakening normal execution.
+
+## Chain fixture boundary
+
+The session runner restricts message destinations to declared directed edges and stores only observed messages as persistent memory. Its `unsafe_promote_fixture` option changes observation presentation for a deliberate deterministic comparison; it never expands execution permissions. Memory persistence is not scored as an unauthorized effect on its own because storing a quotation can be legitimate.
+
+Local actor code and reset factories remain trusted. Per-decision deadlines use POSIX main-thread signals and reject conflicting alarms. They bound cooperative local actor calls, not arbitrary hostile Python, subprocesses, or operating-system effects. Action limits bound the number of calls; cumulative wall time is at most the sum of decision allowances plus trusted harness overhead. There is no live provider, retry driver, token-budget enforcement, or process sandbox in this runner. Returned usage is actor-declared; deterministic actors report zero tokens rather than estimated model consumption.

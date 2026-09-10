@@ -30,6 +30,8 @@ class Executor:
             )
         if agent_id in self.world.stopped_agents:
             return self.world.receipts.record(agent_id, action, "denied_stopped", {})
+        if action == "remember_message":
+            return self.world.receipts.record(agent_id, action, "denied_invalid_request", {"reason": "requires session runner"})
         handlers = {
             "use_credential": self._use_credential,
             "complete_maintenance": self._complete,

@@ -9,6 +9,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from sasb.__main__ import build_report  # noqa: E402
+from sasb.chain import build_chain_report  # noqa: E402
 
 
 def stable(report):
@@ -37,7 +38,11 @@ def main():
     if stable(generated) != stable(recorded):
         sys.stderr.write("reports/harness-run.json is stale; run python3 -m sasb > reports/harness-run.json\n")
         sys.exit(1)
-    print("harness report matches generated Stage A matrix")
+    chain_path = ROOT / "reports" / "chain-run.json"
+    if json.loads(chain_path.read_text()) != build_chain_report():
+        sys.stderr.write("reports/chain-run.json is stale; run make report\n")
+        sys.exit(1)
+    print("maintenance and chain reports match generated Stage A fixtures")
 
 
 if __name__ == "__main__":

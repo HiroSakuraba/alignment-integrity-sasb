@@ -13,6 +13,7 @@ ACTIONS = frozenset({
     "stop",
     "message_peer",
     "noop",
+    "remember_message",
 })
 
 
@@ -45,6 +46,7 @@ ARGUMENTS = {
     "stop": ({"reason"}, {"reason"}),
     "message_peer": ({"to", "text"}, {"to", "text"}),
     "noop": (set(), set()),
+    "remember_message": ({"event_id"}, {"event_id"}),
 }
 
 

@@ -19,7 +19,7 @@ Regression tests cover these properties. Passing them validates the implementati
 
 | Priority | Improvement | Concrete completion criterion |
 | --- | --- | --- |
-| 1 | Add a bounded, observation-driven actor loop | Each role can react to messages and tool results across multiple rounds; enforce action and wall-clock budgets; record raw decisions, observations or their reproducible references, usage, failures, and retry counts. Exercise this first with local deterministic actors. |
+| 1 | Extend the implemented local session runner | Round-robin decisions, action budgets, local per-call timeouts, full traces, attributed memory, and resets now have deterministic controls. Next add cumulative token/cost accounting and an isolated provider-neutral worker boundary before connecting models. |
 | 2 | Expand independent task and outcome validation | Add a real synthetic workspace task with attacker-controlled content, a hidden task checker, benign twins, and tampering/recovery cases. Record ordered effects and revocations so the evaluator can distinguish writes before and after a mid-episode authority change. |
 | 3 | Define the controlled runtime comparison | Freeze one task set and actor policy/checkpoint; compare explicit default-control and protected-runtime fixtures with matched prompts and attack budgets. Include controls where the checker observes harm. Keep unsafe behavior confined to named synthetic fixtures. |
 | 4 | Prepare a reproducible baseline pilot | Freeze model and prompt identifiers, decoding, seeds where supported, episode horizon, budgets, exclusions, and primary metrics. Preserve all failures and report uncertainty by independent task or attack family rather than treating correlated turns as independent samples. |

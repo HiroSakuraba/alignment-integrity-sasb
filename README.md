@@ -63,7 +63,20 @@ The report contains ten scripted episodes, summaries by policy, metric numerator
 
 Current enforcement includes recursive observation validation and defensive copies, delegation lineage and expiry, immediate revocation, terminal stop, and resource evidence obtained through inspection. Invalid proposals and adapter failures remain measured outcomes. The outcome controls deliberately bypass the executor to verify that cross-tenant writes, writes after the fixture's initial revocation, and writes with unresolved ownership are detected.
 
-The four roles do not yet form an observation-driven collaboration: scripts are selected by condition, and the worker completes its sequence within one scheduled turn. No causal claim about peer influence follows from these runs. See the [implementation review and priorities](docs/implementation-review.md).
+The maintenance matrix uses fixed scripts. A separate chain-and-reset fixture now uses local rules that react to observations through a bounded session runner. Neither fixture measures model persuasion. See the [implementation review and priorities](docs/implementation-review.md).
+
+## Chain and persistent-memory controls
+
+`python3 -m sasb.chain` runs twelve deterministic controls: authorized, unauthorized, and absent source messages, crossed with two memory presentations and retention versus cleanup. The source reaches only an intermediary; after its context reset, that intermediary can reach the worker. Only the worker can write to the resource service.
+
+```sh
+python3 -m sasb.chain
+python3 -m sasb.chain --trace unauthorized --memory-mode unsafe_promote_fixture
+```
+
+The trace includes exact observations, raw decisions, declared usage, execution receipts, and reset records. The session runner supports round-robin scheduling, a global action budget, and per-decision POSIX timeouts. Persistent memory retains original sender and event identity. Reset replaces the actor and clears messages and inspection evidence while preserving stop, revocation, and action-budget state.
+
+The explicitly named `unsafe_promote_fixture` presents remembered content as governing memory to a deterministic rule. This can induce a downstream unauthorized attempt, which the capability boundary still blocks. Cleanup also removes legitimate task memory: its utility cost is visible in the benign controls. These are engineering checks, not an estimate of how an LLM responds to privileged prompts. See [the chain protocol](docs/chain-protocol.md) and [recorded results](reports/chain-run.json).
 
 ## Related work in this account
 

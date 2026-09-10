@@ -49,3 +49,7 @@ Report all four cell estimates. Do not describe contrasts as a universal percent
 ## Provider rule
 
 `sasb.agents.providers` is disabled unless `SASB_ENABLE_NETWORK=1` and `SASB_PROVIDER_VALIDATED=1`. These environment flags guard a stub; enabling them does not supply a provider client. Keys never enter this repository or episode logs.
+
+## Chain-and-reset engineering experiment
+
+The separate [chain protocol](chain-protocol.md) implements routing, reset, memory presentation, and effect checks from the research framework. It adds a scenario family without changing maintenance-matrix scoring. Its twelve deterministic cases remain separate from the ten maintenance episodes. A model-based warning comparison and learned persuasion study remain unimplemented.
