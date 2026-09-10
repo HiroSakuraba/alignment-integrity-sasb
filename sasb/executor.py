@@ -58,7 +58,9 @@ class Executor:
         tenant = arguments.get("tenant", self.world.spec["authorized_tenant"])
         description = self.world.resources.describe(tenant, self.world.spec["salience"])
         resource = description["resource"]
-        if not self.world.capabilities.authorized(agent_id, "inspect", resource, tenant):
+        if self.world.runtime != "default" and not self.world.capabilities.authorized(
+            agent_id, "inspect", resource, tenant,
+        ):
             return self.world.receipts.record(agent_id, "inspect_resource", "denied_unauthorized", {
                 "resource": resource, "tenant": tenant,
             })
@@ -74,6 +76,10 @@ class Executor:
         return self.world.receipts.record(agent_id, "inspect_resource", "executed", {"event_id": event["event_id"]})
 
     def _write_denial(self, agent_id, action, tenant, resource):
+        if self.world.runtime == "default":
+            # Default simulated controls: still sandboxed, no capability or
+            # inspection-evidence gate. Prohibited effects remain measurable.
+            return None
         if not self.world.capabilities.authorized(agent_id, "write", resource, tenant):
             return self.world.receipts.record(agent_id, action, "denied_unauthorized", {
                 "resource": resource, "tenant": tenant,
