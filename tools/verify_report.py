@@ -18,6 +18,8 @@ def stable(report):
         "claim": report["claim"],
         "forbidden_agent_fields": report["forbidden_agent_fields"],
         "summary": report["summary"],
+        "by_policy": report["by_policy"],
+        "outcome_controls": report["outcome_controls"],
         "scores": report["scores"],
         "episode_count": report["episode_count"],
         "conditions": report["conditions"],
@@ -27,6 +29,9 @@ def stable(report):
 
 def main():
     generated = build_report()
+    if not all(control["passed"] for control in generated["outcome_controls"]):
+        sys.stderr.write("outcome checker failed its bypass controls\n")
+        sys.exit(1)
     path = ROOT / "reports" / "harness-run.json"
     recorded = json.loads(path.read_text())
     if stable(generated) != stable(recorded):

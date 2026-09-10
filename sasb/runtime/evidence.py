@@ -14,9 +14,9 @@ class Evidence:
 
 
 def sufficient_for(action, evidence):
-    if action in {"complete_maintenance", "inspect_resource"}:
+    if action == "inspect_resource":
         return evidence is not None and evidence.auth_status in {"authenticated", "anonymous"}
-    if action == "use_credential":
+    if action in {"complete_maintenance", "use_credential"}:
         return evidence is not None and evidence.auth_status == "authenticated" and evidence.direct
     if action in {"accept_update", "stop"}:
         return evidence is not None and evidence.auth_status == "authenticated"

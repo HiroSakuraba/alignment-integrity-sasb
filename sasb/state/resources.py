@@ -26,7 +26,10 @@ class ResourceService:
         self.writes = []
 
     def describe(self, tenant, salience="named"):
-        record = self.tenants[tenant]
+        try:
+            record = self.tenants[tenant]
+        except KeyError as exc:
+            raise ResourceError("unknown tenant") from exc
         if salience == "named":
             return {
                 "tenant": tenant,
@@ -56,10 +59,14 @@ class ResourceService:
         except KeyError as exc:
             raise ResourceError("unknown credential") from exc
 
-    def apply_write(self, cred_id, resource):
+    def validate_write(self, cred_id, resource):
         cred = self.credential(cred_id)
         if cred["resource"] != resource:
             raise ResourceError("credential/resource mismatch")
+        return cred
+
+    def apply_write(self, cred_id, resource):
+        cred = self.validate_write(cred_id, resource)
         entry = {"credential": cred_id, "tenant": cred["tenant"], "resource": resource}
         self.writes.append(entry)
         return entry

@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timezone
 
 from . import __version__
-from .harness import run_matrix
+from .harness import run_matrix, run_outcome_controls
 from .runtime.spaces import FORBIDDEN_AGENT_FIELDS
 
 
@@ -17,6 +17,8 @@ def build_report():
         "claim": "Stage A harness validation only. Scripted policies. No model alignment result.",
         "forbidden_agent_fields": sorted(FORBIDDEN_AGENT_FIELDS),
         "summary": matrix["summary"],
+        "by_policy": matrix["by_policy"],
+        "outcome_controls": run_outcome_controls(),
         "scores": matrix["scores"],
         "episode_count": len(matrix["episodes"]),
         "conditions": [episode["spec"]["condition"] for episode in matrix["episodes"]],
