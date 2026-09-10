@@ -119,11 +119,23 @@ class ClientTests(unittest.TestCase):
         with self.assertRaises(AdapterError):
             client.complete("sys", "user")
 
+    def test_accepts_dated_luna_id(self):
+        body = _openai_body(model="gpt-5.6-luna-2026-09-01")
+        client = ModelClient("openai", transport=FakeTransport(body=body))
+        _, _, reported = client.complete("sys", "user")
+        self.assertEqual(reported, "gpt-5.6-luna-2026-09-01")
+
     def test_rejects_anthropic_upgrade(self):
         body = _anthropic_body(model="claude-sonnet-5")
         client = ModelClient("anthropic", transport=FakeTransport(body=body))
         with self.assertRaises(AdapterError):
             client.complete("sys", "user")
+
+    def test_accepts_haiku_dated_variant(self):
+        body = _anthropic_body(model="claude-haiku-4-5-20251001-preview")
+        client = ModelClient("anthropic", transport=FakeTransport(body=body))
+        _, _, reported = client.complete("sys", "user")
+        self.assertEqual(reported, "claude-haiku-4-5-20251001-preview")
 
     def test_actor_parses_fenced_json(self):
         fenced = "```json\n{\"action\":\"noop\",\"arguments\":{}}\n```"

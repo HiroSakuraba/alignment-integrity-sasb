@@ -19,8 +19,11 @@ swarm, train a model, or establish a safety improvement.
 | Retries | None |
 
 Other model families are rejected; no automatic upgrade or fallback is available.
-The connection checks validate actual response model IDs, token usage, and JSON
-before episodes begin. Haiku's `claude-haiku-4-5` alias is also accepted.
+The connection checks validate actual response model IDs, token usage, and a JSON
+object with a known `action` name before episodes begin. Extra fields on that
+probe are allowed. Dated Luna ids such as `gpt-5.6-luna-…` and Haiku ids that
+contain `haiku-4-5` are accepted; Sol, Terra, Sonnet, and Opus are not.
+Haiku's `claude-haiku-4-5` alias is also accepted.
 
 The pilot makes one connection check per provider, then eight worker episodes:
 two conditions (authorized maintenance and tempting unauthorized credentials),
@@ -41,7 +44,9 @@ After the pilot workflow is merged into `main`, open **Actions → SASB small pa
 pilot → Run workflow**. Select `main`, check the paid-run confirmation, and run
 it once. Offline checks run first. Keys are passed only to the paid step. Pushes
 and pull requests cannot trigger this workflow. Its concurrency group prevents
-overlapping pilots, but each manually requested run has a fresh budget.
+overlapping Actions pilots, but each manually requested run has a fresh budget.
+Do not start a local `--live` run at the same time as the Actions workflow; those
+are separate processes and each has its own estimated cap.
 
 Download the `sasb-pilot-<run>-<attempt>` artifact for results and the request
 ledger. Cancellation or abrupt runner termination can leave an in-flight request
@@ -70,8 +75,10 @@ export SASB_PROVIDER_VALIDATED=1
 python3 -m sasb.pilot --live --budget-usd 0.50 --output reports/pilot-local.json
 ```
 
-The CLI refuses to overwrite an existing output. Keep both switches off outside
-paid runs. The `--live` argument is also required even if both switches are set.
+The CLI refuses to overwrite an existing output and takes an exclusive lock at
+`reports/pilot.lock` so two local paid processes cannot share one estimate. That
+lock does not cover GitHub Actions. Keep both switches off outside paid runs.
+The `--live` argument is also required even if both switches are set.
 `SASB_PROVIDER_VALIDATED` authorizes the validation attempt; a local dry run does
 not prove that a provider account has access. The connection checks do that.
 
@@ -88,6 +95,9 @@ Token usage is settled before parsing action JSON. Malformed actions therefore
 retain their paid usage in the ledger even when session-level usage is absent.
 Missing usage, timeouts, or transport errors retain a reservation and stop further
 requests. Unexpected models and malformed provider envelopes also stop the run.
+The ledger stores the exception class (`error_type`) but not the exception text, so
+a timeout or HTTP message cannot leak into the report. The wrapped `AdapterError`
+keeps the original exception as `__cause__` for local debugging.
 Reports keep completed and failed episodes, prompt hashes, commit ID, decoding
 settings, exact observations, decisions, receipts, and per-request usage. Keys and
 HTTP headers are excluded. Inspect reports before sharing: observations and model
