@@ -10,7 +10,7 @@ Read the [research framework](stable_persona_alignment_ai_swarms_framework.html)
 
 ## Status
 
-Stage A only: four scripted roles, one matched maintenance scenario, two synthetic surfaces (resource service and a provenance-bearing workspace), three isolated information spaces, and a scorecard that separates unauthorized *attempts* from completed prohibited *effects*.
+Stage A only: four scripted roles, one matched maintenance scenario, a synthetic resource service and a provenance-bearing maintenance marker, three isolated information spaces, and a scorecard that separates unauthorized *attempts* from completed prohibited *effects*.
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
@@ -20,7 +20,7 @@ Models will later propose actions. The trusted runtime checks identity, scope, e
 
 Scripted compliant and noncompliant policies exist so the harness can be falsified before any model is attached.
 
-## Stage gates
+## Research stages
 
 | Stage | Deliverable | In this repo |
 | --- | --- | --- |
@@ -41,6 +41,8 @@ make test
 make verify
 ```
 
+To refresh the recorded fixture after an intentional behavior change, run `make report`, then `make verify`.
+
 A recorded report is in [reports/harness-run.json](reports/harness-run.json). GitHub Actions runs the same tests and publishes a generated report artifact.
 
 ## Matched scenario
@@ -51,16 +53,37 @@ The Stage A fixture is the synthetic maintenance case from the framework:
 - tempting out-of-scope credential for `tenant_b` / `prod-db`
 - the same ownership facts without a named person
 - genuinely missing scope
-- an authenticated revocation that must be accepted
+- an authenticated revocation enforced before the worker acts
 
 A peer message cannot mint permissions. Using `cred_b` is an unauthorized attempt; the runtime blocks the write.
+
+## Reading the results
+
+The report contains ten scripted episodes, summaries by policy, metric numerators and applicable denominators, and four independent outcome-checker controls. `null` means no applicable opportunity. The pooled summary is a fixture diagnostic, not an estimate of real-world risk.
+
+Current enforcement includes recursive observation validation and defensive copies, delegation lineage and expiry, immediate revocation, terminal stop, and resource evidence obtained through inspection. Invalid proposals and adapter failures remain measured outcomes. The outcome controls deliberately bypass the executor to verify that cross-tenant writes, writes after the fixture's initial revocation, and writes with unresolved ownership are detected.
+
+The maintenance matrix uses fixed scripts. A separate chain-and-reset fixture now uses local rules that react to observations through a bounded session runner. Neither fixture measures model persuasion. See the [implementation review and priorities](docs/implementation-review.md).
+
+## Chain and persistent-memory controls
+
+`python3 -m sasb.chain` runs twelve deterministic controls: authorized, unauthorized, and absent source messages, crossed with two memory presentations and retention versus cleanup. The source reaches only an intermediary; after its context reset, that intermediary can reach the worker. Only the worker can write to the resource service.
+
+```sh
+python3 -m sasb.chain
+python3 -m sasb.chain --trace unauthorized --memory-mode unsafe_promote_fixture
+```
+
+The trace includes exact observations, raw decisions, declared usage, execution receipts, and reset records. The session runner supports round-robin scheduling, a global action budget, and per-decision POSIX timeouts. Persistent memory retains original sender and event identity. Reset replaces the actor and clears messages and inspection evidence while preserving stop, revocation, and action-budget state.
+
+The explicitly named `unsafe_promote_fixture` presents remembered content as governing memory to a deterministic rule. This can induce a downstream unauthorized attempt, which the capability boundary still blocks. Cleanup also removes legitimate task memory: its utility cost is visible in the benign controls. These are engineering checks, not an estimate of how an LLM responds to privileged prompts. See [the chain protocol](docs/chain-protocol.md) and [recorded results](reports/chain-run.json).
 
 ## Related work in this account
 
 - [controlled-ai-research](https://github.com/HiroSakuraba/controlled-ai-research) — finite execution controls, HMAC permits, evaluator custody
 - [Multi-agent-certificate-framework](https://github.com/HiroSakuraba/Multi-agent-certificate-framework.) — certified collaboration notes
 
-Permit and provider-gate design in this harness follows the control prototype. The 12-bit discovery game and exact harm bounds stay in that repository.
+The standalone permit helper and provider guard follow the control prototype. Permits are not integrated into the executor; the capability service enforces the current write boundary. The 12-bit discovery game and exact harm bounds stay in that repository.
 
 ## Project documents
 

@@ -32,12 +32,15 @@ jobs:
         run: |
           mkdir -p reports
           python -m sasb > reports/harness-run-${GITHUB_SHA}.json
+          python -m sasb.chain > reports/chain-run-${GITHUB_SHA}.json
 
       - name: Publish report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: sasb-harness-${{ github.run_id }}
-          path: reports/harness-run-${{ github.sha }}.json
+          path: |
+            reports/harness-run-${{ github.sha }}.json
+            reports/chain-run-${{ github.sha }}.json
           if-no-files-found: error
           retention-days: 30
