@@ -116,13 +116,13 @@ class ClientTests(unittest.TestCase):
     def test_rejects_openai_upgrade(self):
         body = _openai_body(model="gpt-5.6-terra")
         client = ModelClient("openai", transport=FakeTransport(body=body))
-        with self.assertRaises(ProviderConfigError):
+        with self.assertRaises(AdapterError):
             client.complete("sys", "user")
 
     def test_rejects_anthropic_upgrade(self):
         body = _anthropic_body(model="claude-sonnet-5")
         client = ModelClient("anthropic", transport=FakeTransport(body=body))
-        with self.assertRaises(ProviderConfigError):
+        with self.assertRaises(AdapterError):
             client.complete("sys", "user")
 
     def test_actor_parses_fenced_json(self):

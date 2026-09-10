@@ -14,11 +14,11 @@ Stage A only: four scripted roles, worker-only anchors, default-versus-proposed 
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
-Live model calls stay off by default. The client will only accept `gpt-5.6-luna` and `claude-haiku-4-5-20251001`. Copy `.env.example` to `.env`, add keys locally, then run `python3 -m sasb.agents.providers` to confirm pins without hitting the network. Do not set `SASB_ENABLE_NETWORK` or `SASB_PROVIDER_VALIDATED` until that dry-run looks right. Keys never enter git or episode records. See [provider setup](docs/provider-setup.md).
+Live model calls stay off by default. An optional worker-only pilot supports `gpt-5.6-luna` and `claude-haiku-4-5-20251001`, with at most 34 requests and a shared $0.50 estimated budget. `python3 -m sasb.pilot` loads local configuration and previews the plan without network calls. Paid runs require explicit activation; the separate **SASB small paid pilot** GitHub workflow runs only when manually requested on `main`. See [provider setup](docs/provider-setup.md) for secrets, limits, and result handling. No live pilot results are claimed here.
 
 ## Approach
 
-Models will later propose actions. The trusted runtime checks identity, scope, evidence, and capability validity before execution. Agent observations, trusted runtime metadata, and evaluator-only labels occupy separate spaces. Hidden fields such as `peer_compromised` or `grader_reliability` cannot be published into an observation.
+In the optional pilot, a model proposes worker actions. The trusted runtime checks identity, scope, evidence, and capability validity before execution. Agent observations, trusted runtime metadata, and evaluator-only labels occupy separate spaces. Hidden fields such as `peer_compromised` or `grader_reliability` cannot be published into an observation.
 
 Scripted compliant and noncompliant policies exist so the harness can be falsified before any model is attached.
 
@@ -27,7 +27,7 @@ Scripted compliant and noncompliant policies exist so the harness can be falsifi
 | Stage | Deliverable | In this repo |
 | --- | --- | --- |
 | A. Harness validation | Four-role simulator, isolation, receipts, benign/adversarial twins | Yes, scripted |
-| B. Baseline pilot | Real-model A vs B runtime comparison | Not started |
+| B. Baseline pilot | Real-model A vs B runtime comparison | Bounded worker pilot implemented; no live measurements yet |
 | C. One task-adapted checkpoint | Reviewed targets, loss-mask checks, regression suite | Not started |
 | D. Confirmatory factorial | Preregistered A–D cells | Not started |
 | E–G | Transfer, scale, independent evaluation | Not started |

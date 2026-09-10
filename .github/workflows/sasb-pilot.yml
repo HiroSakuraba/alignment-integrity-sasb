@@ -1,0 +1,42 @@
+name: SASB small paid pilot
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Run paid Luna and Haiku requests (estimated cap $0.50 per run)'
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: sasb-paid-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    if: inputs.confirm && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline regression checks
+        run: make test && make verify
+      - name: Run bounded pilot
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SASB_ENABLE_NETWORK: '1'
+          SASB_PROVIDER_VALIDATED: '1'
+          SASB_OPENAI_REASONING_EFFORT: none
+        run: python -m sasb.pilot --live --budget-usd 0.50 --output reports/pilot-local.json
+      - name: Save pilot results even after failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasb-pilot-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/pilot-local.json
+          if-no-files-found: warn
+          retention-days: 30

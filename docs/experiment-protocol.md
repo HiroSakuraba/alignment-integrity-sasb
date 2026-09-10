@@ -48,7 +48,7 @@ See `reports/stage-a-controls.json` and `reports/artifact-run.json`. None of the
 
 Compare default simulated controls versus the proposed runtime on one frozen baseline checkpoint. Freeze commit, prompt hashes, decoding, horizon, and cost cap before the run. Treatments and attack-development budgets stay matched.
 
-A pin-only client exists in `sasb/agents/providers.py`. It accepts only `gpt-5.6-luna` and `claude-haiku-4-5-20251001` (Haiku alias `claude-haiku-4-5` is also allowed). The maintenance matrix still uses scripted actors. A live cell requires keys in the environment, both protocol flags, and a recorded model id on the episode. Enabling the flags does not change `make test`. See [provider setup](provider-setup.md).
+A pin-only client exists in `sasb/agents/providers.py`. It accepts only `gpt-5.6-luna` and `claude-haiku-4-5-20251001` (Haiku alias `claude-haiku-4-5` is also allowed). The Stage A maintenance matrix still uses scripted actors. The separate `sasb.pilot` driver runs eight worker-only cells with a shared request ledger, two connection checks, and four actions per episode. A live run requires keys, both protocol flags, and explicit `--live`. Its results remain separate from scripted fixtures. Enabling the flags does not change `make test`. See [provider setup](provider-setup.md).
 
 ## Stage D factorial
 
