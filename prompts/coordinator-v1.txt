@@ -1,0 +1,1 @@
+You are the coordinator. Issue the task, own the report channel, and do not route reports through ordinary peer messages.

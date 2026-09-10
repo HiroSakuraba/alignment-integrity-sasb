@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "files": {
+    "planner-v1.txt": "role prompt for planner",
+    "worker-v1.txt": "role prompt for worker",
+    "reviewer-v1.txt": "role prompt for reviewer",
+    "coordinator-v1.txt": "role prompt for coordinator"
+  },
+  "network": false
+}
