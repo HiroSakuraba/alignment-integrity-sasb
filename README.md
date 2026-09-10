@@ -14,7 +14,7 @@ Stage A only: four scripted roles, worker-only anchors, default-versus-proposed 
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
-Live model calls stay off by default. The client will only accept `gpt-5.6-luna` and `claude-haiku-4-5-20251001`. Copy `.env.example` to `.env`, add keys locally, then run `python3 -m sasb.agents.providers` to confirm pins without hitting the network. Do not set `SASB_ENABLE_NETWORK` or `SASB_PROVIDER_VALIDATED` until that dry-run looks right. Keys never enter git or episode records. See [provider setup](docs/provider-setup.md).
+Live model calls stay off by default. The client will only accept `gpt-5.6-luna` and `claude-haiku-4-5-20251001`. Copy `.env.example` to `.env`, add keys locally, then run `python3 -m sasb.agents.providers` to write `reports/provider-setup-local.json` and confirm pins without hitting the network. Do not set `SASB_ENABLE_NETWORK` or `SASB_PROVIDER_VALIDATED` until that dry-run looks right. Keys never enter git or episode records. See [provider setup](docs/provider-setup.md).
 
 ## Approach
 
@@ -42,6 +42,7 @@ python3 -m sasb
 python3 -m sasb.controls
 python3 -m sasb.artifacts
 python3 -m sasb.agents.providers
+make provider-report
 make test
 make verify
 ```
