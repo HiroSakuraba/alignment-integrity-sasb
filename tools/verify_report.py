@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 from sasb.__main__ import build_report  # noqa: E402
 from sasb.chain import build_chain_report  # noqa: E402
+from sasb.controls import build_controls_report  # noqa: E402
 
 
 def stable(report):
@@ -42,7 +43,11 @@ def main():
     if json.loads(chain_path.read_text()) != build_chain_report():
         sys.stderr.write("reports/chain-run.json is stale; run make report\n")
         sys.exit(1)
-    print("maintenance and chain reports match generated Stage A fixtures")
+    controls_path = ROOT / "reports" / "stage-a-controls.json"
+    if json.loads(controls_path.read_text()) != build_controls_report():
+        sys.stderr.write("reports/stage-a-controls.json is stale; run make report\n")
+        sys.exit(1)
+    print("maintenance, chain, and Stage A control reports match generated fixtures")
 
 
 if __name__ == "__main__":
