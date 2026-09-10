@@ -14,6 +14,8 @@ Stage A only: four scripted roles, worker-only anchors, default-versus-proposed 
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
+Live model calls stay off by default. The client will only accept `gpt-5.6-luna` and `claude-haiku-4-5-20251001`. Copy `.env.example` to `.env`, add keys locally, then run `python3 -m sasb.agents.providers` to confirm pins without hitting the network. Do not set `SASB_ENABLE_NETWORK` or `SASB_PROVIDER_VALIDATED` until that dry-run looks right. Keys never enter git or episode records. See [provider setup](docs/provider-setup.md).
+
 ## Approach
 
 Models will later propose actions. The trusted runtime checks identity, scope, evidence, and capability validity before execution. Agent observations, trusted runtime metadata, and evaluator-only labels occupy separate spaces. Hidden fields such as `peer_compromised` or `grader_reliability` cannot be published into an observation.
@@ -39,6 +41,7 @@ python3 -m unittest discover -s tests -v
 python3 -m sasb
 python3 -m sasb.controls
 python3 -m sasb.artifacts
+python3 -m sasb.agents.providers
 make test
 make verify
 ```
@@ -104,6 +107,7 @@ The standalone permit helper and provider guard follow the control prototype. Pe
 - [Architecture](docs/architecture.md)
 - [Threat model](docs/threat-model.md)
 - [Experiment protocol](docs/experiment-protocol.md)
+- [Provider setup](docs/provider-setup.md)
 - [Contributor guidance](CONTRIBUTING.md)
 - [Agent entry point](docs/AI_AGENT_ENTRYPOINT.md)
 - [Historical no-go ledger](docs/HISTORICAL_NO_GO_LEDGER.md)
