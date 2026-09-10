@@ -1,0 +1,11 @@
+{
+  "program": "alignment-integrity-sasb",
+  "stage": "A",
+  "version": "0.1.0",
+  "python": ">=3.10",
+  "dependencies": [],
+  "sibling": "https://github.com/HiroSakuraba/controlled-ai-research",
+  "framework": "docs/research-framework.html",
+  "report": "reports/harness-run.json",
+  "notes": "Scripted policies only. Permit design follows controlled-ai-research permits.py."
+}

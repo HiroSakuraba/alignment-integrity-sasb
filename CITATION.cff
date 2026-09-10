@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this harness or research framework, please cite it."
+title: "Alignment Integrity in Heterogeneous AI Systems: Stage A SASB harness"
+authors:
+  - family-names: Schulz
+    given-names: Benjamin John
+repository-code: "https://github.com/HiroSakuraba/alignment-integrity-sasb"
+license: "MIT"
+type: software
+version: "0.1.0"
+date-released: "2026-09-10"
+abstract: "A standard-library Stage A harness for four-agent alignment-integrity experiments: isolated information spaces, scoped capabilities, synthetic resources, and a scorecard that separates attempts from completed effects."

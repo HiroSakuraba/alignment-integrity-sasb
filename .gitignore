@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.Python
+.venv/
+venv/
+*.sqlite
+*.sqlite-journal
+.env
+.env.*
+!.env.example
+.DS_Store
+reports/*-local.json
