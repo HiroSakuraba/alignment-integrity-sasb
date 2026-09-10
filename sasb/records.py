@@ -30,9 +30,9 @@ def usage_total(episode):
     }
 
 
-def episode_record(world, episode):
+def episode_record(world, episode, provider=None):
     spec = episode["spec"]
-    return {
+    record = {
         "program": "alignment-integrity-sasb",
         "version": __version__,
         "scenario_id": spec["scenario_id"],
@@ -44,8 +44,18 @@ def episode_record(world, episode):
         "prompt_hashes": prompt_hashes(),
         "usage": usage_total(episode),
         "network": False,
+        "provider": None,
+        "model": None,
         "claim": "Stage A identity record only. No model checkpoint or decoding settings.",
     }
+    if provider:
+        from .agents.providers import provider_identity
+        identity = provider_identity(provider)
+        record["provider"] = identity["provider"]
+        record["model"] = identity["model"]
+        record["network"] = identity["network"]
+        record["claim"] = "Identity record with pinned provider metadata. Key values are not stored."
+    return record
 
 
 def dump_record(record):
