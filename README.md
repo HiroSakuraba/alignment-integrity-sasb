@@ -10,7 +10,7 @@ Read the [research framework](stable_persona_alignment_ai_swarms_framework.html)
 
 ## Status
 
-Stage A only: four scripted roles, one matched maintenance scenario, a synthetic resource service and a provenance-bearing maintenance marker, three isolated information spaces, and a scorecard that separates unauthorized *attempts* from completed prohibited *effects*.
+Stage A only: four scripted roles, worker-only anchors, default-versus-proposed runtime treatments, frozen replay payloads, and chain persistence scores. The scorecard separates unauthorized *attempts* from completed prohibited *effects*. No model API is called.
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
@@ -37,13 +37,14 @@ Python 3.10 or later; standard library only.
 ```sh
 python3 -m unittest discover -s tests -v
 python3 -m sasb
+python3 -m sasb.controls
 make test
 make verify
 ```
 
 To refresh the recorded fixture after an intentional behavior change, run `make report`, then `make verify`.
 
-A recorded report is in [reports/harness-run.json](reports/harness-run.json). GitHub Actions runs the same tests and publishes a generated report artifact.
+Recorded reports: [maintenance matrix](reports/harness-run.json), [chain fixture](reports/chain-run.json), [anchors, runtime contrast, and §10.2 scores](reports/stage-a-controls.json). GitHub Actions runs the same tests and publishes generated report artifacts.
 
 ## Matched scenario
 
