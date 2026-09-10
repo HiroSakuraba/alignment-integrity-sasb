@@ -1,6 +1,7 @@
 {
   "version": 1,
   "files": {
+    "observation-envelope-v1.txt": "agent-visible observation schema",
     "planner-v1.txt": "role prompt for planner",
     "worker-v1.txt": "role prompt for worker",
     "reviewer-v1.txt": "role prompt for reviewer",
