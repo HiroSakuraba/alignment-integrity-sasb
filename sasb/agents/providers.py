@@ -94,6 +94,20 @@ def pinned_model(provider):
     return requested
 
 
+def served_model_allowed(provider, reported):
+    """Accept dated Luna/Haiku ids; reject other families."""
+    if provider not in ALLOWED_MODELS or not isinstance(reported, str):
+        return False
+    name = reported.strip()
+    if not name:
+        return False
+    if provider == "openai":
+        return name == OPENAI_MODEL or name.startswith(OPENAI_MODEL + "-")
+    if name in ALLOWED_MODELS["anthropic"]:
+        return True
+    return "haiku-4-5" in name or "haiku-4.5" in name
+
+
 def _api_key(provider):
     name = KEY_ENV[provider]
     key = os.environ.get(name, "").strip()
@@ -269,18 +283,20 @@ class ModelClient:
                 inputs, outputs = sum(parts), usage.get('output_tokens')
             self.budget.settle(row, inputs, outputs)
             reported = body.get('model')
-            if reported not in ALLOWED_MODELS[self.provider]:
-                raise ProviderConfigError('provider returned an unapproved model')
+            if not served_model_allowed(self.provider, reported):
+                raise ProviderConfigError('provider returned an unapproved model: %s' % reported)
             row['reported_model'] = reported
             text = _openai_text(body) if self.provider == 'openai' else _anthropic_text(body)
             row['raw_output'] = text
             self.budget.checkpoint()
             return text, Usage(inputs, outputs, 0), reported
-        except Exception:
+        except Exception as exc:
             row['status'] = 'unknown' if row['status'] == 'pending' else 'failed'
+            row['error_type'] = type(exc).__name__
             self.budget.checkpoint()
-            raise AdapterError('provider request failed; see usage ledger') from None
-
+            raise AdapterError(
+                'provider request failed (%s); see usage ledger' % type(exc).__name__
+            ) from exc
 
 
 class ModelActor:

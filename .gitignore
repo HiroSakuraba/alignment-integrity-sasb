@@ -10,3 +10,5 @@ venv/
 !.env.example
 .DS_Store
 reports/*-local.json
+reports/*.lock
+reports/*.json.tmp
