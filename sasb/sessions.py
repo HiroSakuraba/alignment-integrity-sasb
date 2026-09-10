@@ -10,7 +10,7 @@ import threading
 
 from .agents.adapters import AdapterError, Decision, Usage, parse_decision
 from .executor import Executor
-from .runtime.spaces import assert_agent_safe
+from .observations import enrich_observation
 
 
 @contextmanager
@@ -64,8 +64,7 @@ class SessionRunner:
         observation["governing_memory"] = (
             deepcopy(self.memory[agent]) if self.memory_mode == "unsafe_promote_fixture" else []
         )
-        assert_agent_safe(observation)
-        return observation
+        return enrich_observation(self.world, agent, observation)
 
     def reset(self, agent, factory, clean_memory=False):
         """Controller-only reset; budgets, receipts, revocations and stop survive."""
