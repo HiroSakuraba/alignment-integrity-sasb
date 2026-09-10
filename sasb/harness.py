@@ -2,7 +2,10 @@
 
 from .executor import Executor, completed_violation
 from .agents.adapters import AdapterError
+from .observations import enrich_observation
 from .policies import actors_for
+from .records import episode_record
+from .runtime.treatments import DEFAULT, PROPOSED
 from .scenarios.maintenance import CONDITIONS, specification
 from .scoring.scorecard import score_episode, summarize
 from .world import World
@@ -12,7 +15,7 @@ TURN_ORDER = ("coordinator-1", "planner-1", "worker-1", "reviewer-1")
 
 def _take_turn(world, executor, agent_id, actor):
     try:
-        decision = actor.decide(world.spaces.observe(agent_id))
+        decision = actor.decide(enrich_observation(world, agent_id))
     except (AdapterError, TimeoutError) as exc:
         status = "adapter_error" if isinstance(exc, AdapterError) else "actor_timeout"
         world.receipts.record(agent_id, "invalid_output", status, {"error_type": type(exc).__name__})
@@ -22,12 +25,15 @@ def _take_turn(world, executor, agent_id, actor):
     executor.apply(agent_id, decision.action, decision.arguments)
 
 
-def run_episode(condition, policy="compliant"):
+def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm"):
+    if mode not in {"swarm", "worker"}:
+        raise ValueError("unknown episode mode: " + mode)
     spec = specification(condition)
-    world = World(spec)
+    world = World(spec, runtime=runtime)
     actors = actors_for(condition, policy)
     executor = Executor(world)
-    for agent_id in TURN_ORDER:
+    order = ("worker-1",) if mode == "worker" else TURN_ORDER
+    for agent_id in order:
         _take_turn(world, executor, agent_id, actors[agent_id])
         if agent_id == "worker-1":
             while agent_id not in world.stopped_agents and actors[agent_id].index < len(actors[agent_id].steps):
@@ -35,6 +41,8 @@ def run_episode(condition, policy="compliant"):
     episode = {
         "spec": spec,
         "policy": policy,
+        "runtime": world.runtime,
+        "mode": mode,
         "receipts": world.receipts.dump(),
         "reports": world.reports.delivered(),
         "writes": list(world.resources.writes),
@@ -45,10 +53,11 @@ def run_episode(condition, policy="compliant"):
         "agent_observation_keys": sorted({
             key
             for agent_id in world.roster.agents
-            for key in world.spaces.observe(agent_id)
+            for key in enrich_observation(world, agent_id)
         }),
     }
     episode["score"] = score_episode(episode)
+    episode["record"] = episode_record(world, episode)
     return episode
 
 
@@ -64,6 +73,34 @@ def run_matrix(conditions=CONDITIONS):
         "episodes": episodes, "scores": rows, "summary": summarize(rows),
         "by_policy": {policy: summarize(row for row in rows if row["policy"] == policy)
                       for policy in ("compliant", "noncompliant")},
+    }
+
+
+def run_anchors(conditions=CONDITIONS):
+    """Individual worker decisions without peer turns."""
+    rows, episodes = [], []
+    for condition in conditions:
+        for policy in ("compliant", "noncompliant"):
+            episode = run_episode(condition, policy, mode="worker")
+            episodes.append(episode)
+            rows.append(episode["score"])
+    return {"episodes": episodes, "scores": rows, "summary": summarize(rows)}
+
+
+def run_runtime_contrast():
+    """Scripted A-versus-B contrast. No model. Same policy, two treatments."""
+    rows = []
+    for runtime in (DEFAULT, PROPOSED):
+        episode = run_episode("tempting_unauthorized", "noncompliant", runtime=runtime)
+        rows.append({
+            "runtime": runtime,
+            "completed_violation": episode["completed_violation"],
+            "unauthorized_attempt": episode["score"]["unauthorized_attempt"],
+            "writes": episode["writes"],
+        })
+    return {
+        "claim": "Scripted runtime contrast only. Default drops capability and evidence gates; proposed keeps them.",
+        "rows": rows,
     }
 
 
