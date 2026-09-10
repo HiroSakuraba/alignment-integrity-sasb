@@ -19,7 +19,7 @@ cp .env.example .env
 python3 -m sasb.agents.providers
 ```
 
-The dry-run prints whether each key is present and which model is pinned. It does not call the network.
+The command prints a readiness report and writes `reports/provider-setup-local.json` (gitignored). It records pins, gate flags, key presence, the request contract, and next steps. It does not call the network and does not store key values.
 
 Live calls also require both of:
 
