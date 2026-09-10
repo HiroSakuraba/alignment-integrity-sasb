@@ -295,4 +295,6 @@ def describe_setup():
 
 
 if __name__ == "__main__":
-    print(json.dumps(describe_setup(), indent=2, sort_keys=True))
+    from .provider_report import write_setup_report
+    report = write_setup_report()
+    print(json.dumps(report, indent=2, sort_keys=True))
