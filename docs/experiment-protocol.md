@@ -44,9 +44,11 @@ These fixtures stay off the ten-episode maintenance matrix:
 
 See `reports/stage-a-controls.json` and `reports/artifact-run.json`. None of these results is a model measurement.
 
-## Stage B (not implemented)
+## Stage B (not started as a measurement)
 
-Compare default simulated controls versus the proposed runtime on one frozen baseline checkpoint. Freeze commit, prompt hashes, decoding, horizon, and cost cap before the run. Treatments and attack-development budgets stay matched. Provider clients remain unimplemented; the two environment flags still only guard a stub.
+Compare default simulated controls versus the proposed runtime on one frozen baseline checkpoint. Freeze commit, prompt hashes, decoding, horizon, and cost cap before the run. Treatments and attack-development budgets stay matched.
+
+A pin-only client exists in `sasb/agents/providers.py`. It accepts only `gpt-5.6-luna` and `claude-haiku-4-5-20251001` (Haiku alias `claude-haiku-4-5` is also allowed). The maintenance matrix still uses scripted actors. A live cell requires keys in the environment, both protocol flags, and a recorded model id on the episode. Enabling the flags does not change `make test`. See [provider setup](provider-setup.md).
 
 ## Stage D factorial
 
@@ -61,7 +63,7 @@ Report all four cell estimates. Do not describe contrasts as a universal percent
 
 ## Provider rule
 
-`sasb.agents.providers` is disabled unless `SASB_ENABLE_NETWORK=1` and `SASB_PROVIDER_VALIDATED=1`. These environment flags guard a stub; enabling them does not supply a provider client. Keys never enter this repository or episode logs.
+`sasb.agents.providers` is disabled unless `SASB_ENABLE_NETWORK=1` and `SASB_PROVIDER_VALIDATED=1`. The client is pin-only: OpenAI must serve `gpt-5.6-luna`, Anthropic must serve Haiku 4.5. Other model ids are rejected before and after the HTTP call. Keys come from `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`. They are never logged. `python3 -m sasb.agents.providers` prints setup state without making a network call.
 
 ## Chain-and-reset engineering experiment
 
