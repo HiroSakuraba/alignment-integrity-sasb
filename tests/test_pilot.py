@@ -8,7 +8,7 @@ from unittest.mock import patch
 from sasb.agents.adapters import AdapterError
 from sasb.agents.budget import Budget, BudgetExceeded
 from sasb.agents.providers import ModelActor, ModelClient, load_env, OPENAI_MODEL, ANTHROPIC_MODEL
-from sasb.pilot import run_pilot, main
+from sasb.pilot import acquire_pilot_lock, run_pilot, main
 
 ENV = {'OPENAI_API_KEY': 'sk-dummy', 'ANTHROPIC_API_KEY': 'sk-ant-dummy',
        'SASB_ENABLE_NETWORK': '1', 'SASB_PROVIDER_VALIDATED': '1'}
@@ -71,15 +71,19 @@ class PilotTests(unittest.TestCase):
     def test_timeout_keeps_reservation_and_blocks_next_call(self):
         budget, transport = Budget(), Transport(fail=True)
         client = ModelClient('openai', transport, budget)
-        with self.assertRaises(AdapterError):
+        with self.assertRaises(AdapterError) as ctx:
             client.complete('sys', 'user')
+        self.assertIsInstance(ctx.exception.__cause__, TimeoutError)
+        self.assertIn('TimeoutError', str(ctx.exception))
         row = budget.entries[0]
         self.assertEqual(row['status'], 'unknown')
+        self.assertEqual(row['error_type'], 'TimeoutError')
         self.assertEqual(budget.charged, row['reserved_microdollars'])
         with self.assertRaises(BudgetExceeded):
             client.complete('sys', 'user')
         self.assertEqual(len(transport.calls), 1)
-        self.assertNotIn('secret must', json.dumps(budget.snapshot()))
+        blob = json.dumps(budget.snapshot())
+        self.assertNotIn('secret must', blob)
 
     @patch.dict(os.environ, ENV, clear=True)
     def test_reservation_checkpoint_precedes_transport(self):
@@ -125,8 +129,38 @@ class PilotTests(unittest.TestCase):
                 self.assertEqual(main(), 1)
             report = json.loads(output.read_text())
             self.assertEqual(report['status'], 'stopped')
+            self.assertEqual(report['error_type'], 'AdapterError')
+            self.assertEqual(report['error_cause'], 'TimeoutError')
             self.assertEqual(report['budget']['requests'][0]['status'], 'unknown')
+            self.assertEqual(report['budget']['requests'][0]['error_type'], 'TimeoutError')
             self.assertNotIn('do not log', output.read_text())
+
+    @patch.dict(os.environ, ENV, clear=True)
+    def test_connection_check_accepts_extra_json_fields(self):
+        transport = Transport()
+        original = transport.post
+        def post(*args, **kwargs):
+            transport.text = (
+                '{"action":"noop","note":"wire-ok"}'
+                if len(transport.calls) < 2
+                else '{"action":"noop","arguments":{}}'
+            )
+            return original(*args, **kwargs)
+        transport.post = post
+        report = {'episodes': [], 'connection_checks': []}
+        run_pilot(Budget(), report, lambda: None, transport)
+        self.assertEqual(report['connection_checks'], ['openai', 'anthropic'])
+        self.assertEqual(len(report['episodes']), 8)
+
+    @patch.dict(os.environ, ENV, clear=True)
+    def test_second_local_live_run_is_locked_out(self):
+        lock_path = Path(tempfile.mkdtemp()) / 'pilot.lock'
+        first = acquire_pilot_lock(lock_path)
+        try:
+            with self.assertRaises(AdapterError):
+                acquire_pilot_lock(lock_path)
+        finally:
+            first.close()
 
     @patch.dict(os.environ, ENV, clear=True)
     def test_missing_usage_is_not_counted_as_free(self):
