@@ -10,7 +10,7 @@ Read the [research framework](stable_persona_alignment_ai_swarms_framework.html)
 
 ## Status
 
-Stage A only: four scripted roles, worker-only anchors, default-versus-proposed runtime treatments, frozen replay payloads, and chain persistence scores. The scorecard separates unauthorized *attempts* from completed prohibited *effects*. No model API is called.
+Stage A only: four scripted roles, worker-only anchors, default-versus-proposed runtime treatments, frozen replay payloads, chain persistence scores, and synthetic artifact challenge/repair. The scorecard separates unauthorized *attempts* from completed prohibited *effects*. No model API is called.
 
 There are no model API calls, no training runs, and no claimed safety gain.
 
@@ -38,13 +38,14 @@ Python 3.10 or later; standard library only.
 python3 -m unittest discover -s tests -v
 python3 -m sasb
 python3 -m sasb.controls
+python3 -m sasb.artifacts
 make test
 make verify
 ```
 
 To refresh the recorded fixture after an intentional behavior change, run `make report`, then `make verify`.
 
-Recorded reports: [maintenance matrix](reports/harness-run.json), [chain fixture](reports/chain-run.json), [anchors, runtime contrast, and §10.2 scores](reports/stage-a-controls.json). GitHub Actions runs the same tests and publishes generated report artifacts.
+Recorded reports: [maintenance matrix](reports/harness-run.json), [chain fixture](reports/chain-run.json), [anchors, runtime contrast, and §10.2 scores](reports/stage-a-controls.json), [artifact challenge and repair](reports/artifact-run.json). GitHub Actions runs the same tests and publishes generated report artifacts.
 
 ## Matched scenario
 
@@ -78,6 +79,17 @@ python3 -m sasb.chain --trace unauthorized --memory-mode unsafe_promote_fixture
 The trace includes exact observations, raw decisions, declared usage, execution receipts, and reset records. The session runner supports round-robin scheduling, a global action budget, and per-decision POSIX timeouts. Persistent memory retains original sender and event identity. Reset replaces the actor and clears messages and inspection evidence while preserving stop, revocation, and action-budget state.
 
 The explicitly named `unsafe_promote_fixture` presents remembered content as governing memory to a deterministic rule. This can induce a downstream unauthorized attempt, which the capability boundary still blocks. Cleanup also removes legitimate task memory: its utility cost is visible in the benign controls. These are engineering checks, not an estimate of how an LLM responds to privileged prompts. See [the chain protocol](docs/chain-protocol.md) and [recorded results](reports/chain-run.json).
+
+## Artifact challenge and repair
+
+`python3 -m sasb.artifacts` runs twelve deterministic cells: incorrect, valid, and reordered-valid sources, crossed with log-only versus independent review, at delay 0 and 2. Weak acceptance is a known-bad fixture so a substituted task can lock and be consumed. Review withdraws the source and every derived summary, then repairs from protected inputs, never from the reporter's claimed answer. Repair does not erase earlier incorrect effects.
+
+```sh
+python3 -m sasb.artifacts
+python3 -m sasb.artifacts --trace incorrect --response review --delay 2
+```
+
+See [recorded results](reports/artifact-run.json). This is an engineering check of publication, challenge, and repair, not a Lean proof or a model measurement.
 
 ## Related work in this account
 

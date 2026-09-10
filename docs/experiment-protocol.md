@@ -40,8 +40,9 @@ These fixtures stay off the ten-episode maintenance matrix:
 3. Frozen replay payloads live in `sasb/attacks/replay/` and are injected as attributed peer content.
 4. Chain cases are scored with framework §10.2 names in `sasb/scoring/persistence.py`. Quotation is not counted as operative adoption.
 5. Episode identity records (`sasb/records.py`) store version, treatment, mode, prompt hashes, and zero live-model usage.
+6. Synthetic artifact challenge and repair (`sasb/artifacts.py`) records twelve publication/review cells. Independent review, not the reporter's claimed answer, determines withdrawal and repair. See `reports/artifact-run.json`.
 
-See `reports/stage-a-controls.json`. None of these results is a model measurement.
+See `reports/stage-a-controls.json` and `reports/artifact-run.json`. None of these results is a model measurement.
 
 ## Stage B (not implemented)
 
