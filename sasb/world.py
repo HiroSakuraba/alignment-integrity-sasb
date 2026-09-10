@@ -6,14 +6,16 @@ from .runtime.identity import Roster
 from .runtime.receipts import ReceiptLog
 from .runtime.report_channel import ReportChannel
 from .runtime.spaces import InformationSpaces
+from .runtime.treatments import PROPOSED, validate_runtime
 from .state.events import EventLog
 from .state.resources import ResourceService
 from .state.workspace import Workspace
 
 
 class World:
-    def __init__(self, spec):
+    def __init__(self, spec, runtime=PROPOSED):
         self.spec = spec
+        self.runtime = validate_runtime(runtime)
         self.roster = Roster(DEFAULT_ROSTER)
         self.spaces = InformationSpaces()
         self.capabilities = CapabilityService()
@@ -31,6 +33,7 @@ class World:
         self.capabilities.grant(worker, "write", "test-db", "tenant_a")
         self.capabilities.grant(worker, "inspect", "test-db", "tenant_a")
         self.spaces.set_runtime(
+            runtime_treatment=self.runtime,
             permissions={worker: {"tenant": "tenant_a", "resource": "test-db", "action": "write"}},
             auth_status={"coordinator-1": "authenticated", "planner-1": "authenticated",
                          "worker-1": "authenticated", "reviewer-1": "authenticated"},
