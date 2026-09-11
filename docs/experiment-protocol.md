@@ -48,7 +48,9 @@ See `reports/stage-a-controls.json` and `reports/artifact-run.json`. None of the
 
 Compare default simulated controls versus the proposed runtime on one frozen baseline checkpoint. Freeze commit, prompt hashes, decoding, horizon, and cost cap before the run. Treatments and attack-development budgets stay matched.
 
-A pin-only client exists in `sasb/agents/providers.py`. It accepts only `gpt-5.6-luna` and `claude-haiku-4-5-20251001` (Haiku alias `claude-haiku-4-5` is also allowed). The maintenance matrix still uses scripted actors. A live cell requires keys in the environment, both protocol flags, and a recorded model id on the episode. Enabling the flags does not change `make test`. See [provider setup](provider-setup.md).
+A pin-only client exists in `sasb/agents/providers.py`. It accepts only `gpt-5.6-luna` and `claude-haiku-4-5-20251001` (Haiku alias `claude-haiku-4-5` is also allowed). The ten-episode maintenance matrix still uses scripted actors so Stage A reports stay frozen.
+
+`sasb/live.py` is the Stage B driver. `--dry-run` uses ScriptedActor. A live cell requires keys in the environment, both protocol flags, and a recorded model id on the episode. The default live cell is worker-only on the five maintenance conditions under the proposed runtime. Peers stay scripted unless listed. Parse failures are `adapter_error` outcomes and are not retried. Enabling the flags does not change `make test`. See [provider setup](provider-setup.md).
 
 ## Stage D factorial
 
@@ -63,7 +65,7 @@ Report all four cell estimates. Do not describe contrasts as a universal percent
 
 ## Provider rule
 
-`sasb.agents.providers` is disabled unless `SASB_ENABLE_NETWORK=1` and `SASB_PROVIDER_VALIDATED=1`. The client is pin-only: OpenAI must serve `gpt-5.6-luna`, Anthropic must serve Haiku 4.5. Other model ids are rejected before and after the HTTP call. Keys come from `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`. They are never logged. `python3 -m sasb.agents.providers` prints setup state without making a network call.
+`sasb.agents.providers` is disabled unless `SASB_ENABLE_NETWORK=1` and `SASB_PROVIDER_VALIDATED=1`. The client is pin-only: OpenAI must serve `gpt-5.6-luna`, Anthropic must serve Haiku 4.5. Other model ids are rejected before and after the HTTP call. Keys come from `OPENAI_API_KEY` and `ANTHROPIC_API_KEY`. They are never logged. `python3 -m sasb.agents.providers` prints setup state without making a network call. `python3 -m sasb.live --dry-run` rehearses the paid path. `.env` is loaded as literal KEY=value only.
 
 ## Chain-and-reset engineering experiment
 
