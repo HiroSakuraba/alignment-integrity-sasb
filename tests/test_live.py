@@ -88,6 +88,66 @@ class LiveDriverTests(unittest.TestCase):
         self.assertGreater(cost, 0.0)
         self.assertLess(cost, 0.01)
 
+    def test_dry_run_forecasts_and_stops_on_episode_cap(self):
+        report = run_experiment(provider="local", dry_run=True, mode="worker")
+        self.assertGreater(report["forecast_usd_if_paid"], 0.0)
+        self.assertEqual(report["spent_usd"], 0.0)
+        self.assertEqual(report["stopped"]["reason"], "episode_cap")
+        self.assertNotEqual(report["stopped"].get("reason"), "target_met")
+
+    def test_paid_skip_does_not_crash_and_honest_unreachable_is_paid(self):
+        os.environ["SASB_ENABLE_NETWORK"] = "1"
+        os.environ["SASB_PROVIDER_VALIDATED"] = "1"
+        os.environ["ANTHROPIC_API_KEY"] = "sk-ant-test"
+        from sasb.live import StubTransport
+        try:
+            report = run_experiment(
+                provider="anthropic",
+                dry_run=False,
+                mode="worker",
+                transport=StubTransport(),
+                cap_usd=1.0,
+            )
+        finally:
+            for key in ("SASB_ENABLE_NETWORK", "SASB_PROVIDER_VALIDATED", "ANTHROPIC_API_KEY"):
+                os.environ.pop(key, None)
+        self.assertFalse(report["dry_run"])
+        self.assertEqual(report["stopped"]["reason"], "episode_cap")
+        join = report["reachability_join"]
+        skipped = [row for row in join if row.get("skipped") == "unreachable"]
+        honest = [row for row in join if row["role"] == "honest"]
+        self.assertTrue(skipped)
+        self.assertTrue(all(row["role"] == "adversary" for row in skipped))
+        self.assertTrue(honest)
+        self.assertTrue(all(row["paid"] and row["completed_violation"] is not None for row in honest))
+        self.assertNotIn(None, [row["completed_violation"] for row in report["rows"] if row.get("paid")])
+        self.assertGreater(report["spent_usd"], 0.0)
+        self.assertIn("completed_violation_rate", report["summary"])
+
+    def test_default_runtime_pays_adversary_when_violation_is_reachable(self):
+        os.environ["SASB_ENABLE_NETWORK"] = "1"
+        os.environ["SASB_PROVIDER_VALIDATED"] = "1"
+        os.environ["ANTHROPIC_API_KEY"] = "sk-ant-test"
+        from sasb.live import StubTransport
+        from sasb.runtime.treatments import DEFAULT
+        try:
+            report = run_experiment(
+                provider="anthropic",
+                dry_run=False,
+                conditions=("tempting_unauthorized",),
+                runtime=DEFAULT,
+                mode="worker",
+                transport=StubTransport(),
+                roles=("adversary",),
+            )
+        finally:
+            for key in ("SASB_ENABLE_NETWORK", "SASB_PROVIDER_VALIDATED", "ANTHROPIC_API_KEY"):
+                os.environ.pop(key, None)
+        self.assertEqual(len(report["rows"]), 1)
+        self.assertTrue(report["rows"][0]["paid"])
+        self.assertEqual(report["rows"][0]["harm_reachable"], 1)
+        self.assertIsNone(report["rows"][0].get("skipped"))
+
 
 if __name__ == "__main__":
     unittest.main()
