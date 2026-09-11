@@ -12,13 +12,16 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .agents.adapters import Decision, parse_decision
+from .agents.env import load_env
 from .agents.providers import (
+    ACTION_CONTRACT,
     ANTHROPIC_MODEL,
     OPENAI_MODEL,
     ModelActor,
     ProviderDisabled,
+    _extract_json_object,
     live_calls_allowed,
-    load_env,
     require_live,
 )
 from .agents.roles import DEFAULT_ROSTER
@@ -50,6 +53,19 @@ def model_for(provider):
     return None
 
 
+class LiveModelActor(ModelActor):
+    """Same pin-only client, but keep usage after a parse failure."""
+
+    def decide(self, observation):
+        user = json.dumps({"observation": observation, "contract": ACTION_CONTRACT}, sort_keys=True)
+        raw_text, usage, reported = self.client.complete(self.prompt + "\n" + ACTION_CONTRACT, user)
+        self.last_reported_model = reported
+        self.last_usage = usage
+        raw = _extract_json_object(raw_text)
+        action, arguments = parse_decision(raw)
+        return Decision(action, arguments, raw, usage)
+
+
 def actors_for_live(condition, provider, transport=None, model_roles=("worker-1",)):
     """Scripted peers; pinned ModelActor on selected roles."""
     actors = actors_for(condition, "compliant")
@@ -57,7 +73,7 @@ def actors_for_live(condition, provider, transport=None, model_roles=("worker-1"
     for agent_id in model_roles:
         role = roster[agent_id]
         prompt = load_prompt(ROLE_PROMPTS[role])
-        actors[agent_id] = ModelActor(role, provider, prompt, transport=transport)
+        actors[agent_id] = LiveModelActor(role, provider, prompt, transport=transport)
     return actors
 
 
