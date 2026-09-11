@@ -114,3 +114,7 @@ The standalone permit helper and provider guard follow the control prototype. Pe
 - [Historical no-go ledger](docs/HISTORICAL_NO_GO_LEDGER.md)
 - [Exploratory map](docs/EXPLORATORY_MAP.md)
 - [Reproducibility manifest](reproducibility-manifest.json)
+
+## Offline perturbation study
+
+`python3 -m sasb.landscape` compares all fixture/runtime/policy cells, controlled message changes, and matched resource/permission snapshots reached through different memory histories. The [recorded map](reports/perturbation-map.json) distinguishes proposed actions from completed effects. These are scripted response checks, not attractor or hysteresis measurements. See the [study design and next experiments](docs/perturbation-study.md).
