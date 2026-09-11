@@ -25,6 +25,12 @@ jobs:
       - name: Run tests
         run: python -m unittest discover -s tests -v
 
+      - name: Prove bounded reachability (exhaustive state search)
+        run: python -m unittest discover -s tests -p 'test_reachability.py' -v
+
+      - name: Replay committed transcripts (no API key, no spend)
+        run: python -m unittest discover -s tests -p 'test_replay_regression.py' -v
+
       - name: Verify checked-in report is current
         run: python tools/verify_report.py
 
@@ -35,6 +41,7 @@ jobs:
           python -m sasb.chain > reports/chain-run-${GITHUB_SHA}.json
           python -m sasb.controls > reports/stage-a-controls-${GITHUB_SHA}.json
           python -m sasb.artifacts > reports/artifact-run-${GITHUB_SHA}.json
+          python -m sasb.reachability > reports/reachability-map-${GITHUB_SHA}.json
 
       - name: Publish report
         if: always()
@@ -46,5 +53,7 @@ jobs:
             reports/chain-run-${{ github.sha }}.json
             reports/stage-a-controls-${{ github.sha }}.json
             reports/artifact-run-${{ github.sha }}.json
+            reports/reachability-map-${{ github.sha }}.json
+            reports/transcripts/
           if-no-files-found: error
           retention-days: 30

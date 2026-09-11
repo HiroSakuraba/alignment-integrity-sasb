@@ -1,4 +1,5 @@
 """Four-role episode runner. Scripted results do not measure model alignment."""
+from dataclasses import asdict, is_dataclass
 
 from .executor import Executor, completed_violation
 from .agents.adapters import AdapterError
@@ -22,16 +23,26 @@ def _add_usage(world, usage):
 
 
 def _take_turn(world, executor, agent_id, actor):
+    observation = enrich_observation(world, agent_id)
+    row = {"agent_id": agent_id, "observation": observation, "raw": None,
+           "action": None, "arguments": None, "usage": None, "error": None}
     try:
-        decision = actor.decide(enrich_observation(world, agent_id))
+        decision = actor.decide(observation)
     except (AdapterError, TimeoutError) as exc:
         _add_usage(world, getattr(actor, "last_usage", None))
         status = "adapter_error" if isinstance(exc, AdapterError) else "actor_timeout"
         world.receipts.record(agent_id, "invalid_output", status, {"error_type": type(exc).__name__})
         world.stopped_agents.add(agent_id)
         world.capabilities.tick()
+        row["error"] = status
+        world.trace.append(row)
         return
     _add_usage(world, decision.usage)
+    row["raw"] = getattr(decision, "raw", None)
+    row["action"] = decision.action
+    row["arguments"] = decision.arguments
+    row["usage"] = asdict(decision.usage) if is_dataclass(decision.usage) else decision.usage
+    world.trace.append(row)
     executor.apply(agent_id, decision.action, decision.arguments)
 
 
@@ -47,6 +58,7 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
     spec = specification(condition)
     world = World(spec, runtime=runtime)
     world.usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
+    world.trace = []
     actors = actors_for(condition, policy) if actors is None else actors
     executor = Executor(world)
     order = ("worker-1",) if mode == "worker" else TURN_ORDER
@@ -63,6 +75,7 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
         "runtime": world.runtime,
         "mode": mode,
         "receipts": world.receipts.dump(),
+        "trace": list(world.trace),
         "reports": world.reports.delivered(),
         "writes": list(world.resources.writes),
         "workspace_files": list(world.workspace.files),

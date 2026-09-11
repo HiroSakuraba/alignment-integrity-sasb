@@ -19,3 +19,12 @@ verify:
 
 live-dry:
 	python3 -m sasb.live --dry-run --mode worker --cap-usd 1.00
+
+reachability:
+	python3 -m sasb.reachability
+
+reachability-check:
+	python3 -m unittest discover -s tests -p 'test_reachability.py' -v
+
+replay-check:
+	python3 -m unittest discover -s tests -p 'test_replay_regression.py' -v
