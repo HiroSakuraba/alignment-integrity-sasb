@@ -1,4 +1,4 @@
-"""Minimal episode identity fields from framework \u00a77.1, without model calls."""
+"""Minimal episode identity fields from framework §7.1, without model calls."""
 
 import hashlib
 import json
@@ -21,12 +21,17 @@ def prompt_hashes():
 
 def usage_total(episode):
     receipts = episode.get("receipts", [])
+    usage = episode.get("usage") or {}
+    input_tokens = int(usage.get("input_tokens", 0) or 0)
+    output_tokens = int(usage.get("output_tokens", 0) or 0)
+    retries = int(usage.get("retries", 0) or 0)
+    live = input_tokens > 0 or output_tokens > 0
     return {
-        "input_tokens": 0,
-        "output_tokens": 0,
-        "retries": 0,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "retries": retries,
         "recorded_actions": len(receipts),
-        "note": "scripted actors declare no live-model usage",
+        "note": "reported actor usage" if live else "scripted actors declare no live-model usage",
     }
 
 
