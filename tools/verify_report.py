@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from sasb.__main__ import build_report  # noqa: E402
 from sasb.artifacts import build_artifact_report  # noqa: E402
 from sasb.chain import build_chain_report  # noqa: E402
+from sasb.landscape import build_landscape
 from sasb.controls import build_controls_report  # noqa: E402
 
 
@@ -52,7 +53,9 @@ def main():
     if json.loads(artifact_path.read_text()) != build_artifact_report():
         sys.stderr.write("reports/artifact-run.json is stale; run make report\n")
         sys.exit(1)
-    print("maintenance, chain, Stage A control, and artifact reports match generated fixtures")
+    if json.loads((ROOT / "reports/perturbation-map.json").read_text()) != build_landscape():
+        sys.exit("reports/perturbation-map.json is stale; run make report")
+    print("perturbation map, maintenance, chain, Stage A control, and artifact reports match generated fixtures")
 
 
 if __name__ == "__main__":
