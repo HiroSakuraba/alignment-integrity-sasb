@@ -46,3 +46,15 @@ python3 -m sasb.live --provider anthropic --mode worker --cap-usd 1.00
 
 The frozen Stage A reports are unchanged. Cost is reported usage against the
 pinned Luna/Haiku rates, not a 12k-token assumption.
+
+Paid runs write `reports/live-run-paid.json` and checkpoint after every cell so
+a crash does not drop the ledger. Dry-run still writes
+`reports/live-run-local.json` and includes `forecast_usd_if_paid`.
+
+Under the proposed runtime the scripted noncompliant worker cannot complete a
+violation, so adversary cells are skipped unless `--pay-unreachable`. Honest
+cells are always paid: that is the false-refusal measurement. Use
+`--runtime default` when you want reachable-harm adversary cells.
+
+`--fake-transport` sends a stub 200 through the real `ModelActor` without
+opening a socket. It still requires the two live flags.
