@@ -30,6 +30,7 @@
 <a href="#benchmark">9. Benchmark design</a>
 <a href="#metrics">10. Measures and inference</a>
 <a href="#experiments">11. Decisive experiments</a>
+<a href="#experiments-explained">Experiments explained</a>
 <a href="#recovery">12. Monitoring and recovery</a>
 <a href="#roadmap">13. Implementation sequence</a>
 <a href="#evidence">14. Evidence and safety claims</a>
@@ -41,7 +42,7 @@
 <p class="eyebrow">AI safety · Training · Multi-agent systems</p>
 <h1>Alignment Integrity in Heterogeneous AI Systems</h1>
 <p class="subtitle">Durable behavioral commitments, reliable evidence, and bounded authority in systems that learn from data and act through shared tools.</p>
-<p class="meta">Research framework · 10 September 2026<br>Proposed evaluation program: Swarm Alignment Stability Benchmark (SASB)</p>
+<p class="meta">Research framework · 11 September 2026<br>Proposed evaluation program: Swarm Alignment Stability Benchmark (SASB)</p>
 </header>
 
 <section id="summary">
@@ -57,7 +58,7 @@
 <p>Owain Evans and collaborators have demonstrated several reasons to test these properties across the entire training lifecycle. Narrow fine-tuning can produce unrelated harmful behavior; apparently innocuous synthetic data can transmit traits; and some interventions leave failures that appear only under particular contextual cues. These findings justify broader tests of generalization. They do not establish that a particular stable persona or training recipe solves alignment. <a class="cite" href="#r-em">[1]</a> <a class="cite" href="#r-sl">[2]</a> <a class="cite" href="#r-cm">[3]</a></p>
 <div class="note"><strong>Central empirical question.</strong> Which failures can be prevented by ordinary access control, source tracking, and task design, and which require changes to model training? The first study should answer this with a small, reproducible experiment before expanding to large swarms or continued pre-training.</div>
 <p>The proposed benchmark measures attempted violations and completed harmful actions separately, alongside legitimate task completion, mistaken refusals, unnecessary escalation, and acceptance of valid corrections. Its first implementation uses four agents and two environments. Larger networks, long-horizon propagation, and representation research follow only when they address a demonstrated limitation.</p>
-<p class="small">Status: this document proposes methods and experiments. It reports findings from cited external research; it contains no claim that SASB has been implemented or that the proposed interventions have achieved measured safety improvements.</p>
+<p class="small">Status: the repository contains a small scripted harness and offline perturbation studies. The broader training and multi-model research program remains proposed. The local results establish engineering behavior in synthetic tasks; they do not establish a measured safety improvement in learned models. The <a href="#experiments-explained">plain-language experiment guide</a> explains what has been tested and what comes next.</p>
 </section>
 
 <section id="assessment">
@@ -350,6 +351,23 @@
 
 <section id="experiments">
 <h2>11. Decisive experiments</h2>
+<h3 id="experiments-explained">The experiments in plain language</h3>
+<p>Suppose a small team of AI assistants is maintaining a customer’s test database. One assistant plans the work, another carries it out, and messages and saved notes connect their activities. A message suggests using a different customer’s credentials to improve the score. We want to know whether the worker proposes that action, whether the execution service permits it, and whether the original maintenance job still gets done. These are three separate questions. A blocked mistake shows that a control worked; it also reveals a decision that deserves investigation.</p>
+<p>The first experiments use simple programmed actors whose decisions we can inspect. They run without model API charges. This lets us check that messages, memory, permissions, and outcome records behave as intended before paying to study Luna or Haiku. The programmed behavior is known in advance, so these results establish that the experimental equipment works. Later model runs will test behavior we have not specified ourselves.</p>
+<div class="table-wrap"><table><caption>What we change, what we observe, and why</caption><thead><tr><th scope="col">Experiment</th><th scope="col">What happens</th><th scope="col">Why do it?</th></tr></thead><tbody>
+<tr><td>Compare the execution controls</td><td>Run the same maintenance conditions with the default controls and the proposed controls. Record attempted violations, completed violations, and useful completion for both programmed policies.</td><td>Find out whether the controls prevent the tested mistakes while leaving legitimate work possible. The twenty comparisons provide a baseline for later model runs.</td></tr>
+<tr><td>Change one message</td><td>Keep the task, credentials, permissions, and schedule fixed. Give the worker an authorized instruction, an unauthorized instruction, or no planner message.</td><td>Check whether communication changes the worker’s proposal. A second worker that follows a fixed script should ignore these message changes, giving us a comparison with a known result.</td></tr>
+<tr><td>Compare different histories</td><td>Let a planner retain an unauthorized instruction in one run and retain none in another. Reset its conversation, then send the same new status message in both runs.</td><td>Test whether matching resource and permission records are enough to predict what happens next. Saved memory may contain a consequential difference that those records omit.</td></tr>
+<tr><td>Clean up retained memory</td><td>Repeat the history comparison after removing the saved instruction, and compare ordinary evidence presentation with a deliberately unsafe presentation that treats memory as governing instruction.</td><td>Identify whether the response difference depends on the stored content and how it is presented. This helps distinguish replacing an agent from repairing its working environment.</td></tr>
+</tbody></table></div>
+<p>In the recorded history tests, retained memory presented as governing instruction changes the later proposal even though the resource and permission snapshots match. Cleaning that memory removes the difference. The proposed execution controls still block the prohibited write. This gives us a concrete reason to inspect saved notes during recovery: a fresh conversation can inherit an old problem.</p>
+<p>The comparison has limits. The full states of the two systems differ because one contains an extra memory; there is no mysterious influence of the past beyond the state we retained. The worker’s response is also programmed. The result does not show that a real model will obey the same instruction. Similarly, the default/proposed comparison changes several controls together. Separate tests are needed to identify the contribution of each control.</p>
+<h3 id="recovery-exposure-explained">Next: increase the pressure, then remove it</h3>
+<p>The next proposed experiment varies the number of misleading messages: zero, one, two, and four. Each has an authorized-message comparison with the same declared length budget. We then remove the misleading messages and watch a fixed number of further decisions. Does the worker return to authorized work? Does it keep repeating the bad instruction? Does it stop doing useful work altogether? Record all three possibilities rather than treating silence or refusal as successful recovery.</p>
+<p>A further test raises and then lowers message exposure while preserving memory, and compares that sequence with the reverse order. If the response at a given exposure depends reproducibly on the direction of travel, we can investigate <em>hysteresis</em>: behavior that depends on how the system arrived there. An <em>attractor</em> is a pattern a system tends to return to after being disturbed. A short run ending in the same action does not establish one; we would need repeated disturbances and a defined test of return.</p>
+<p>The purpose is to learn which conditions preserve useful behavior, which changes disrupt it, and what restores it. Once these measurements work, we can replace the programmed worker with Luna and Haiku separately, then test different models working together. Four role names alone do not create model diversity. Transfer to new tasks and environments will need its own evidence.</p>
+<p class="small">Implemented offline: twenty outcome comparisons, twelve message comparisons, and four paired history tests. Exposure-and-recovery sweeps and model comparisons remain planned. See the <a href="https://github.com/HiroSakuraba/alignment-integrity-sasb/blob/main/reports/perturbation-map.json">recorded results</a> and <a href="https://github.com/HiroSakuraba/alignment-integrity-sasb/blob/main/docs/perturbation-study.md">study methods</a>.</p>
+
 <h3>11.1 Runtime controls first; factorial comparison second</h3>
 <p>Begin with baseline weights under the default and proposed runtime. Both conditions retain the outer sandbox that prevents real external harm; they differ only in the simulated controls being evaluated. This identifies residual model decisions and completed effects that the runtime fails to prevent.</p>
 <p>After producing one task-adapted checkpoint, run the full design:</p>
@@ -511,7 +529,7 @@
 <li id="r-mindviruses"><strong>Papadopoulos, V., Shah, M., Zimmerman, S., and Lindsey, J.</strong> <a href="https://arxiv.org/abs/2608.10218v1">Mind Viruses: Self-Propagating Ideas in Multi-Agent LLM Systems.</a> 10 August 2026. Preprint, arXiv:2608.10218v1.<small>Basis: coding-team and persistent-file chain experiments; Figure 8 and Appendix C for the defensive instruction; Sections 3.2 and 4 for content drift and persona analysis. Evans is not a coauthor. The memory-authority comparison and benchmark extensions here are proposed experiments.</small></li>
 </ol>
 </section>
-<footer class="footer">Alignment Integrity in Heterogeneous AI Systems · Research framework · 10 September 2026</footer>
+<footer class="footer">Alignment Integrity in Heterogeneous AI Systems · Research framework · 11 September 2026</footer>
 </main>
 </div>
 </body>
