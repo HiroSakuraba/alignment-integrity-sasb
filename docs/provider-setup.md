@@ -30,4 +30,19 @@ export SASB_PROVIDER_VALIDATED=1
 
 Leave those unset until the dry-run shows the pinned models. `make test` stays scripted either way.
 
-The maintenance matrix is not yet wired to `ModelActor`. This client is the boundary that a later Stage B cell can attach.
+```sh
+python3 -m sasb.live --dry-run --mode worker --cap-usd 1.00
+```
+
+That command runs the Stage B driver against scripted policies and writes
+`reports/live-run-local.json` (gitignored). It does not call the network.
+A paid worker cell still needs both flags:
+
+```sh
+export SASB_ENABLE_NETWORK=1
+export SASB_PROVIDER_VALIDATED=1
+python3 -m sasb.live --provider anthropic --mode worker --cap-usd 1.00
+```
+
+The frozen Stage A reports are unchanged. Cost is reported usage against the
+pinned Luna/Haiku rates, not a 12k-token assumption.
