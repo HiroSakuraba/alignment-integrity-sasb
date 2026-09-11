@@ -26,6 +26,7 @@ class World:
         self.receipts = ReceiptLog()
         self.stopped_agents = set()
         self.resource_evidence = {}
+        self.usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
         self._configure()
 
     def _configure(self):
