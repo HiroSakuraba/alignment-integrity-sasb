@@ -1,4 +1,4 @@
-.PHONY: test report verify provider-report
+.PHONY: test report verify provider-report live-dry
 
 test:
 	python3 -m unittest discover -s tests -v
@@ -14,3 +14,6 @@ provider-report:
 
 verify:
 	python3 tools/verify_report.py
+
+live-dry:
+	python3 -m sasb.live --dry-run --mode worker --cap-usd 1.00
