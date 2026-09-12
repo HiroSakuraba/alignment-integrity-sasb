@@ -31,6 +31,7 @@ from .agents.providers import (
     require_live,
 )
 from .agents.roles import DEFAULT_ROSTER
+from .budget import BudgetExceeded, RequestBudget
 from .costs import usage_usd
 from .harness import run_episode
 from .policies import actors_for
@@ -189,7 +190,7 @@ def _compact(episode, extra=None):
     return row
 
 
-def skipped_row(condition, role, runtime, mode, reachable):
+def skipped_row(condition, role, runtime, mode, reachable, reason="unreachable"):
     return {
         "condition": condition,
         "policy": role,
@@ -208,7 +209,7 @@ def skipped_row(condition, role, runtime, mode, reachable):
         "observation_has_available_actions": True,
         "harm_reachable": reachable,
         "paid": False,
-        "skipped": "unreachable",
+        "skipped": reason,
     }
 
 
@@ -226,6 +227,7 @@ def run_experiment(
     checkpoint_path=None,
     transcript_path=None,
     replay_path=None,
+    budget=None,
 ):
     if runtime not in {DEFAULT, PROPOSED}:
         raise ValueError("unknown runtime")
@@ -247,6 +249,8 @@ def run_experiment(
             raise ValueError("live provider must be anthropic or openai")
     model = None if (dry_run or replay is not None) else model_for(provider)
     pricing_model = model_for(provider) or ANTHROPIC_MODEL
+    if budget is None and not dry_run and replay is None:
+        budget = RequestBudget(cap_usd, pricing_model)
     usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
     spent = 0.0
     forecast = 0.0
@@ -263,7 +267,14 @@ def run_experiment(
                               mode=mode, conditions=list(conditions), roles=list(roles),
                               model_roles=list(model_roles), cap_usd=cap_usd, dry_run=dry_run)
     stop = stop_status(spent, cap_usd, finished=False)
+    if not dry_run and replay is None and cap_usd <= 0:
+        for condition, policy, role in planned:
+            reachable = violation_reachable(condition, runtime, mode)
+            rows.append(skipped_row(condition, role or policy, runtime, mode, reachable, "budget"))
+        stop = {"stop": True, "reason": "dollar_cap"}
+        return _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=False)
     for condition, policy, role in planned:
+        reservation = None
         reachable = violation_reachable(condition, runtime, mode)
         if not dry_run:
             pay = should_pay(reachable, role, pay_unreachable)
@@ -276,6 +287,18 @@ def run_experiment(
                 if checkpoint_path:
                     write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None)), checkpoint_path)
                 continue
+            reservation = None
+            if budget is not None:
+                try:
+                    reservation = budget.reserve("cell")
+                    if checkpoint_path:
+                        write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None)), checkpoint_path)
+                except BudgetExceeded as exc:
+                    rows.append(skipped_row(condition, role, runtime, mode, reachable, "budget"))
+                    stop = {"stop": True, "reason": exc.reason}
+                    if checkpoint_path:
+                        write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None)), checkpoint_path)
+                    break
             objective = ADVERSARY_OBJECTIVE if role == "adversary" else HONEST_OBJECTIVE
             if replay is not None:
                 actors = actors_for(condition, "compliant")
@@ -303,6 +326,11 @@ def run_experiment(
         paid = not dry_run and replay is None
         if paid and model:
             spent = round(spent + usage_usd(model, cell_usage), 6)
+            if budget is not None and reservation is not None:
+                if cell_usage and any(int(cell_usage.get(k, 0) or 0) for k in ("input_tokens", "output_tokens")):
+                    budget.settle(reservation, cell_usage)
+                else:
+                    budget.fail(reservation, "missing usage; reservation retained")
         rows.append({**_compact(episode, extra), "paid": paid})
         if transcript_path and header is not None:
             from .transcript import append_episode
@@ -324,7 +352,7 @@ def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, 
     kept = [row for row in scores if row.get("completed_violation") is not None]
     return {
         "claim": (
-            "Stage B rehearsal. ScriptedActor only."
+            "Stage A rehearsal. ScriptedActor only."
             if dry_run
             else "Pinned Luna/Haiku worker on the maintenance conditions."
         ),
@@ -368,7 +396,8 @@ def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, 
             "within the horizon, under the schedule over-approximation and free-text quotient it states.",
             "Adversary cells with harm_reachable=0 are not paid unless --pay-unreachable.",
             "Honest cells are paid even when a violation is unreachable; that measures false refusal.",
-            "Stop reasons are dollar_cap or episode_cap only.",
+            "Stop reasons are dollar_cap, request_cap, or episode_cap only.",
+            "Paid cells reserve an estimated cost before the request; missing usage retains the reservation.",
         ],
     }
 
