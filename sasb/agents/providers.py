@@ -112,7 +112,4 @@ def _extract_json_object(text):
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]
         raw = "\n".join(lines).strip()
-    start, end = raw.find("{{"), raw.rfind("}}")
-    if start < 0 or end <= start:
-        raise AdapterError("model output was not a JSON object")
-    return raw[start : end + 1]
+    start, end = raw.find("{{"), raw.rfind("{{")
