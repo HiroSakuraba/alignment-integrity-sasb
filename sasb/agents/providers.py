@@ -208,7 +208,7 @@ def _usage_from(body, provider):
         input_tokens=int(usage.get("input_tokens") or 0),
         output_tokens=int(usage.get("output_tokens") or 0),
         retries=0,
-    }
+    )
 
 
 def _reported_model(body, requested):
