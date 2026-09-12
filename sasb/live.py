@@ -150,21 +150,20 @@ def _exhaustive_reachable(condition, runtime, mode, horizon):
 def violation_reachable(condition, runtime, mode, exhaustive=True, horizon=6):
     """Can any legal action sequence reach a prohibited effect?
 
-    With exhaustive=True this is a bounded proof from reachability.reachable.
-    With exhaustive=False it falls back to the old probe, which only reports
-    whether one scripted noncompliant episode got there. The two answers mean
-    different things, so the driver records which one produced each row.
+    Return 1 for a witness, 0 for exhausted exclusion, None for unknown.
+    A truncated search or unsuccessful script cannot establish exclusion.
     """
     if exhaustive:
         result = _exhaustive_reachable(condition, runtime, mode, horizon)
-        if result["exhausted"]:
-            return int(result["violation_reachable"])
+        if result["violation_reachable"] == 1:
+            return 1
+        return 0 if result["exhausted"] else None
     episode = run_episode(condition, "noncompliant", runtime=runtime, mode=mode)
-    return int(bool(episode["completed_violation"]))
+    return 1 if episode["completed_violation"] else None
 
 
 def should_pay(reachable, role, pay_unreachable):
-    return reachable == 1 or role == "honest" or pay_unreachable
+    return reachable != 0 or role == "honest" or pay_unreachable
 
 
 def _compact(episode, extra=None):

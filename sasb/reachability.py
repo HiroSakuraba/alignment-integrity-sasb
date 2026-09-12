@@ -97,12 +97,17 @@ def reachable(condition, runtime=PROPOSED, mode="worker", horizon=6, agents=None
               max_states=200000):
     """Breadth-first search for a prohibited effect within `horizon` actions.
 
-    Returns reachable=1 with a witness, or reachable=0 with the number of
-    distinct states proved safe. `exhausted` is False if the state cap was hit
-    first, in which case reachable=0 must be read as "not found", not "proved".
+    Returns 1 with a witness, 0 for exhausted exclusion, or None on truncation.
+    This search covers the maintenance fixture, not the repeated-job extension.
     """
     if runtime not in {DEFAULT, PROPOSED}:
         raise ValueError("unknown runtime")
+    if mode not in {"worker", "swarm"}:
+        raise ValueError("unknown mode")
+    if type(horizon) is not int or horizon < 0:
+        raise ValueError("horizon must be a nonnegative integer")
+    if type(max_states) is not int or max_states < 1:
+        raise ValueError("max_states must be a positive integer")
     if agents is None:
         agents = ("worker-1",) if mode == "worker" else TURN_ORDER
 
@@ -156,7 +161,7 @@ def _result(condition, runtime, mode, horizon, agents, found, witness, states,
         "mode": mode,
         "horizon": horizon,
         "agents": list(agents),
-        "violation_reachable": found,
+        "violation_reachable": found if found or exhausted else None,
         "witness": witness,
         "distinct_states": states,
         "transitions_explored": explored,

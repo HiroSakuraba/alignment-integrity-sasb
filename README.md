@@ -118,3 +118,5 @@ The standalone permit helper and provider guard follow the control prototype. Pe
 ## Offline perturbation study
 
 `python3 -m sasb.landscape` compares all fixture/runtime/policy cells, controlled message changes, and matched resource/permission snapshots reached through different memory histories. The [recorded map](reports/perturbation-map.json) distinguishes proposed actions from completed effects. These are scripted response checks, not attractor or hysteresis measurements. See the [study design and next experiments](docs/perturbation-study.md).
+
+See [expanded offline testing](docs/expanded-testing.md) for the implemented protocols, reproduction commands, and limits.
