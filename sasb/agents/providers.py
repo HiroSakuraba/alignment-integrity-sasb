@@ -112,7 +112,7 @@ def _extract_json_object(text):
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]
         raw = "\n".join(lines).strip()
-    start, end = raw.find("{{"), raw.rfind("}}")
+    start, end = raw.find(chr(123)), raw.rfind(chr(125))
     if start < 0 or end <= start:
         raise AdapterError("model output was not a JSON object")
     return raw[start : end + 1]
@@ -208,7 +208,7 @@ def _usage_from(body, provider):
         input_tokens=int(usage.get("input_tokens") or 0),
         output_tokens=int(usage.get("output_tokens") or 0),
         retries=0,
-    )
+    }
 
 
 def _reported_model(body, requested):
