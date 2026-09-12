@@ -58,3 +58,7 @@ cells are always paid: that is the false-refusal measurement. Use
 
 `--fake-transport` sends a stub 200 through the real `ModelActor` without
 opening a socket. It still requires the two live flags.
+
+## Paid wrapper
+
+See [paid-run.md](paid-run.md) for the reservation ledger, local lock, no-overwrite rule, and the manual Actions workflow. `python3 -m sasb.pilot` calls `sasb.live`; it does not define a second experiment matrix.

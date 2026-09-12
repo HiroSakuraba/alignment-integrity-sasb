@@ -1,4 +1,4 @@
-.PHONY: test report verify provider-report live-dry
+.PHONY: test report verify provider-report live-dry live-fake live-pilot
 
 test:
 	python3 -m unittest discover -s tests -v
@@ -19,6 +19,12 @@ verify:
 
 live-dry:
 	python3 -m sasb.live --dry-run --mode worker --cap-usd 1.00
+
+live-fake:
+	python3 -m sasb.live --fake-transport --provider anthropic --mode worker --cap-usd 0.50 --out reports/live-run-local.json
+
+live-pilot:
+	python3 -m sasb.pilot --fake-transport --provider anthropic --mode worker --cap-usd 0.50 --force --out reports/live-run-local.json
 
 reachability:
 	python3 -m sasb.reachability

@@ -1,0 +1,51 @@
+name: SASB paid live wrapper
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Run paid Luna or Haiku requests through sasb.live (estimated cap $0.50)'
+        type: boolean
+        required: true
+        default: false
+      provider:
+        description: 'Pinned provider'
+        type: choice
+        options:
+          - anthropic
+          - openai
+        default: anthropic
+permissions:
+  contents: read
+concurrency:
+  group: sasb-paid-live
+  cancel-in-progress: false
+jobs:
+  paid:
+    if: inputs.confirm && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline regression checks
+        run: python -m unittest discover -s tests -q && python tools/verify_report.py
+      - name: Bounded live wrapper
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SASB_ENABLE_NETWORK: '1'
+          SASB_PROVIDER_VALIDATED: '1'
+          SASB_OPENAI_REASONING_EFFORT: none
+        run: python -m sasb.pilot --provider ${{ inputs.provider }} --mode worker --cap-usd 0.50 --out reports/live-run-paid.json
+      - name: Save paid report even after failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sasb-paid-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            reports/live-run-paid.json
+            reports/transcripts/**
+          if-no-files-found: warn
+          retention-days: 30
