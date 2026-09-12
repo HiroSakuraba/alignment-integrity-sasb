@@ -1,4 +1,4 @@
-.PHONY: test report verify provider-report live-dry
+.PHONY: test report verify provider-report live-dry live-fake live-pilot
 
 test:
 	python3 -m unittest discover -s tests -v
@@ -31,3 +31,9 @@ replay-check:
 
 expanded-report:
 	python3 -m sasb.recovery > reports/expanded-testing.json
+
+live-fake:
+	python3 -m sasb.live --fake-transport --provider anthropic --mode worker --cap-usd 0.50
+
+live-pilot:
+	python3 -m sasb.pilot --fake-transport --mode worker --cap-usd 0.50 --force
