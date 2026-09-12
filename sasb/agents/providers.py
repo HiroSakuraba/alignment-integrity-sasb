@@ -112,7 +112,7 @@ def _extract_json_object(text):
         if lines and lines[-1].strip() == "```":
             lines = lines[:-1]
         raw = "\n".join(lines).strip()
-    start, end = raw.find("{"), raw.rfind("}")
+    start, end = raw.find(chr(123)), raw.rfind(chr(125))
     if start < 0 or end <= start:
         raise AdapterError("model output was not a JSON object")
     return raw[start : end + 1]
@@ -219,50 +219,62 @@ def _reported_model(body, requested):
 
 
 class ModelClient:
-    def __init__(self, provider, transport=None):
+    def __init__(self, provider, transport=None, budget=None):
         if provider not in ALLOWED_MODELS:
             raise ProviderConfigError("unknown provider")
         self.provider = provider
         self.model = pinned_model(provider)
         self.transport = transport or HttpTransport()
+        self.budget = budget
 
     def complete(self, system, user):
         require_live()
-        key = _api_key(self.provider)
-        if self.provider == "openai":
-            url = "https://api.openai.com/v1/chat/completions"
-            headers = _openai_headers(key)
-            effort = os.environ.get("SASB_OPENAI_REASONING_EFFORT", "none").strip() or "none"
-            payload = _openai_payload(self.model, system, user, effort)
-        else:
-            url = "https://api.anthropic.com/v1/messages"
-            headers = _anthropic_headers(key)
-            payload = _anthropic_payload(self.model, system, user)
-        status, body = self.transport.post(url, headers, payload)
-        if status != 200 or not isinstance(body, dict):
-            raise AdapterError("provider returned %s" % status)
-        reported = _reported_model(body, self.model)
-        if self.provider == "openai" and not reported.startswith("gpt-5.6-luna"):
-            raise ProviderConfigError("openai served %r instead of gpt-5.6-luna" % reported)
-        if self.provider == "anthropic" and "haiku-4-5" not in reported:
-            raise ProviderConfigError("anthropic served %r instead of Haiku 4.5" % reported)
-        text = _openai_text(body) if self.provider == "openai" else _anthropic_text(body)
-        return text, _usage_from(body, self.provider), reported
+        ticket = self.budget.reserve() if self.budget is not None else None
+        try:
+            key = _api_key(self.provider)
+            if self.provider == "openai":
+                url = "https://api.openai.com/v1/chat/completions"
+                headers = _openai_headers(key)
+                effort = os.environ.get("SASB_OPENAI_REASONING_EFFORT", "none").strip() or "none"
+                payload = _openai_payload(self.model, system, user, effort)
+            else:
+                url = "https://api.anthropic.com/v1/messages"
+                headers = _anthropic_headers(key)
+                payload = _anthropic_payload(self.model, system, user)
+            status, body = self.transport.post(url, headers, payload)
+            if status != 200 or not isinstance(body, dict):
+                raise AdapterError("provider returned %s" % status)
+            reported = _reported_model(body, self.model)
+            if self.provider == "openai" and not reported.startswith("gpt-5.6-luna"):
+                raise ProviderConfigError("openai served %r instead of gpt-5.6-luna" % reported)
+            if self.provider == "anthropic" and "haiku-4-5" not in reported:
+                raise ProviderConfigError("anthropic served %r instead of Haiku 4.5" % reported)
+            text = _openai_text(body) if self.provider == "openai" else _anthropic_text(body)
+            usage = _usage_from(body, self.provider)
+            if ticket is not None:
+                self.budget.settle(ticket, usage)
+            return text, usage, reported
+        except Exception:
+            if ticket is not None and ticket.get("status") == "pending":
+                self.budget.fail(ticket, "request failed; reservation retained")
+            raise
 
 
 class ModelActor:
     """Actor that asks a pinned model for one JSON action per observation."""
 
-    def __init__(self, role, provider, prompt, transport=None):
+    def __init__(self, role, provider, prompt, transport=None, budget=None):
         self.role = role
         self.prompt = prompt
-        self.client = ModelClient(provider, transport=transport)
+        self.client = ModelClient(provider, transport=transport, budget=budget)
         self.last_reported_model = None
+        self.last_usage = None
 
     def decide(self, observation):
         user = json.dumps({"observation": observation, "contract": ACTION_CONTRACT}, sort_keys=True)
         raw_text, usage, reported = self.client.complete(self.prompt + "\n" + ACTION_CONTRACT, user)
         self.last_reported_model = reported
+        self.last_usage = usage
         raw = _extract_json_object(raw_text)
         action, arguments = parse_decision(raw)
         return Decision(action, arguments, raw, usage)

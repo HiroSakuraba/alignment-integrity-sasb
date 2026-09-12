@@ -31,6 +31,7 @@ from .agents.providers import (
     require_live,
 )
 from .agents.roles import DEFAULT_ROSTER
+from .budget import BudgetExceeded, RequestBudget
 from .costs import usage_usd
 from .harness import run_episode
 from .policies import actors_for
@@ -76,8 +77,10 @@ def model_for(provider):
     return None
 
 
-def stop_status(spent, cap_usd, finished=False):
+def stop_status(spent, cap_usd, finished=False, reason=None):
     """Dollar cap or episode cap only. No Wilson target_met shortcut."""
+    if reason:
+        return {"stop": True, "reason": reason}
     if spent >= cap_usd:
         return {"stop": True, "reason": "dollar_cap"}
     if finished:
@@ -128,7 +131,7 @@ class StubTransport:
         return 200, body
 
 
-def actors_for_live(condition, provider, transport=None, model_roles=("worker-1",), objective=""):
+def actors_for_live(condition, provider, transport=None, model_roles=("worker-1",), objective="", budget=None):
     """Scripted peers; pinned ModelActor on selected roles."""
     actors = actors_for(condition, "compliant")
     roster = {row["agent_id"]: row["role"] for row in DEFAULT_ROSTER}
@@ -137,7 +140,7 @@ def actors_for_live(condition, provider, transport=None, model_roles=("worker-1"
         prompt = load_prompt(ROLE_PROMPTS[role])
         if objective:
             prompt = objective + "\n\n" + prompt
-        actors[agent_id] = LiveModelActor(role, provider, prompt, transport=transport)
+        actors[agent_id] = LiveModelActor(role, provider, prompt, transport=transport, budget=budget)
     return actors
 
 
@@ -189,7 +192,7 @@ def _compact(episode, extra=None):
     return row
 
 
-def skipped_row(condition, role, runtime, mode, reachable):
+def skipped_row(condition, role, runtime, mode, reachable, reason="unreachable"):
     return {
         "condition": condition,
         "policy": role,
@@ -208,7 +211,7 @@ def skipped_row(condition, role, runtime, mode, reachable):
         "observation_has_available_actions": True,
         "harm_reachable": reachable,
         "paid": False,
-        "skipped": "unreachable",
+        "skipped": reason,
     }
 
 
@@ -226,6 +229,7 @@ def run_experiment(
     checkpoint_path=None,
     transcript_path=None,
     replay_path=None,
+    max_requests=64,
 ):
     if runtime not in {DEFAULT, PROPOSED}:
         raise ValueError("unknown runtime")
@@ -252,6 +256,9 @@ def run_experiment(
     forecast = 0.0
     rows = []
     scores = []
+    budget = None
+    if not dry_run and replay is None and model:
+        budget = RequestBudget(cap_usd, model, max_requests=max_requests)
     if dry_run:
         planned = [(condition, policy, None) for condition in conditions for policy in ("compliant", "noncompliant")]
     else:
@@ -263,6 +270,9 @@ def run_experiment(
                               mode=mode, conditions=list(conditions), roles=list(roles),
                               model_roles=list(model_roles), cap_usd=cap_usd, dry_run=dry_run)
     stop = stop_status(spent, cap_usd, finished=False)
+    if budget is not None and not budget.can_reserve():
+        stop = stop_status(spent, cap_usd, reason=budget.deny_reason() or "dollar_cap")
+        return _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=False, budget=budget)
     for condition, policy, role in planned:
         reachable = violation_reachable(condition, runtime, mode)
         if not dry_run:
@@ -271,25 +281,40 @@ def run_experiment(
                 pay = replay.has(condition, role, runtime, mode)
                 if not pay:
                     continue
+            if budget is not None and not budget.can_reserve():
+                rows.append(skipped_row(condition, role, runtime, mode, reachable, budget.deny_reason() or "dollar_cap"))
+                stop = stop_status(spent, cap_usd, reason=budget.deny_reason() or "dollar_cap")
+                if checkpoint_path:
+                    write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=bool(transport or False), budget=budget), checkpoint_path)
+                break
             if not pay:
                 rows.append(skipped_row(condition, role, runtime, mode, reachable))
                 if checkpoint_path:
-                    write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None)), checkpoint_path)
+                    write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None), budget=budget), checkpoint_path)
                 continue
             objective = ADVERSARY_OBJECTIVE if role == "adversary" else HONEST_OBJECTIVE
             if replay is not None:
                 actors = actors_for(condition, "compliant")
                 actors.update(replay.actors(condition, role, runtime, mode))
             else:
-                actors = actors_for_live(condition, provider, transport=transport, model_roles=model_roles, objective=objective)
-            episode = run_episode(
-                condition,
-                role,
-                runtime=runtime,
-                mode=mode,
-                actors=actors,
-                provider=None if replay is not None else provider,
-            )
+                actors = actors_for_live(condition, provider, transport=transport, model_roles=model_roles, objective=objective, budget=budget)
+            try:
+                episode = run_episode(
+                    condition,
+                    role,
+                    runtime=runtime,
+                    mode=mode,
+                    actors=actors,
+                    provider=None if replay is not None else provider,
+                )
+            except BudgetExceeded as exc:
+                rows.append(skipped_row(condition, role, runtime, mode, reachable, exc.reason))
+                stop = stop_status(spent, cap_usd, reason=exc.reason)
+                if budget is not None:
+                    spent = budget.reserved_usd
+                if checkpoint_path:
+                    write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=True, budget=budget), checkpoint_path)
+                break
             extra = {"role": role, "harm_reachable": reachable, "paid": True, "skipped": None}
         else:
             episode = run_episode(condition, policy, runtime=runtime, mode=mode)
@@ -302,7 +327,10 @@ def run_experiment(
         forecast = round(forecast + cell_usd, 6)
         paid = not dry_run and replay is None
         if paid and model:
-            spent = round(spent + usage_usd(model, cell_usage), 6)
+            if budget is not None:
+                spent = budget.reserved_usd
+            else:
+                spent = round(spent + usage_usd(model, cell_usage), 6)
         rows.append({**_compact(episode, extra), "paid": paid})
         if transcript_path and header is not None:
             from .transcript import append_episode
@@ -310,19 +338,20 @@ def run_experiment(
                                                  role=extra.get("role"), policy=policy,
                                                  runtime=runtime, mode=mode), episode)
         scores.append(episode["score"])
-        stop = stop_status(spent, cap_usd)
+        blocked = budget.blocked if budget is not None else None
+        stop = stop_status(spent, cap_usd, reason=blocked)
         if checkpoint_path:
-            write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None)), checkpoint_path)
-        if paid and spent >= cap_usd:
+            write_report(_report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None), budget=budget), checkpoint_path)
+        if paid and (spent >= cap_usd or blocked):
             break
     else:
         stop = stop_status(spent, cap_usd, finished=True)
-    return _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None))
+    return _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=(not dry_run and replay is None), budget=budget)
 
 
-def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=None):
+def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, conditions, usage, spent, cap_usd, forecast, stop, network_called=None, budget=None):
     kept = [row for row in scores if row.get("completed_violation") is not None]
-    return {
+    payload = {
         "claim": (
             "Stage B rehearsal. ScriptedActor only."
             if dry_run
@@ -371,6 +400,12 @@ def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, 
             "Stop reasons are dollar_cap or episode_cap only.",
         ],
     }
+    if budget is not None:
+        payload["budget"] = budget.snapshot()
+        payload["notes"] = list(payload["notes"]) + [
+            "Live HTTP reserves a local estimate before each request; missing usage retains the reservation.",
+        ]
+    return payload
 
 
 def write_report(report, path="reports/live-run-local.json"):
@@ -389,6 +424,7 @@ def main(argv=None):
     parser.add_argument("--runtime", choices=(PROPOSED, DEFAULT), default=PROPOSED)
     parser.add_argument("--mode", choices=("worker", "swarm"), default="worker")
     parser.add_argument("--cap-usd", type=float, default=1.0)
+    parser.add_argument("--max-requests", type=int, default=64)
     parser.add_argument("--role", choices=("honest", "adversary", "both"), default="both")
     parser.add_argument("--pay-unreachable", action="store_true")
     parser.add_argument("--fake-transport", action="store_true")
@@ -419,6 +455,7 @@ def main(argv=None):
         runtime=args.runtime,
         mode=args.mode,
         cap_usd=args.cap_usd,
+        max_requests=args.max_requests,
         roles=roles,
         pay_unreachable=args.pay_unreachable,
         transport=transport,

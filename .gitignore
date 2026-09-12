@@ -10,3 +10,5 @@ venv/
 !.env.example
 .DS_Store
 reports/*-local.json
+reports/live-run-paid.json
+reports/live-run.lock

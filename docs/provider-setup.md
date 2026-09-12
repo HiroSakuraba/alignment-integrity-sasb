@@ -58,3 +58,10 @@ cells are always paid: that is the false-refusal measurement. Use
 
 `--fake-transport` sends a stub 200 through the real `ModelActor` without
 opening a socket. It still requires the two live flags.
+
+## Spend permit
+
+`sasb.live` reserves a conservative local estimate before each HTTP request.
+Zero cap does not build a live actor. Missing usage retains the reservation
+and blocks later calls. See [paid-run.md](paid-run.md). The bounded wrapper
+is `python3 -m sasb.pilot`.
