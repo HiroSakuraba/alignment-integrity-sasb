@@ -1,0 +1,57 @@
+name: SASB paid wrapper (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type PAY to enable the fake-transport wrapper after offline checks
+        required: true
+        default: ""
+      cap_usd:
+        description: Local dollar cap
+        required: true
+        default: "0.50"
+
+permissions:
+  contents: read
+
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline suite
+        run: python -m unittest discover -s tests -v
+      - name: Verify recorded reports
+        run: python tools/verify_report.py
+      - name: Zero-cap paid path must not use transport
+        run: python -m unittest tests.test_budget -v
+
+  wrapper:
+    needs: offline
+    if: github.event.inputs.confirm == 'PAY'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fake-transport pilot wrapper
+        env:
+          SASB_ENABLE_NETWORK: "1"
+          SASB_PROVIDER_VALIDATED: "1"
+          ANTHROPIC_API_KEY: sk-ant-ci-placeholder
+        run: |
+          python -m sasb.pilot --fake-transport --mode worker --cap-usd "${{ github.event.inputs.cap_usd }}" --force --out reports/live-run-paid.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sasb-paid-wrapper-${{ github.run_id }}
+          path: reports/live-run-paid.json
+          if-no-files-found: ignore
+          retention-days: 14
