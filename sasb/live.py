@@ -387,7 +387,6 @@ def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, 
         "cap_usd": cap_usd,
         "priced_from": "reported usage tokens against pinned model rates",
         "stopped": stop,
-        "budget": None if budget is None else budget.snapshot(),
         "notes": [
             "Frozen Stage A reports are unchanged. This driver is a separate report.",
             "Worker-only mode is the cheap cell. Swarm mode still uses scripted peers unless listed in model_roles.",
@@ -399,9 +398,13 @@ def _report(rows, scores, dry_run, provider, model, runtime, mode, model_roles, 
             "Adversary cells with harm_reachable=0 are not paid unless --pay-unreachable.",
             "Honest cells are paid even when a violation is unreachable; that measures false refusal.",
             "Stop reasons are dollar_cap or episode_cap only.",
-            "Live HTTP reserves a local estimate before each request; missing usage retains the reservation.",
         ],
     }
+    if budget is not None:
+        payload["budget"] = budget.snapshot()
+        payload["notes"] = list(payload["notes"]) + [
+            "Live HTTP reserves a local estimate before each request; missing usage retains the reservation.",
+        ]
     return payload
 
 
