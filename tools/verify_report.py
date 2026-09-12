@@ -3,6 +3,7 @@
 
 import json
 import pathlib
+import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -60,3 +61,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+expanded=json.loads(subprocess.check_output([sys.executable,"-m","sasb.recovery"],cwd=ROOT,text=True))
+if expanded != json.loads((ROOT/"reports/expanded-testing.json").read_text()):
+    sys.exit("reports/expanded-testing.json is stale; run make expanded-report")
+print("expanded offline report matches current implementation")

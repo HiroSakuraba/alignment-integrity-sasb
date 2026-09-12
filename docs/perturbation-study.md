@@ -105,3 +105,5 @@ verify the deployed implementation.
 - Thelen et al. (2001), *The dynamics of embodiment: A field theory of infant perseverative reaching*: https://doi.org/10.1017/S0140525X01003910
 - Haken, Kelso, and Bunz (1985), *A theoretical model of phase transitions in human hand movements*: https://ccs.fau.edu/hbblab/pdfs/1985_Haken_Kelso_Bunz_Biol_Cyb.pdf
 - User-supplied thread link (not independently retrieved): https://x.com/BenjaminLy61243/status/2098245457889894740
+
+The [repeated-work recovery pilot](expanded-testing.md) now implements continuing jobs, seeded controller sampling, recovery windows, and memory controls. Its claims remain distinct from reachability and attraction.

@@ -28,3 +28,6 @@ reachability-check:
 
 replay-check:
 	python3 -m unittest discover -s tests -p 'test_replay_regression.py' -v
+
+expanded-report:
+	python3 -m sasb.recovery > reports/expanded-testing.json
