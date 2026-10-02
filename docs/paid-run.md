@@ -66,6 +66,20 @@ as `<out stem>.transcript.jsonl` (for the default `--out`,
 episode with every turn: for model turns the exact `system_prompt` and
 `user_prompt` sent, the `raw_response`, the parsed action, arguments, usage and
 error status, plus receipts and the score. API keys are never written.
+`raw_response` is the full reply text exactly as returned (fences and prose
+included) and is recorded even when the reply fails to parse; `parsed_json` is
+the object the adapter extracted; on an adapter error `error_reason` holds the
+exact parse/validation message and `usage` the tokens the failed call used.
+The header records the `action_contract` text and its sha256, because the
+contract lives in code rather than `prompts/`.
+
+Reply parsing tolerates whitespace, a byte-order mark, one Markdown code fence
+(any language tag) and short prose around a single JSON object, and treats
+`"arguments": {}`, `null` or a missing `arguments` as no arguments. The
+contract sent to the model lists every action's argument names, generated from
+the parser's own table. Anything else (no object, two objects, unknown action,
+extra top-level fields, invented or missing argument names, non-string or
+blank values) is still an `adapter_error` outcome and is not retried.
 Replay it for free with `python3 -m sasb.live --replay <transcript>`.
 
 ## Live run from GitHub Actions

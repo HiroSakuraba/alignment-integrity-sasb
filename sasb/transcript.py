@@ -61,6 +61,13 @@ def cell_key(condition, role, runtime, mode):
     return "|".join([str(condition), str(role), str(runtime), str(mode)])
 
 
+def _contract_fields():
+    """The action contract lives in code, not prompts/; record it explicitly."""
+    from .agents.providers import ACTION_CONTRACT
+    return {"action_contract": ACTION_CONTRACT,
+            "action_contract_sha256": hashlib.sha256(ACTION_CONTRACT.encode()).hexdigest()}
+
+
 def write_header(path, **fields):
     dest = Path(path)
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -70,6 +77,7 @@ def write_header(path, **fields):
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source_commit": source_commit(),
         "prompt_sha256": prompt_digests(),
+        **_contract_fields(),
         **fields,
     }
     with dest.open("w") as fh:
@@ -77,19 +85,37 @@ def write_header(path, **fields):
     return header
 
 
+def _turn(row):
+    """One recorded turn.
+
+    For model turns ``raw_response`` is the full reply text exactly as the
+    provider returned it (fences, prose and all), recorded even when parsing
+    fails; ``parsed_json`` is the object the adapter extracted, if any. On an
+    adapter error, ``error_reason`` is the exact parse/validation message and
+    ``usage`` the tokens the failed call still consumed.
+    """
+    model_turn = "raw_text" in row or row.get("request") is not None
+    turn = {
+        "agent_id": row.get("agent_id"), "observation": row.get("observation"),
+        "raw_response": row.get("raw_text") if model_turn else row.get("raw"),
+        "action": row.get("action"), "arguments": row.get("arguments"),
+        "usage": row.get("usage"), "error": row.get("error"),
+    }
+    if model_turn:
+        turn["parsed_json"] = row.get("raw")
+    if row.get("error"):
+        turn["error_reason"] = row.get("error_reason")
+    if row.get("request"):
+        turn["system_prompt"] = row["request"].get("system")
+        turn["user_prompt"] = row["request"].get("user")
+    return turn
+
+
 def append_episode(path, header, episode):
     """One line per episode: every turn, plus the receipts and score it produced."""
     if not path:
         return None
-    turns = [
-        {"agent_id": row.get("agent_id"), "observation": row.get("observation"),
-         "raw_response": row.get("raw"), "action": row.get("action"),
-         "arguments": row.get("arguments"), "usage": row.get("usage"),
-         "error": row.get("error"),
-         **({"system_prompt": row["request"].get("system"),
-             "user_prompt": row["request"].get("user")} if row.get("request") else {})}
-        for row in episode.get("trace", [])
-    ]
+    turns = [_turn(row) for row in episode.get("trace", [])]
     record = dict(header, record="episode", turns=turns,
                   receipts=episode.get("receipts", []),
                   score=episode.get("score", {}),
@@ -150,5 +176,6 @@ class ReplayActor:
         turn = self.turns[self.index]
         self.index += 1
         if turn.get("error") or turn.get("raw_response") is None:
-            raise AdapterError(turn.get("error") or "recorded response was unparseable")
-        return Decision(turn["action"], turn["arguments"], turn["raw_response"], Usage(0, 0, 0))
+            raise AdapterError(turn.get("error_reason") or turn.get("error") or "recorded response was unparseable")
+        return Decision(turn["action"], turn["arguments"],
+                        turn.get("parsed_json") or turn["raw_response"], Usage(0, 0, 0))

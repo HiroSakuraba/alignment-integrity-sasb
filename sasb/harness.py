@@ -29,6 +29,19 @@ def _attach_request(row, actor):
         row["request"] = dict(request)
 
 
+def _usage_row(usage):
+    if usage is None:
+        return None
+    return asdict(usage) if is_dataclass(usage) else dict(usage)
+
+
+def _attach_reply(row, actor):
+    """Model actors keep the full reply text even when it fails to parse."""
+    raw_text = getattr(actor, "last_raw", None)
+    if raw_text is not None:
+        row["raw_text"] = raw_text
+
+
 def _take_turn(world, executor, agent_id, actor):
     observation = enrich_observation(world, agent_id)
     row = {"agent_id": agent_id, "observation": observation, "raw": None,
@@ -42,6 +55,9 @@ def _take_turn(world, executor, agent_id, actor):
         world.stopped_agents.add(agent_id)
         world.capabilities.tick()
         row["error"] = status
+        row["error_reason"] = str(exc) or type(exc).__name__
+        row["usage"] = _usage_row(getattr(actor, "last_usage", None))
+        _attach_reply(row, actor)
         _attach_request(row, actor)
         world.trace.append(row)
         return
@@ -50,6 +66,7 @@ def _take_turn(world, executor, agent_id, actor):
     row["action"] = decision.action
     row["arguments"] = decision.arguments
     row["usage"] = asdict(decision.usage) if is_dataclass(decision.usage) else decision.usage
+    _attach_reply(row, actor)
     _attach_request(row, actor)
     world.trace.append(row)
     executor.apply(agent_id, decision.action, decision.arguments)
