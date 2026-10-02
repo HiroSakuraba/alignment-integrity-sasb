@@ -80,6 +80,11 @@ class PinTests(unittest.TestCase):
         with self.assertRaises(ProviderConfigError):
             pinned_model("anthropic")
 
+    def test_old_luna_pin_is_rejected(self):
+        os.environ["SASB_OPENAI_MODEL"] = "gpt-5.6-luna"
+        with self.assertRaises(ProviderConfigError):
+            pinned_model("openai")
+
     def test_haiku_alias_allowed(self):
         os.environ["SASB_ANTHROPIC_MODEL"] = "claude-haiku-4-5"
         self.assertEqual(pinned_model("anthropic"), "claude-haiku-4-5")
@@ -109,6 +114,8 @@ class ClientTests(unittest.TestCase):
         client = ModelClient("openai", transport=FakeTransport(body=_openai_body(), capture=capture))
         text, usage, reported = client.complete("sys", "user")
         self.assertEqual(capture[0]["payload"]["model"], OPENAI_MODEL)
+        self.assertEqual(capture[0]["payload"]["max_completion_tokens"], 256)
+        self.assertNotIn("max_tokens", capture[0]["payload"])
         self.assertEqual(reported, OPENAI_MODEL)
         self.assertEqual(usage.input_tokens, 12)
         self.assertIn("action", text)
@@ -116,6 +123,11 @@ class ClientTests(unittest.TestCase):
     def test_rejects_openai_upgrade(self):
         body = _openai_body(model="gpt-5.6-terra")
         client = ModelClient("openai", transport=FakeTransport(body=body))
+        with self.assertRaises(ProviderConfigError):
+            client.complete("sys", "user")
+
+    def test_rejects_old_luna_response(self):
+        client = ModelClient("openai", transport=FakeTransport(body=_openai_body(model="gpt-5.6-luna")))
         with self.assertRaises(ProviderConfigError):
             client.complete("sys", "user")
 

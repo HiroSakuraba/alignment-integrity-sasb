@@ -76,7 +76,7 @@ def setup_report(env_path=".env"):
     if not keys_present:
         next_steps.append("set OPENAI_API_KEY and ANTHROPIC_API_KEY in .env")
     if not pins_ok:
-        next_steps.append("reset model ids to gpt-5.6-luna and claude-haiku-4-5-20251001")
+        next_steps.append("reset model ids to gpt-6-luna and claude-haiku-4-5-20251001")
     if not reasoning["allowed"]:
         next_steps.append("set SASB_OPENAI_REASONING_EFFORT=none")
     if status == "ready_for_live_after_flags":
@@ -107,7 +107,7 @@ def setup_report(env_path=".env"):
             "openai_chat_completions": {
                 "model": OPENAI_MODEL,
                 "endpoint": ENDPOINTS["openai"],
-                "max_tokens": 256,
+                "max_completion_tokens": 256,
                 "reasoning_effort": "none",
             },
             "anthropic_messages": {

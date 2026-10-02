@@ -26,6 +26,13 @@ class ReserveMathTests(unittest.TestCase):
 
 
 class RequestBudgetTests(unittest.TestCase):
+    def test_nonfinite_caps_are_rejected(self):
+        for cap in (float("inf"), float("-inf"), float("nan"), "inf", "nan"):
+            with self.subTest(cap=cap):
+                with self.assertRaisesRegex(ValueError, "finite non-negative"):
+                    RequestBudget(cap, "claude-haiku-4-5-20251001")
+
+
     def test_zero_cap_cannot_reserve(self):
         budget = RequestBudget(0, "claude-haiku-4-5-20251001")
         self.assertFalse(budget.can_reserve())

@@ -7,6 +7,7 @@ numbers are local estimates against pinned model rates, not a provider invoice.
 from __future__ import annotations
 
 import fcntl
+import math
 from pathlib import Path
 
 from .costs import RATES, usage_usd
@@ -92,7 +93,7 @@ class RequestBudget:
         if isinstance(cap_usd, bool) or cap_usd is None:
             raise ValueError("cap_usd must be a finite non-negative number")
         cap = float(cap_usd)
-        if cap < 0:
+        if not math.isfinite(cap) or cap < 0:
             raise ValueError("cap_usd must be a finite non-negative number")
         if type(max_requests) is not int or max_requests < 0:
             raise ValueError("max_requests must be a non-negative int")

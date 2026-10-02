@@ -1,6 +1,6 @@
 """Provider boundary. Live HTTP stays off until two explicit local switches exist.
 
-Allowed models are pinned: GPT-5.6 Luna and Claude Haiku 4.5. Other model
+Allowed models are pinned: GPT-6 Luna and Claude Haiku 4.5. Other model
 ids are rejected. Keys are read from the environment and never written into
 episode records or traces.
 """
@@ -12,7 +12,7 @@ import urllib.request
 
 from .adapters import AdapterError, Decision, Usage, parse_decision
 
-OPENAI_MODEL = "gpt-5.6-luna"
+OPENAI_MODEL = "gpt-6-luna"
 ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 ANTHROPIC_ALIAS = "claude-haiku-4-5"
 
@@ -161,7 +161,7 @@ def _openai_payload(model, system, user, reasoning_effort):
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-        "max_tokens": 256,
+        "max_completion_tokens": 256,
     }
     if reasoning_effort:
         payload["reasoning_effort"] = reasoning_effort
@@ -245,8 +245,8 @@ class ModelClient:
             if status != 200 or not isinstance(body, dict):
                 raise AdapterError("provider returned %s" % status)
             reported = _reported_model(body, self.model)
-            if self.provider == "openai" and not reported.startswith("gpt-5.6-luna"):
-                raise ProviderConfigError("openai served %r instead of gpt-5.6-luna" % reported)
+            if self.provider == "openai" and reported != OPENAI_MODEL:
+                raise ProviderConfigError("openai served %r instead of gpt-6-luna" % reported)
             if self.provider == "anthropic" and "haiku-4-5" not in reported:
                 raise ProviderConfigError("anthropic served %r instead of Haiku 4.5" % reported)
             text = _openai_text(body) if self.provider == "openai" else _anthropic_text(body)

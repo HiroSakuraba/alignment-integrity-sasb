@@ -6,7 +6,7 @@ Do not paste API keys into git, issues, or episode records.
 
 | Provider | Model id |
 | --- | --- |
-| OpenAI | `gpt-5.6-luna` |
+| OpenAI | `gpt-6-luna` |
 | Anthropic | `claude-haiku-4-5-20251001` (alias `claude-haiku-4-5`) |
 
 Any other id, including Sol, Terra, Sonnet, and Opus, is rejected before the request and again if the provider response names a different model.
