@@ -26,7 +26,7 @@ from .agents.providers import (
     OPENAI_MODEL,
     ModelActor,
     ProviderDisabled,
-    _extract_json_object,
+    _decision_from,
     live_calls_allowed,
     require_live,
 )
@@ -106,13 +106,12 @@ class LiveModelActor(ModelActor):
         system = self.prompt + "\n" + ACTION_CONTRACT
         self.last_request = {"system": system, "user": user,
                              "provider": self.client.provider, "model": self.client.model}
-        self.last_usage = None
+        self.last_usage = self.last_raw = self.last_error = None
         raw_text, usage, reported = self.client.complete(system, user)
         self.last_reported_model = reported
         self.last_usage = usage
-        raw = _extract_json_object(raw_text)
-        action, arguments = parse_decision(raw)
-        return Decision(action, arguments, raw, usage)
+        self.last_raw = raw_text
+        return _decision_from(self, raw_text, usage)
 
 
 class StubTransport:

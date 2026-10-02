@@ -50,16 +50,35 @@ ARGUMENTS = {
 }
 
 
+def argument_contract():
+    """Per-action argument names, generated from ARGUMENTS (the parser's table).
+
+    ``name?`` is optional. ``{}`` means the action takes no arguments.
+    """
+    parts = []
+    for action in sorted(ARGUMENTS):
+        required, allowed = ARGUMENTS[action]
+        names = [n for n in sorted(allowed) if n in required] + [n + "?" for n in sorted(allowed - required)]
+        parts.append("%s {%s}" % (action, ", ".join(names)))
+    return "; ".join(parts)
+
+
 def validate_action(action, arguments):
     if not isinstance(action, str) or action not in ACTIONS:
-        raise AdapterError("invalid action schema")
+        raise AdapterError("invalid action schema: unknown action %r" % (action,))
     if not isinstance(arguments, dict):
-        raise AdapterError("arguments must be an object")
+        raise AdapterError("arguments must be an object, got %s" % type(arguments).__name__)
     required, allowed = ARGUMENTS[action]
-    if not required.issubset(arguments) or set(arguments) - allowed:
-        raise AdapterError("missing or unexpected action arguments")
-    if any(not isinstance(value, str) or not value.strip() for value in arguments.values()):
-        raise AdapterError("action arguments must be nonempty strings")
+    missing = sorted(required - set(arguments))
+    unexpected = sorted(set(arguments) - allowed)
+    if missing or unexpected:
+        raise AdapterError(
+            "missing or unexpected action arguments for %s: missing=%s unexpected=%s allowed=%s"
+            % (action, missing, unexpected, sorted(allowed))
+        )
+    bad = sorted(key for key, value in arguments.items() if not isinstance(value, str) or not value.strip())
+    if bad:
+        raise AdapterError("action arguments must be nonempty strings: %s" % bad)
     return action, dict(arguments)
 
 
@@ -67,7 +86,7 @@ def _unique_object(pairs):
     result = {}
     for key, value in pairs:
         if key in result:
-            raise AdapterError("duplicate JSON field")
+            raise AdapterError("duplicate JSON field %r" % (key,))
         result[key] = value
     return result
 
@@ -81,11 +100,23 @@ def parse_decision(raw):
         raise AdapterError("action output must be text")
     try:
         item = json.loads(raw, object_pairs_hook=_unique_object, parse_constant=_reject_constant)
-    except (json.JSONDecodeError, RecursionError) as exc:
-        raise AdapterError("invalid JSON action") from exc
-    if not isinstance(item, dict) or "action" not in item or set(item) - {"action", "arguments"}:
-        raise AdapterError("invalid action schema")
-    return validate_action(item["action"], item.get("arguments", {}))
+    except json.JSONDecodeError as exc:
+        raise AdapterError("invalid JSON action: %s" % exc.msg) from exc
+    except RecursionError as exc:
+        raise AdapterError("invalid JSON action: nesting too deep") from exc
+    if not isinstance(item, dict):
+        raise AdapterError("invalid action schema: top level is %s, not an object" % type(item).__name__)
+    if "action" not in item:
+        raise AdapterError("invalid action schema: missing 'action'")
+    extra = sorted(set(item) - {"action", "arguments"})
+    if extra:
+        raise AdapterError("invalid action schema: unexpected top-level fields %s" % extra)
+    arguments = item.get("arguments", {})
+    if arguments is None:
+        # "arguments": null is the same as {} for actions that take none;
+        # actions with required arguments still fail validation below.
+        arguments = {}
+    return validate_action(item["action"], arguments)
 
 
 class ScriptedActor:
