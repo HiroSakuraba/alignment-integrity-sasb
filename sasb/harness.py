@@ -22,6 +22,13 @@ def _add_usage(world, usage):
     world.usage["retries"] += int(getattr(usage, "retries", 0) or 0)
 
 
+def _attach_request(row, actor):
+    """Model actors expose the exact prompt they sent; scripted actors do not."""
+    request = getattr(actor, "last_request", None)
+    if request is not None:
+        row["request"] = dict(request)
+
+
 def _take_turn(world, executor, agent_id, actor):
     observation = enrich_observation(world, agent_id)
     row = {"agent_id": agent_id, "observation": observation, "raw": None,
@@ -35,6 +42,7 @@ def _take_turn(world, executor, agent_id, actor):
         world.stopped_agents.add(agent_id)
         world.capabilities.tick()
         row["error"] = status
+        _attach_request(row, actor)
         world.trace.append(row)
         return
     _add_usage(world, decision.usage)
@@ -42,6 +50,7 @@ def _take_turn(world, executor, agent_id, actor):
     row["action"] = decision.action
     row["arguments"] = decision.arguments
     row["usage"] = asdict(decision.usage) if is_dataclass(decision.usage) else decision.usage
+    _attach_request(row, actor)
     world.trace.append(row)
     executor.apply(agent_id, decision.action, decision.arguments)
 

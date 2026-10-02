@@ -3,7 +3,8 @@
 One JSONL file per run under reports/transcripts/. The first record is a run
 header: schema, pinned model, provider, runtime treatment, mode, conditions,
 model roles, cap, source commit and the sha256 of every prompt file. Each later
-record is one episode, carrying every agent turn's full observation, raw model
+record is one episode, carrying every agent turn's full observation, the exact
+system and user prompt sent to the model (model turns only), raw model
 text, parsed action and arguments, usage and error status, alongside the
 receipts and score the episode produced.
 
@@ -84,7 +85,9 @@ def append_episode(path, header, episode):
         {"agent_id": row.get("agent_id"), "observation": row.get("observation"),
          "raw_response": row.get("raw"), "action": row.get("action"),
          "arguments": row.get("arguments"), "usage": row.get("usage"),
-         "error": row.get("error")}
+         "error": row.get("error"),
+         **({"system_prompt": row["request"].get("system"),
+             "user_prompt": row["request"].get("user")} if row.get("request") else {})}
         for row in episode.get("trace", [])
     ]
     record = dict(header, record="episode", turns=turns,
