@@ -11,4 +11,5 @@ venv/
 .DS_Store
 reports/*-local.json
 reports/live-run-paid.json
+reports/live-run-paid.transcript.jsonl
 reports/live-run.lock

@@ -126,6 +126,17 @@ class ClientTests(unittest.TestCase):
         with self.assertRaises(ProviderConfigError):
             client.complete("sys", "user")
 
+    def test_accepts_dated_luna_snapshot_only(self):
+        from sasb.agents.providers import openai_served_ok
+        self.assertTrue(openai_served_ok("gpt-6-luna"))
+        self.assertTrue(openai_served_ok("gpt-6-luna-2026-09-01"))
+        for bad in ("gpt-6-luna-pro", "gpt-6-sol", "gpt-6-luna-2026-09-01x", "xgpt-6-luna", None, ""):
+            self.assertFalse(openai_served_ok(bad), bad)
+        client = ModelClient("openai", transport=FakeTransport(body=_openai_body(model="gpt-6-luna-2026-09-01")))
+        text, usage, reported = client.complete("sys", "user")
+        self.assertEqual(reported, "gpt-6-luna-2026-09-01")
+        self.assertEqual(usage.input_tokens, 12)
+
     def test_rejects_old_luna_response(self):
         client = ModelClient("openai", transport=FakeTransport(body=_openai_body(model="gpt-5.6-luna")))
         with self.assertRaises(ProviderConfigError):

@@ -61,7 +61,10 @@ opening a socket. It still requires the two live flags.
 
 ## Spend permit
 
-`sasb.live` reserves a conservative local estimate before each HTTP request.
+`sasb.live` reserves the worst-case cost of each HTTP request (prompt bytes
+plus framing as input tokens, plus max output tokens) before sending it.
 Zero cap does not build a live actor. Missing usage retains the reservation
 and blocks later calls. See [paid-run.md](paid-run.md). The bounded wrapper
-is `python3 -m sasb.pilot`.
+is `python3 -m sasb.pilot --provider <anthropic|openai>`; it writes the
+report and a full transcript next to it. For the GitHub Actions live run, see
+[paid-run.md](paid-run.md#live-run-from-github-actions).

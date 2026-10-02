@@ -1,19 +1,44 @@
 name: SASB paid wrapper (manual)
 
+# Manual only. Nothing here runs on push or pull_request.
+# A REAL paid run needs all three deliberate choices:
+#   confirm = PAY, provider = anthropic|openai (no default), fake = false (unticked).
+# With fake = true (the default) the pilot runs through the in-process fake
+# transport: no socket is opened, no secret is read, nothing is spent.
+
 on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: Type PAY to enable the fake-transport wrapper after offline checks
+        description: Type PAY to run the pilot job after the offline checks
         required: true
         default: ""
+      provider:
+        description: Model provider. Must be chosen explicitly; the "choose" placeholder fails the run.
+        required: true
+        type: choice
+        default: choose
+        options:
+          - choose
+          - anthropic
+          - openai
+      fake:
+        description: Fake transport (no network, no spend). Untick ONLY for a real paid run.
+        required: true
+        type: boolean
+        default: true
       cap_usd:
-        description: Local dollar cap
+        description: Local dollar cap for the run (0 to 5.00)
         required: true
         default: "0.50"
 
 permissions:
   contents: read
+
+# One paid pilot at a time across the repository. PaidRunLock only covers one host.
+concurrency:
+  group: sasb-paid-pilot
+  cancel-in-progress: false
 
 jobs:
   offline:
@@ -31,27 +56,105 @@ jobs:
       - name: Zero-cap paid path must not use transport
         run: python -m unittest tests.test_budget -v
 
-  wrapper:
+  pilot:
     needs: offline
-    if: github.event.inputs.confirm == 'PAY'
+    if: inputs.confirm == 'PAY'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
+    env:
+      PROVIDER: ${{ inputs.provider }}
+      FAKE: ${{ inputs.fake }}
+      CAP_USD: ${{ inputs.cap_usd }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Fake-transport pilot wrapper
+
+      - name: Validate inputs
+        run: |
+          set -euo pipefail
+          case "$PROVIDER" in
+            anthropic|openai) ;;
+            *) echo "::error::Choose provider=anthropic or provider=openai explicitly (got '$PROVIDER')."; exit 1 ;;
+          esac
+          case "$FAKE" in
+            true|false) ;;
+            *) echo "::error::fake must be true or false (got '$FAKE')."; exit 1 ;;
+          esac
+          python - <<'PY'
+          import math, os, re, sys
+          raw = os.environ["CAP_USD"].strip()
+          if not re.fullmatch(r"\d+(\.\d+)?", raw):
+              sys.exit("::error::cap_usd must be a plain decimal number such as 0.50 (got %r)" % raw)
+          cap = float(raw)
+          if not math.isfinite(cap) or cap < 0 or cap > 5.0:
+              sys.exit("::error::cap_usd must be between 0 and 5.00 (got %s)" % raw)
+          PY
+          if [ "$FAKE" = "true" ]; then
+            echo "Mode: FAKE transport (no network, no spend). provider=$PROVIDER cap_usd=$CAP_USD"
+          else
+            echo "Mode: LIVE paid run. provider=$PROVIDER cap_usd=$CAP_USD"
+          fi
+
+      - name: Require the selected provider's secret (live only)
+        if: ${{ !inputs.fake }}
+        env:
+          ANTHROPIC_API_KEY: ${{ inputs.provider == 'anthropic' && secrets.ANTHROPIC_API_KEY || '' }}
+          OPENAI_API_KEY: ${{ inputs.provider == 'openai' && secrets.OPENAI_API_KEY || '' }}
+        run: |
+          set -euo pipefail
+          if [ "$PROVIDER" = "anthropic" ]; then name=ANTHROPIC_API_KEY; else name=OPENAI_API_KEY; fi
+          # Only the presence of the variable is tested; its value is never printed.
+          if [ -z "${!name:-}" ]; then
+            echo "::error::Repository secret $name is not set (or is empty). Add it under Settings > Secrets and variables > Actions, then re-run. No request was sent."
+            exit 1
+          fi
+          echo "$name is present."
+
+      - name: Run pilot
         env:
           SASB_ENABLE_NETWORK: "1"
           SASB_PROVIDER_VALIDATED: "1"
-          ANTHROPIC_API_KEY: sk-ant-ci-placeholder
+          # Fake runs get placeholders; live runs get only the selected provider's secret.
+          ANTHROPIC_API_KEY: ${{ inputs.fake && 'sk-ant-ci-placeholder' || (inputs.provider == 'anthropic' && secrets.ANTHROPIC_API_KEY || '') }}
+          OPENAI_API_KEY: ${{ inputs.fake && 'sk-ci-placeholder' || (inputs.provider == 'openai' && secrets.OPENAI_API_KEY || '') }}
         run: |
-          python -m sasb.pilot --fake-transport --mode worker --cap-usd "${{ github.event.inputs.cap_usd }}" --force --out reports/live-run-paid.json
+          set -euo pipefail
+          args=(--provider "$PROVIDER" --mode worker --cap-usd "$CAP_USD" --force
+                --out reports/live-run-paid.json
+                --transcript reports/live-run-paid.transcript.jsonl)
+          if [ "$FAKE" = "true" ]; then
+            args=(--fake-transport "${args[@]}")
+          fi
+          python -m sasb.pilot "${args[@]}" > /dev/null
+
+      - name: Summarize
+        if: always()
+        run: |
+          python - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, pathlib
+          p = pathlib.Path("reports/live-run-paid.json")
+          if not p.exists():
+              print("No report was written.")
+          else:
+              r = json.loads(p.read_text())
+              b = r.get("budget") or {}
+              print("| field | value |\n| --- | --- |")
+              for k, v in (("provider", r.get("provider")), ("model", r.get("model")),
+                           ("fake transport", "${{ inputs.fake }}"),
+                           ("cap_usd", r.get("cap_usd")), ("spent_usd (local estimate)", r.get("spent_usd")),
+                           ("requests", b.get("request_count")), ("usage", r.get("usage")),
+                           ("stopped", r.get("stopped")), ("blocked", b.get("blocked"))):
+                  print("| %s | %s |" % (k, v))
+          PY
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: sasb-paid-wrapper-${{ github.run_id }}
-          path: reports/live-run-paid.json
-          if-no-files-found: ignore
+          name: sasb-paid-${{ inputs.provider }}-${{ inputs.fake && 'fake' || 'live' }}-${{ github.run_id }}
+          path: |
+            reports/live-run-paid.json
+            reports/live-run-paid.transcript.jsonl
+          if-no-files-found: warn
           retention-days: 14

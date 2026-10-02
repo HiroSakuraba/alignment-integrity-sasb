@@ -93,11 +93,21 @@ def scored_rows(rows):
 
 
 class LiveModelActor(ModelActor):
-    """Same pin-only client, but keep usage after a parse failure."""
+    """Same pin-only client, but keep usage after a parse failure.
+
+    ``last_request`` holds the exact system and user text of the latest call so
+    the transcript records prompts next to responses. It never holds the key.
+    """
+
+    last_request = None
 
     def decide(self, observation):
         user = json.dumps({"observation": observation, "contract": ACTION_CONTRACT}, sort_keys=True)
-        raw_text, usage, reported = self.client.complete(self.prompt + "\n" + ACTION_CONTRACT, user)
+        system = self.prompt + "\n" + ACTION_CONTRACT
+        self.last_request = {"system": system, "user": user,
+                             "provider": self.client.provider, "model": self.client.model}
+        self.last_usage = None
+        raw_text, usage, reported = self.client.complete(system, user)
         self.last_reported_model = reported
         self.last_usage = usage
         raw = _extract_json_object(raw_text)

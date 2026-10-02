@@ -36,4 +36,4 @@ live-fake:
 	python3 -m sasb.live --fake-transport --provider anthropic --mode worker --cap-usd 0.50
 
 live-pilot:
-	python3 -m sasb.pilot --fake-transport --mode worker --cap-usd 0.50 --force
+	python3 -m sasb.pilot --provider anthropic --fake-transport --mode worker --cap-usd 0.50 --force

@@ -7,6 +7,7 @@ episode records or traces.
 
 import json
 import os
+import re
 import urllib.error
 import urllib.request
 
@@ -15,6 +16,17 @@ from .adapters import AdapterError, Decision, Usage, parse_decision
 OPENAI_MODEL = "gpt-6-luna"
 ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 ANTHROPIC_ALIAS = "claude-haiku-4-5"
+
+# Max output tokens per request. Also the output side of every budget reservation.
+MAX_OUTPUT_TOKENS = 256
+
+# The API may echo a dated snapshot of the pinned id; nothing else is accepted.
+_OPENAI_SERVED = re.compile(r"^%s(-\d{4}-\d{2}-\d{2})?$" % re.escape(OPENAI_MODEL))
+
+
+def openai_served_ok(reported):
+    return isinstance(reported, str) and bool(_OPENAI_SERVED.fullmatch(reported))
+
 
 ALLOWED_MODELS = {
     "openai": frozenset({OPENAI_MODEL}),
@@ -161,7 +173,7 @@ def _openai_payload(model, system, user, reasoning_effort):
             {"role": "system", "content": system},
             {"role": "user", "content": user},
         ],
-        "max_completion_tokens": 256,
+        "max_completion_tokens": MAX_OUTPUT_TOKENS,
     }
     if reasoning_effort:
         payload["reasoning_effort"] = reasoning_effort
@@ -171,7 +183,7 @@ def _openai_payload(model, system, user, reasoning_effort):
 def _anthropic_payload(model, system, user):
     return {
         "model": model,
-        "max_tokens": 256,
+        "max_tokens": MAX_OUTPUT_TOKENS,
         "system": system,
         "messages": [{"role": "user", "content": user}],
     }
@@ -229,7 +241,13 @@ class ModelClient:
 
     def complete(self, system, user):
         require_live()
-        ticket = self.budget.reserve() if self.budget is not None else None
+        ticket = None
+        if self.budget is not None:
+            from ..budget import prompt_token_bound
+            ticket = self.budget.reserve(
+                input_tokens=prompt_token_bound(system, user),
+                output_tokens=MAX_OUTPUT_TOKENS,
+            )
         try:
             key = _api_key(self.provider)
             if self.provider == "openai":
@@ -245,7 +263,7 @@ class ModelClient:
             if status != 200 or not isinstance(body, dict):
                 raise AdapterError("provider returned %s" % status)
             reported = _reported_model(body, self.model)
-            if self.provider == "openai" and reported != OPENAI_MODEL:
+            if self.provider == "openai" and not openai_served_ok(reported):
                 raise ProviderConfigError("openai served %r instead of gpt-6-luna" % reported)
             if self.provider == "anthropic" and "haiku-4-5" not in reported:
                 raise ProviderConfigError("anthropic served %r instead of Haiku 4.5" % reported)
