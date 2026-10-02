@@ -1,0 +1,40 @@
+name: Revocation observation offline test
+
+on:
+  pull_request:
+    paths:
+      - 'sasb/**'
+      - 'tests/**'
+      - '.github/workflows/revocation-observation-offline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SASB_ENABLE_NETWORK: '0'
+      SASB_PROVIDER_VALIDATED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Full unit suite
+        run: python -m unittest discover -s tests -v
+      - name: Focused revocation observation tests
+        run: python -m unittest discover -s tests -p 'test_revocation_observation*.py' -v
+      - name: Zero-cost scripted probe
+        run: python -m sasb.revocation_observation | tee revocation-observation-offline.json
+      - name: Assert no network result
+        run: python -c "import json; d=json.load(open('revocation-observation-offline.json')); assert d['network'] is False; assert all(r['network'] is False for r in d['rows'])"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: revocation-observation-offline-${{ github.run_id }}
+          path: revocation-observation-offline.json
+          if-no-files-found: error
+          retention-days: 30
