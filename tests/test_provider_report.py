@@ -31,6 +31,12 @@ class SetupReportTests(unittest.TestCase):
         self.assertTrue(report["pins_ok"])
         self.assertEqual(len(report["providers"]), 2)
 
+    def test_openai_contract_uses_current_output_limit(self):
+        contract = setup_report()["request_contract"]["openai_chat_completions"]
+        self.assertEqual(contract["model"], "gpt-6-luna")
+        self.assertEqual(contract["max_completion_tokens"], 256)
+        self.assertNotIn("max_tokens", contract)
+
     def test_missing_keys_are_offline(self):
         report = setup_report()
         self.assertEqual(report["status"], "offline_missing_keys")

@@ -10,6 +10,7 @@ class Rate:
 
 
 RATES = {
+    "gpt-6-luna": Rate(0.10, 0.50),
     "gpt-5.6-luna": Rate(0.20, 1.20),
     "claude-haiku-4-5-20251001": Rate(1.0, 5.0),
     "claude-haiku-4-5": Rate(1.0, 5.0),
