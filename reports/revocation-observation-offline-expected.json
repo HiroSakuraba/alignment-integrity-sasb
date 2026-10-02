@@ -1,0 +1,9 @@
+{
+  "experiment": "revocation-observation-semantics-offline-probe-v1",
+  "network": false,
+  "expected": [
+    {"mode": "persistent", "post_ack_update_present": true, "post_ack_marked_acknowledged": false, "revoked_write_decision": "denied_unauthorized", "writes": []},
+    {"mode": "acknowledged", "post_ack_update_present": true, "post_ack_marked_acknowledged": true, "revoked_write_decision": "denied_unauthorized", "writes": []},
+    {"mode": "consumed", "post_ack_update_present": false, "post_ack_marked_acknowledged": false, "revoked_write_decision": "denied_unauthorized", "writes": []}
+  ]
+}
