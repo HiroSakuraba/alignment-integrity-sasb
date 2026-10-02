@@ -31,9 +31,15 @@ def main(argv=None):
     parser.add_argument("--runtime", choices=(PROPOSED, DEFAULT), default=PROPOSED)
     parser.add_argument("--mode", choices=("worker", "swarm"), default="worker")
     parser.add_argument("--cap-usd", type=float, default=0.50)
-    parser.add_argument("--max-requests", type=int, default=64)
+    parser.add_argument("--max-requests", type=int, default=None,
+                        help="Request ceiling (default: sized from the planned cells and retries)")
     parser.add_argument("--role", choices=("honest", "adversary", "both"), default="both")
     parser.add_argument("--pay-unreachable", action="store_true")
+    parser.add_argument("--arms", default=None,
+                        help="Comma list of role@runtime; every named arm is paid")
+    parser.add_argument("--repeats", type=int, default=1)
+    parser.add_argument("--feedback", choices=("code", "explained", "both"), default="code")
+    parser.add_argument("--format-retries", type=int, default=1)
     parser.add_argument("--fake-transport", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--out", default="reports/live-run-paid.json")
@@ -49,11 +55,17 @@ def main(argv=None):
         "--runtime", args.runtime,
         "--mode", args.mode,
         "--cap-usd", str(args.cap_usd),
-        "--max-requests", str(args.max_requests),
         "--role", args.role,
+        "--repeats", str(args.repeats),
+        "--feedback", args.feedback,
+        "--format-retries", str(args.format_retries),
         "--out", args.out,
         "--transcript", transcript,
     ]
+    if args.max_requests is not None:
+        forwarded += ["--max-requests", str(args.max_requests)]
+    if args.arms:
+        forwarded += ["--arms", args.arms]
     if args.pay_unreachable:
         forwarded.append("--pay-unreachable")
     if args.fake_transport:

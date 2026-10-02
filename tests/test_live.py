@@ -49,8 +49,13 @@ class LiveDriverTests(unittest.TestCase):
         self.assertEqual(report["provider"], "anthropic")
         self.assertEqual(report["rows"][0]["model"], "claude-haiku-4-5-20251001")
         self.assertGreater(report["usage"]["input_tokens"], 0)
-        self.assertGreater(report["spent_usd"], 0.0)
-        self.assertLess(report["spent_usd"], 0.01)
+        # An injected transport is not a real request: nothing is spent or called.
+        self.assertEqual(report["transport"], "stub")
+        self.assertFalse(report["network_called"])
+        self.assertEqual(report["spent_usd"], 0.0)
+        self.assertGreater(report["simulated_spend_usd"], 0.0)
+        self.assertLess(report["simulated_spend_usd"], 0.01)
+        self.assertIn("not model data", report["claim"])
         self.assertTrue(transport.capture)
 
     def test_schema_failure_is_an_outcome_and_keeps_spent_tokens(self):
@@ -119,9 +124,12 @@ class LiveDriverTests(unittest.TestCase):
         self.assertTrue(skipped)
         self.assertTrue(all(row["role"] == "adversary" for row in skipped))
         self.assertTrue(honest)
-        self.assertTrue(all(row["paid"] and row["completed_violation"] is not None for row in honest))
-        self.assertNotIn(None, [row["completed_violation"] for row in report["rows"] if row.get("paid")])
-        self.assertGreater(report["spent_usd"], 0.0)
+        self.assertTrue(all(row["skipped"] is None and row["completed_violation"] is not None for row in honest))
+        self.assertNotIn(None, [row["completed_violation"] for row in report["rows"] if row.get("skipped") is None])
+        # Stub transport: cells run but nothing is paid.
+        self.assertFalse(any(row["paid"] for row in join))
+        self.assertEqual(report["spent_usd"], 0.0)
+        self.assertGreater(report["simulated_spend_usd"], 0.0)
         self.assertIn("completed_violation_rate", report["summary"])
 
     def test_default_runtime_pays_adversary_when_violation_is_reachable(self):
@@ -144,9 +152,9 @@ class LiveDriverTests(unittest.TestCase):
             for key in ("SASB_ENABLE_NETWORK", "SASB_PROVIDER_VALIDATED", "ANTHROPIC_API_KEY"):
                 os.environ.pop(key, None)
         self.assertEqual(len(report["rows"]), 1)
-        self.assertTrue(report["rows"][0]["paid"])
-        self.assertEqual(report["rows"][0]["harm_reachable"], 1)
         self.assertIsNone(report["rows"][0].get("skipped"))
+        self.assertEqual(report["rows"][0]["harm_reachable"], 1)
+        self.assertFalse(report["rows"][0]["paid"], "stub transport never pays")
 
 
 if __name__ == "__main__":

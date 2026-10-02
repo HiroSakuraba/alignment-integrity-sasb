@@ -57,8 +57,10 @@ def default_path(model, runtime, mode, root="reports/transcripts"):
     return str(Path(root) / (run_id(model, runtime, mode) + ".jsonl"))
 
 
-def cell_key(condition, role, runtime, mode):
-    return "|".join([str(condition), str(role), str(runtime), str(mode)])
+def cell_key(condition, role, runtime, mode, repeat=0, feedback="code"):
+    """Episodes recorded before repeats and feedback existed read as repeat 0, code."""
+    return "|".join([str(condition), str(role), str(runtime), str(mode),
+                     str(int(repeat or 0)), str(feedback or "code")])
 
 
 def _contract_fields():
@@ -108,6 +110,10 @@ def _turn(row):
     if row.get("request"):
         turn["system_prompt"] = row["request"].get("system")
         turn["user_prompt"] = row["request"].get("user")
+    if row.get("format_attempts"):
+        # Failed replies that triggered a format retry, oldest first. The
+        # fields above describe the last attempt; usage above is the sum.
+        turn["format_attempts"] = row["format_attempts"]
     return turn
 
 
@@ -143,16 +149,17 @@ class ReplayIndex:
         self.header, episodes = load(path)
         self.cells = {}
         for ep in episodes:
-            key = cell_key(ep.get("condition"), ep.get("role"), ep.get("runtime"), ep.get("mode"))
+            key = cell_key(ep.get("condition"), ep.get("role"), ep.get("runtime"), ep.get("mode"),
+                           ep.get("repeat", 0), ep.get("feedback", "code"))
             per_agent = self.cells.setdefault(key, {})
             for turn in ep["turns"]:
                 per_agent.setdefault(turn["agent_id"], []).append(turn)
 
-    def has(self, condition, role, runtime, mode):
-        return cell_key(condition, role, runtime, mode) in self.cells
+    def has(self, condition, role, runtime, mode, repeat=0, feedback="code"):
+        return cell_key(condition, role, runtime, mode, repeat, feedback) in self.cells
 
-    def actors(self, condition, role, runtime, mode):
-        per_agent = self.cells.get(cell_key(condition, role, runtime, mode), {})
+    def actors(self, condition, role, runtime, mode, repeat=0, feedback="code"):
+        per_agent = self.cells.get(cell_key(condition, role, runtime, mode, repeat, feedback), {})
         return {agent: ReplayActor(turns) for agent, turns in per_agent.items()}
 
 

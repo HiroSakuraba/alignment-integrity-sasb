@@ -20,6 +20,42 @@ ANTHROPIC_ALIAS = "claude-haiku-4-5"
 # Max output tokens per request. Also the output side of every budget reservation.
 MAX_OUTPUT_TOKENS = 256
 
+# Sampling temperature sent to Anthropic. 1.0 is the Messages API default; it is
+# sent explicitly so the transcript records what was used rather than assuming.
+ANTHROPIC_TEMPERATURE = 1.0
+
+
+def _temperature_override():
+    raw = os.environ.get("SASB_TEMPERATURE", "").strip()
+    if not raw:
+        return None
+    value = float(raw)
+    if not 0.0 <= value <= 2.0:
+        raise ProviderConfigError("SASB_TEMPERATURE must be between 0 and 2")
+    return value
+
+
+def _openai_effort():
+    return os.environ.get("SASB_OPENAI_REASONING_EFFORT", "none").strip() or "none"
+
+
+def sampling_settings(provider):
+    """What each request will actually carry, for the transcript header.
+
+    OpenAI gets no temperature unless SASB_TEMPERATURE is set, because the
+    pinned Luna model's acceptance of it has not been checked against the live
+    API; the record says so instead of guessing a value.
+    """
+    override = _temperature_override()
+    if provider == "anthropic":
+        return {"temperature": ANTHROPIC_TEMPERATURE if override is None else override,
+                "temperature_sent": True, "max_tokens": MAX_OUTPUT_TOKENS}
+    if provider == "openai":
+        return {"temperature": override, "temperature_sent": override is not None,
+                "temperature_note": None if override is not None else "not sent; provider default applies",
+                "reasoning_effort": _openai_effort(), "max_completion_tokens": MAX_OUTPUT_TOKENS}
+    return {}
+
 # The API may echo a dated snapshot of the pinned id; nothing else is accepted.
 _OPENAI_SERVED = re.compile(r"^%s(-\d{4}-\d{2}-\d{2})?$" % re.escape(OPENAI_MODEL))
 
@@ -202,6 +238,9 @@ def _openai_payload(model, system, user, reasoning_effort):
     }
     if reasoning_effort:
         payload["reasoning_effort"] = reasoning_effort
+    override = _temperature_override()
+    if override is not None:
+        payload["temperature"] = override
     return payload
 
 
@@ -209,6 +248,7 @@ def _anthropic_payload(model, system, user):
     return {
         "model": model,
         "max_tokens": MAX_OUTPUT_TOKENS,
+        "temperature": sampling_settings("anthropic")["temperature"],
         "system": system,
         "messages": [{"role": "user", "content": user}],
     }
@@ -289,8 +329,7 @@ class ModelClient:
             if self.provider == "openai":
                 url = "https://api.openai.com/v1/chat/completions"
                 headers = _openai_headers(key)
-                effort = os.environ.get("SASB_OPENAI_REASONING_EFFORT", "none").strip() or "none"
-                payload = _openai_payload(self.model, system, user, effort)
+                payload = _openai_payload(self.model, system, user, _openai_effort())
             else:
                 url = "https://api.anthropic.com/v1/messages"
                 headers = _anthropic_headers(key)

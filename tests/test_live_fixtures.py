@@ -217,12 +217,13 @@ class ProviderFixtureTests(_LiveEnv):
 
 
 class TranscriptOnErrorTests(_LiveEnv):
-    def _run(self, provider, body):
+    def _run(self, provider, body, format_retries=1):
         transcript = Path(self.tmp.name) / ("%s.jsonl" % provider)
         transport = SequenceTransport([body])
         report = run_experiment(provider=provider, dry_run=False, mode="worker", transport=transport,
                                 conditions=("authorized_maintenance",), roles=("honest",),
-                                cap_usd=0.5, transcript_path=str(transcript))
+                                cap_usd=0.5, transcript_path=str(transcript),
+                                format_retries=format_retries)
         header, episodes = load(transcript)
         return report, transport, header, episodes
 
@@ -232,18 +233,56 @@ class TranscriptOnErrorTests(_LiveEnv):
                                        ("openai", openai_completion(text), (435, 18))):
             with self.subTest(provider=provider):
                 report, transport, header, episodes = self._run(provider, body)
-                self.assertEqual(len(transport.capture), 1, "adapter errors are not retried")
+                # One format retry; the canned transport repeats the same bad reply.
+                self.assertEqual(len(transport.capture), 2)
                 turn = episodes[0]["turns"][0]
                 self.assertEqual(turn["error"], "adapter_error")
                 self.assertEqual(turn["raw_response"], text)
                 self.assertIsNone(turn["parsed_json"])
-                self.assertEqual(turn["usage"]["input_tokens"], tokens[0])
-                self.assertEqual(turn["usage"]["output_tokens"], tokens[1])
+                # Both calls were billed, so usage is their sum.
+                self.assertEqual(turn["usage"]["input_tokens"], 2 * tokens[0])
+                self.assertEqual(turn["usage"]["output_tokens"], 2 * tokens[1])
+                self.assertEqual(len(turn["format_attempts"]), 2)
+                self.assertEqual(turn["format_attempts"][0]["raw_response"], text)
+                retry_prompt = json.loads(transport.capture[1]["payload"]["messages"][-1]["content"])
+                self.assertIn("unexpected=['resource']", retry_prompt["format_error"]["problem"])
+                self.assertEqual(report["rows"][0]["format_retry_turns"], 1)
+                self.assertEqual(report["rows"][0]["format_repaired_turns"], 0)
                 self.assertIn("missing or unexpected action arguments for inspect_resource", turn["error_reason"])
                 self.assertIn("unexpected=['resource']", turn["error_reason"])
                 self.assertIn("Use only these argument names", turn["system_prompt"])
                 self.assertEqual(header["action_contract"], ACTION_CONTRACT)
                 self.assertTrue(report["rows"][0]["invalid_action_or_actor_error"])
+
+    def test_retry_can_be_disabled(self):
+        text = "Sure! I'll inspect first."
+        report, transport, _, episodes = self._run("anthropic", anthropic_message(text), format_retries=0)
+        self.assertEqual(len(transport.capture), 1)
+        self.assertEqual(episodes[0]["turns"][0]["error"], "adapter_error")
+        self.assertNotIn("format_attempts", episodes[0]["turns"][0])
+
+    def test_retry_repairs_a_bad_reply_and_the_episode_continues(self):
+        replies = [anthropic_message('{"action": "accept_update", "kind": "revoke"}'),
+                   anthropic_message(INSPECT),
+                   anthropic_message('{"action": "noop", "arguments": {}}')]
+        transcript = Path(self.tmp.name) / "repair.jsonl"
+        transport = SequenceTransport(replies)
+        report = run_experiment(provider="anthropic", dry_run=False, mode="worker", transport=transport,
+                                conditions=("authorized_maintenance",), roles=("honest",),
+                                cap_usd=0.5, transcript_path=str(transcript))
+        row = report["rows"][0]
+        self.assertFalse(row["invalid_action_or_actor_error"])
+        self.assertEqual(row["format_retry_turns"], 1)
+        self.assertEqual(row["format_repaired_turns"], 1)
+        self.assertTrue(row["format_retry_used"])
+        _, episodes = load(transcript)
+        first = [t for t in episodes[0]["turns"] if t["agent_id"] == "worker-1"][0]
+        self.assertIsNone(first["error"])
+        self.assertEqual(first["action"], "inspect_resource")
+        self.assertEqual(len(first["format_attempts"]), 1)
+        self.assertIn("unexpected top-level fields", first["format_attempts"][0]["error_reason"])
+        self.assertEqual(first["usage"]["input_tokens"], 2 * 489)
+        self.assertEqual(first["usage"]["retries"], 1)
 
     def test_fenced_valid_reply_runs_the_episode(self):
         replies = [anthropic_message("```json\n" + INSPECT + "\n```"),
