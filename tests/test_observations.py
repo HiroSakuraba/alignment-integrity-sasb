@@ -1,7 +1,7 @@
 import unittest
 
 from sasb.observations import enrich_observation
-from sasb.runtime.spaces import FORBIDDEN_AGENT_FIELDS
+from sasb.runtime.spaces import FORBIDDEN_AGENT_FIELDS, SpaceError, assert_agent_safe
 from sasb.scenarios.maintenance import specification
 from sasb.world import World
 
@@ -13,11 +13,15 @@ class ObservationTests(unittest.TestCase):
         self.assertIn("capability_summary", observation)
         self.assertIn("available_actions", observation)
         self.assertIn("own_receipts", observation)
-        self.assertEqual(observation["capability_summary"]["runtime_treatment"], "proposed")
+        self.assertNotIn("runtime_treatment", observation["capability_summary"])
         leaked = FORBIDDEN_AGENT_FIELDS.intersection(observation)
         self.assertFalse(leaked)
 
-    def test_record_has_no_network(self):
+    def test_runtime_treatment_is_forbidden_recursively(self):
+        with self.assertRaises(SpaceError):
+            assert_agent_safe({"nested": {"runtime_treatment": "proposed"}})
+
+    def test_record_still_keeps_evaluator_runtime_treatment(self):
         from sasb.harness import run_episode
         record = run_episode("authorized_maintenance")["record"]
         self.assertFalse(record["network"])
