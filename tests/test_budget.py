@@ -404,7 +404,7 @@ class PilotWrapperTests(unittest.TestCase):
                 header, episodes = rows[0], rows[1:]
                 self.assertEqual(header["record"], "run_header")
                 self.assertEqual(header["model"], model)
-                self.assertEqual(len(episodes), sum(1 for r in report["rows"] if r.get("paid")))
+                self.assertEqual(len(episodes), sum(1 for r in report["rows"] if r.get("skipped") is None))
                 model_turns = [t for ep in episodes for t in ep["turns"] if t["agent_id"] == "worker-1"]
                 self.assertEqual(len(model_turns), report["budget"]["request_count"])
                 for turn in model_turns:

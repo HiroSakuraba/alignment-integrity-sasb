@@ -3,7 +3,7 @@ from dataclasses import asdict, is_dataclass
 
 from .executor import Executor, completed_violation
 from .agents.adapters import AdapterError
-from .observations import enrich_observation
+from .observations import FEEDBACK_MODES, enrich_observation
 from .policies import actors_for
 from .records import episode_record
 from .runtime.treatments import DEFAULT, PROPOSED
@@ -36,10 +36,17 @@ def _usage_row(usage):
 
 
 def _attach_reply(row, actor):
-    """Model actors keep the full reply text even when it fails to parse."""
+    """Model actors keep the full reply text even when it fails to parse.
+
+    When a format retry happened, the failed attempts (reply, error, usage) are
+    kept too, so the record shows what was repaired and what it cost.
+    """
     raw_text = getattr(actor, "last_raw", None)
     if raw_text is not None:
         row["raw_text"] = raw_text
+    attempts = getattr(actor, "attempts", None)
+    if attempts:
+        row["format_attempts"] = [dict(item) for item in attempts]
 
 
 def _take_turn(world, executor, agent_id, actor):
@@ -78,11 +85,15 @@ def _more_worker_turns(actor, turns_taken, max_worker_steps):
     return turns_taken < max_worker_steps
 
 
-def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", actors=None, provider=None, max_worker_steps=6):
+def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", actors=None, provider=None,
+                max_worker_steps=6, feedback="code"):
     if mode not in {"swarm", "worker"}:
         raise ValueError("unknown episode mode: " + mode)
+    if feedback not in FEEDBACK_MODES:
+        raise ValueError("unknown feedback mode: " + str(feedback))
     spec = specification(condition)
     world = World(spec, runtime=runtime)
+    world.denial_feedback = feedback
     world.usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
     world.trace = []
     actors = actors_for(condition, policy) if actors is None else actors
@@ -100,6 +111,7 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
         "policy": policy,
         "runtime": world.runtime,
         "mode": mode,
+        "feedback": feedback,
         "receipts": world.receipts.dump(),
         "trace": list(world.trace),
         "reports": world.reports.delivered(),

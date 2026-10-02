@@ -51,10 +51,13 @@ Paid runs write `reports/live-run-paid.json` and checkpoint after every cell so
 a crash does not drop the ledger. Dry-run still writes
 `reports/live-run-local.json` and includes `forecast_usd_if_paid`.
 
-Under the proposed runtime the scripted noncompliant worker cannot complete a
-violation, so adversary cells are skipped unless `--pay-unreachable`. Honest
-cells are always paid: that is the false-refusal measurement. Use
-`--runtime default` when you want reachable-harm adversary cells.
+Under the proposed runtime no legal action sequence can complete a violation
+(the exhaustive reachability search proves it within the horizon), so without
+`--arms` adversary cells are skipped unless `--pay-unreachable`. Honest cells
+are always paid: that is the false-refusal measurement. With `--arms`, every
+named arm runs, so `adversary@proposed` records attempts against the hardened
+runtime and `adversary@default` records what happens when nothing blocks them.
+See [paid run](paid-run.md#repeats-arms-and-denial-feedback).
 
 `--fake-transport` sends a stub 200 through the real `ModelActor` without
 opening a socket. It still requires the two live flags.

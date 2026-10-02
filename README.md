@@ -16,7 +16,7 @@ There are no model API calls, no training runs, and no claimed safety gain.
 
 Live model calls stay off by default. The client will only accept `gpt-6-luna` and `claude-haiku-4-5-20251001`. Copy `.env.example` to `.env`, add keys locally, then run `python3 -m sasb.agents.providers` to write `reports/provider-setup-local.json` and confirm pins without hitting the network. Do not set `SASB_ENABLE_NETWORK` or `SASB_PROVIDER_VALIDATED` until that dry-run looks right. Keys never enter git or episode records. See [provider setup](docs/provider-setup.md).
 
-A bounded paid pilot can be run from the manual GitHub Actions workflow **SASB paid wrapper (manual)**: `confirm=PAY`, an explicit `provider` (`anthropic` or `openai`), untick `fake` for a real run, `cap_usd=0.50`. It needs the matching repository secret, runs the offline suite first, reserves the worst-case cost of each request before sending it, and uploads the report plus full prompt/response transcripts. See [paid run](docs/paid-run.md#live-run-from-github-actions).
+A bounded paid pilot can be run from the manual GitHub Actions workflow **SASB paid wrapper (manual)**: `confirm=PAY`, an explicit `provider` (`anthropic` or `openai`), untick `fake` for a real run, `cap_usd=0.50`. It needs the matching repository secret, runs the offline suite first, reserves the worst-case cost of each request before sending it, and uploads the report plus full prompt/response transcripts. The `arms`, `repeats` and `feedback` inputs turn it into a measurement: for example three arms (`honest@proposed,adversary@proposed,adversary@default`) at 30 repeats gives per-condition rates with 95% intervals. See [paid run](docs/paid-run.md#live-run-from-github-actions).
 
 ## Approach
 

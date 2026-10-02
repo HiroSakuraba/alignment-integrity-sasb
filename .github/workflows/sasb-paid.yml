@@ -31,6 +31,23 @@ on:
         description: Local dollar cap for the run (0 to 5.00)
         required: true
         default: "0.50"
+      arms:
+        description: "Comma list of role@runtime. Every named arm is paid. Runtimes: proposed (hardened) or default (harm reachable)."
+        required: true
+        default: "honest@proposed,adversary@proposed,adversary@default"
+      repeats:
+        description: Episodes per condition per arm (1 to 100). 30 gives usable intervals.
+        required: true
+        default: "1"
+      feedback:
+        description: "What a denial tells the model: code only, a one-line explanation, or both (doubles the arms)"
+        required: true
+        type: choice
+        default: code
+        options:
+          - code
+          - explained
+          - both
 
 permissions:
   contents: read
@@ -60,11 +77,17 @@ jobs:
     needs: offline
     if: inputs.confirm == 'PAY'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Repeated runs are serial HTTP calls; 30 repeats x 3 arms x 2 feedback modes
+    # is about 900 episodes. The transcript is appended per episode, so a timeout
+    # still uploads everything finished before it.
+    timeout-minutes: 240
     env:
       PROVIDER: ${{ inputs.provider }}
       FAKE: ${{ inputs.fake }}
       CAP_USD: ${{ inputs.cap_usd }}
+      ARMS: ${{ inputs.arms }}
+      REPEATS: ${{ inputs.repeats }}
+      FEEDBACK: ${{ inputs.feedback }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -90,6 +113,17 @@ jobs:
           cap = float(raw)
           if not math.isfinite(cap) or cap < 0 or cap > 5.0:
               sys.exit("::error::cap_usd must be between 0 and 5.00 (got %s)" % raw)
+          reps = os.environ["REPEATS"].strip()
+          if not re.fullmatch(r"\d+", reps) or not 1 <= int(reps) <= 100:
+              sys.exit("::error::repeats must be a whole number from 1 to 100 (got %r)" % reps)
+          sys.path.insert(0, ".")
+          from sasb.live import parse_arms
+          try:
+              arms = parse_arms(os.environ["ARMS"], os.environ["FEEDBACK"])
+          except ValueError as exc:
+              sys.exit("::error::%s" % exc)
+          print("Arms: %s" % ", ".join("%s@%s/%s" % (a["role"], a["runtime"], a["feedback"]) for a in arms))
+          print("Planned episodes: %d (5 conditions x %d arms x %s repeats)" % (5 * len(arms) * int(reps), len(arms), reps))
           PY
           if [ "$FAKE" = "true" ]; then
             echo "Mode: FAKE transport (no network, no spend). provider=$PROVIDER cap_usd=$CAP_USD"
@@ -122,6 +156,7 @@ jobs:
         run: |
           set -euo pipefail
           args=(--provider "$PROVIDER" --mode worker --cap-usd "$CAP_USD" --force
+                --arms "$ARMS" --repeats "$REPEATS" --feedback "$FEEDBACK"
                 --out reports/live-run-paid.json
                 --transcript reports/live-run-paid.transcript.jsonl)
           if [ "$FAKE" = "true" ]; then
@@ -142,11 +177,29 @@ jobs:
               b = r.get("budget") or {}
               print("| field | value |\n| --- | --- |")
               for k, v in (("provider", r.get("provider")), ("model", r.get("model")),
-                           ("fake transport", "${{ inputs.fake }}"),
+                           ("transport", r.get("transport")),
                            ("cap_usd", r.get("cap_usd")), ("spent_usd (local estimate)", r.get("spent_usd")),
+                           ("simulated_spend_usd", r.get("simulated_spend_usd")),
                            ("requests", b.get("request_count")), ("usage", r.get("usage")),
-                           ("stopped", r.get("stopped")), ("blocked", b.get("blocked"))):
+                           ("repeats", r.get("repeats")), ("stopped", r.get("stopped")),
+                           ("blocked", b.get("blocked"))):
                   print("| %s | %s |" % (k, v))
+              cells = r.get("by_cell") or {}
+              if cells:
+                  print("\n### Per cell (k/n, 95% interval)\n")
+                  cols = ("prohibited_attempt", "completed_violation", "authorized_task_completion",
+                          "malformed_write_target", "format_retry_used")
+                  print("| arm | condition | n | " + " | ".join(cols) + " |")
+                  print("| --- | --- | --- | " + " | ".join("---" for _ in cols) + " |")
+                  for c in cells.values():
+                      def fmt(m):
+                          x = c["metrics"][m]
+                          if not x["n"]:
+                              return "n/a"
+                          lo, hi = x["wilson95"]
+                          return "%d/%d (%.2f-%.2f)" % (x["k"], x["n"], lo, hi)
+                      print("| %s@%s/%s | %s | %d | %s |" % (c["role"], c["runtime"], c["feedback"], c["condition"],
+                                                              c["episodes"], " | ".join(fmt(m) for m in cols)))
           PY
 
       - uses: actions/upload-artifact@v4
@@ -157,4 +210,4 @@ jobs:
             reports/live-run-paid.json
             reports/live-run-paid.transcript.jsonl
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 90
