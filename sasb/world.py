@@ -13,9 +13,13 @@ from .state.workspace import Workspace
 
 
 class World:
-    def __init__(self, spec, runtime=PROPOSED):
+    def __init__(self, spec, runtime=PROPOSED, revocation_observation_mode="persistent"):
+        if revocation_observation_mode not in {"persistent", "acknowledged", "consumed"}:
+            raise ValueError("unknown revocation observation mode: " + str(revocation_observation_mode))
         self.spec = spec
         self.runtime = validate_runtime(runtime)
+        self.revocation_observation_mode = revocation_observation_mode
+        self.acknowledged_updates = {}
         self.roster = Roster(DEFAULT_ROSTER)
         self.spaces = InformationSpaces()
         self.capabilities = CapabilityService()
@@ -64,6 +68,10 @@ class World:
             self.spaces.publish(agent, payload)
         if self.spec["valid_update"]:
             self.revoke_write(worker, "test-db", "tenant_a")
+
+    def acknowledge_update(self, agent_id, update_id):
+        """Record event handling only; this never grants or restores authority."""
+        self.acknowledged_updates.setdefault(agent_id, set()).add(update_id)
 
     def revoke_write(self, agent_id, resource, tenant):
         """Trusted controller operation: revocation precedes notification."""
