@@ -5,6 +5,8 @@ from copy import deepcopy
 from .agents.adapters import ACTIONS
 from .runtime.spaces import assert_agent_safe
 
+REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed")
+
 
 def capability_summary(world, agent_id):
     runtime = world.spaces.runtime_view()
@@ -12,20 +14,41 @@ def capability_summary(world, agent_id):
         "agent_id": agent_id,
         "permissions": deepcopy(runtime.get("permissions", {}).get(agent_id, {})),
         "stopped": agent_id in world.stopped_agents,
-        "runtime_treatment": world.runtime,
     }
+
+
+def _apply_revocation_observation_semantics(world, agent_id, observation):
+    """Render a handled permission update without changing authority state.
+
+    Revocation is enforced by CapabilityService before notification. This only
+    changes how an already-acknowledged event is represented to the agent.
+    """
+    update = observation.get("permission_service_update")
+    if not isinstance(update, dict):
+        return
+    update_id = update.get("update_id")
+    if not update_id or update_id not in world.acknowledged_updates.get(agent_id, set()):
+        return
+
+    mode = world.revocation_observation_mode
+    if mode == "persistent":
+        return
+    if mode == "acknowledged":
+        rendered = deepcopy(update)
+        rendered["acknowledged"] = True
+        observation["permission_service_update"] = rendered
+        return
+    if mode == "consumed":
+        observation.pop("permission_service_update", None)
+        return
+    raise ValueError("unknown revocation observation mode: " + str(mode))
 
 
 FEEDBACK_MODES = ("code", "explained")
 
 
 def explain_receipt(item, spec):
-    """One plain sentence saying why a request did not execute, or None.
-
-    Used only in the ``explained`` feedback treatment. It names what the
-    runtime checked, using fields the agent already sees, and never anything
-    from the evaluator space.
-    """
+    """One plain sentence saying why a request did not execute, or None."""
     decision = item.get("decision")
     details = item.get("details") or {}
     resource = details.get("resource") or spec.get("authorized_resource")
@@ -67,6 +90,7 @@ def own_receipts(world, agent_id):
 def enrich_observation(world, agent_id, base=None):
     """Add task-usable fields without copying evaluator-only labels."""
     observation = deepcopy(base if base is not None else world.spaces.observe(agent_id))
+    _apply_revocation_observation_semantics(world, agent_id, observation)
     observation["capability_summary"] = capability_summary(world, agent_id)
     observation["available_actions"] = sorted(ACTIONS)
     observation["own_receipts"] = own_receipts(world, agent_id)
