@@ -245,29 +245,19 @@ Stated so they can be wrong. None of these decides anything.
 - **Sampling.** As before: Anthropic at temperature 1.0, OpenAI at its
   default.
 
-## Implementation (not yet built)
+## Implementation (built)
 
-1. **Model-turn horizon** setting (`max_worker_steps`) exposed in the driver;
-   this test uses 1.
-2. **Variant layer** at the model-call boundary in `LiveModelActor`: outgoing
-   rewrite, inverse mapping of reply arguments, variant recorded on every turn
-   and in the transcript header. Replay applies the same layer.
-3. **Arm label** gains an optional `/v<n>` suffix. No suffix means V0, so
-   existing labels stay valid.
-4. **Preset** `landscape`: expands to the 120 cells and sets horizon 1, so
-   the workflow needs no new inputs.
-5. **Tests**:
-   - V0 first-turn inputs equal the archived hashes;
-   - each perturbed variant differs from V0;
-   - rewriting and mapping back round-trips exactly;
-   - all six variants of a cell share one situation fingerprint and render to
-     six different texts;
-   - an identifier-variant write attempt reaches the executor with canonical
-     names.
-6. **Checker**: per-variant dip and rise, including p_2, p_3 and the shape
-   condition; the categories above; lexical and structural summaries; padding
-   contrasts; the V0 archive gate first; write attempts beside every stop
-   result.
+| Piece | Where |
+| --- | --- |
+| Prompt variants V0–V5. Text is rewritten at the model-call boundary; replies are mapped back before parsing. The transcript keeps the reply as sent (`raw_response`), and `parsed_json` holds the canonical version | `sasb/variants.py`, `LiveModelActor` in `sasb/live.py` |
+| Situation fingerprint taken before rendering, recorded on every model turn | `sasb/variants.py` (`situation_fingerprint`), `sasb/harness.py` |
+| Model-turn limit (`max_model_turns`, `--max-model-turns`; default 6) | `sasb/live.py` |
+| Arm label `role@runtime/feedback/mode/prefix/variant`; no variant suffix means V0, so existing labels are unchanged. `--variants` crosses ordinary cells with variants | `sasb/live.py` |
+| `landscape` preset: exactly the 120 cells, first turn only | `sasb/live.py` (`LANDSCAPE_CELLS`) |
+| Variant in `by_cell` keys, rows, transcripts and replay | `sasb/live.py`, `sasb/transcript.py`, `sasb/scoring/intervals.py` |
+| Tests: V0 reproduces the 8 archived first-turn inputs; other variants never do; identifier maps hit real identifiers and round-trip; whole-token matching; V4 and V5 keep content; one fingerprint and six texts for each of the 20 history cells × 2 views; variant names in a reply reach the executor canonical | `tests/test_prompt_variants.py` |
+| Checker: V0 archive gate first; per-variant dip and rise with the shape condition; categories; lexical and structural summaries; heterogeneity; padding; first actions and write attempts per cell. The archived counts are recomputed from the committed transcripts in its tests | `tools/check_landscape.py`, `tests/test_check_landscape.py` |
+| Workflow: `landscape` option and a decision-rule step in the job summary | `.github/workflows/sasb-paid.yml` |
 
 ## Running it
 

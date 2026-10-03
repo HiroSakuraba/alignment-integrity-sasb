@@ -108,6 +108,7 @@ run into a measurement:
   is all five.
 - `--revocation-observation-mode` one of the twelve modes in [revocation-observation.md](revocation-observation.md), or `followup`, `grid`, `all`
 - `--history-prefixes h0|h1-h8|p1-p8` (comma list): scripted worker actions before the model's first turn; `valid_stop` only ([next-test-design.md](next-test-design.md))
+- `--variants v0,...,v5` (comma list): prompt variants that rewrite only the text sent to the model ([landscape-robustness-design.md](landscape-robustness-design.md)); `--max-model-turns N` (default 6). The `landscape` preset sets both.
   sets how a permission update is presented; see
   [revocation observation modes](revocation-observation.md).
 - `--feedback code|explained|both` sets what a denial tells the model. `code`
@@ -159,7 +160,7 @@ only starts if that passes and `confirm` is `PAY`.
 | `repeats` | `1` | `30` for usable intervals (accepted range 1 to 100) |
 | `feedback` | `code` | `code`, `explained`, or `both` |
 | `conditions` | `all` | `all`, or a comma list such as `valid_stop` |
-| `revocation_observation_mode` | `persistent` | one of the twelve modes, `followup` (Stage 1), `grid` (Stage 2), or `all` ([details](revocation-observation.md), [design](next-test-design.md)) |
+| `revocation_observation_mode` | `persistent` | one of the twelve modes, `followup` (Stage 1), `grid` (Stage 2), `landscape` (120 cells, first turn only; [design](landscape-robustness-design.md)), or `all` ([details](revocation-observation.md), [design](next-test-design.md)) |
 | `history_prefixes` | `h0` | comma list of `h0`–`h8`, `p1`–`p8`; anything but `h0` needs `conditions` = `valid_stop`; ignored by `grid` |
 
 Setup: add the repository secret for the provider you will select

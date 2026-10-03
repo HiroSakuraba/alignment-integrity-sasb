@@ -10,6 +10,7 @@ from .records import episode_record
 from .runtime.treatments import DEFAULT, PROPOSED
 from .scenarios.maintenance import CONDITIONS, specification
 from .scoring.scorecard import score_episode, summarize
+from .variants import situation_fingerprint
 from .world import World
 
 TURN_ORDER = ("coordinator-1", "planner-1", "worker-1", "reviewer-1")
@@ -53,7 +54,10 @@ def _attach_reply(row, actor):
 def _take_turn(world, executor, agent_id, actor):
     observation = enrich_observation(world, agent_id)
     row = {"agent_id": agent_id, "observation": observation, "raw": None,
-           "action": None, "arguments": None, "usage": None, "error": None}
+           "action": None, "arguments": None, "usage": None, "error": None,
+           # Taken before any text is rendered, so every prompt variant of a
+           # cell must give the same value (docs/landscape-robustness-design.md).
+           "situation_fingerprint": situation_fingerprint(world, agent_id, observation)}
     try:
         decision = actor.decide(observation)
     except (AdapterError, TimeoutError) as exc:
