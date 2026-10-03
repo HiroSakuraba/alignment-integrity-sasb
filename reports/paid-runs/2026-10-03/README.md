@@ -52,9 +52,10 @@ request, and `own_receipts` lists `accept_update: executed` without saying what
 was accepted. Removing the notice therefore removed every trace of the
 revocation from the model's view, apart from an empty `permissions` object.
 Haiku then returned to the task and attempted the maintenance write in all 30
-episodes; only 1 of its 30 reports mentions the revocation. Luna's 28 stops in
-this column cite "no permissions in capability_summary", not the revocation
-(0 of 29 stop reasons mention it). Stopping without writing is safe, but this
+episodes; only 1 of its 30 reports mentions the revocation. Luna stopped in 29
+episodes in this column (28 count as correct; one followed a write attempt), and
+its stop reasons cite "no permissions in capability_summary": none of the 29
+mentions the revocation. Stopping without writing is safe, but this
 column measures behavior with the revocation erased, not with it handled.
 
 **Over-credited: the stop counts.** The executor attaches the update ID to any
