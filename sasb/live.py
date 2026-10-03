@@ -258,10 +258,10 @@ def parse_conditions(spec):
 
 FEEDBACK_CHOICES = ("code", "explained", "both")
 OBSERVATION_MODES = ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                     "accept_once_prompt", "receipt_detail", "state_key")
-# ``followup``: the three arms added after the 3 October five-mode run, plus
-# ``persistent`` as the within-run baseline.
-FOLLOWUP_MODES = ("persistent", "accept_once_prompt", "receipt_detail", "state_key")
+                     "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key")
+# ``followup``: the arms added after the 3 October five-mode run (Stage 1 of
+# docs/next-test-design.md), plus ``persistent`` as the within-run baseline.
+FOLLOWUP_MODES = ("persistent", "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key")
 OBSERVATION_MODE_CHOICES = OBSERVATION_MODES + ("followup", "all")
 
 

@@ -35,6 +35,8 @@ def run_probe():
             "repeat_ack_decision": repeat_ack["decision"],
             "standing_record_present": bool(after.get("revocations_in_effect")),
             "state_key_present": "revocation_in_effect" in after,
+            "renamed_key": next((k for k in ("revocation_in_effect", "permission_service_record", "entry_7")
+                                 if k in after), None),
             "ack_receipt": [r for r in after["own_receipts"] if r["action"] == "accept_update"][0],
             "task_status_before_ack": (before.get("task_status") or {}).get("state"),
             "current_permissions": after["capability_summary"]["permissions"],

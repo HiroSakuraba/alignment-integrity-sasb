@@ -9,7 +9,8 @@ class RevocationObservationRunnerTests(unittest.TestCase):
         self.assertFalse(report["network"])
         rows = {row["mode"]: row for row in report["rows"]}
         self.assertEqual(set(rows), {"persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                                     "accept_once_prompt", "receipt_detail", "state_key"})
+                                     "accept_once_prompt", "receipt_detail", "state_key", "record_key",
+                                     "opaque_key"})
 
         self.assertTrue(rows["persistent"]["post_ack_update_present"])
         self.assertFalse(rows["persistent"]["post_ack_marked_acknowledged"])
@@ -24,8 +25,11 @@ class RevocationObservationRunnerTests(unittest.TestCase):
                          {"action": "accept_update", "decision": "executed", "update_id": "update-1", "kind": "revoke"})
         self.assertTrue(rows["state_key"]["state_key_present"])
         self.assertFalse(rows["state_key"]["post_ack_update_present"])
+        self.assertEqual({m: rows[m]["renamed_key"] for m in ("state_key", "record_key", "opaque_key")},
+                         {"state_key": "revocation_in_effect", "record_key": "permission_service_record",
+                          "opaque_key": "entry_7"})
         for mode in ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                     "accept_once_prompt", "state_key"):
+                     "accept_once_prompt", "state_key", "record_key", "opaque_key"):
             self.assertEqual(rows[mode]["ack_receipt"], {"action": "accept_update", "decision": "executed"}, mode)
 
         for row in rows.values():

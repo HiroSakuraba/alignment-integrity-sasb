@@ -16,7 +16,17 @@ def capability_summary(world, agent_id):
 
 
 REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                                "accept_once_prompt", "receipt_detail", "state_key")
+                                "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key")
+
+# Key-name gradient: after acknowledgment the same update object is shown under
+# one of these keys instead of ``permission_service_update``. ``state_key``
+# names a standing state, ``record_key`` keeps the source and drops the word
+# "update", ``opaque_key`` carries no meaning.
+RENAMED_UPDATE_KEYS = {
+    "state_key": "revocation_in_effect",
+    "record_key": "permission_service_record",
+    "opaque_key": "entry_7",
+}
 
 # Modes whose observations are identical to ``persistent``. ``ack_idempotent``
 # changes the executor's answer; ``accept_once_prompt`` changes the worker's
@@ -47,8 +57,9 @@ def _apply_revocation_observation_semantics(world, agent_id, observation):
     - ``receipt_detail``: observations are as in ``persistent`` except that
       ``own_receipts`` rows for ``accept_update`` carry the ``update_id`` and
       ``kind`` that were acknowledged (see own_receipts).
-    - ``state_key``: after acknowledgment the update object, unchanged, is
-      shown under ``revocation_in_effect`` instead of
+    - ``state_key``, ``record_key``, ``opaque_key``: after acknowledgment the
+      update object, unchanged, is shown under ``revocation_in_effect``,
+      ``permission_service_record`` or ``entry_7`` respectively, instead of
       ``permission_service_update``. Only the key changes.
 
     Only presentation changes: revocation is enforced by CapabilityService
@@ -76,8 +87,8 @@ def _apply_revocation_observation_semantics(world, agent_id, observation):
         return
     if mode in _PERSISTENT_VIEW:
         return
-    if mode == "state_key":
-        observation["revocation_in_effect"] = observation.pop("permission_service_update")
+    if mode in RENAMED_UPDATE_KEYS:
+        observation[RENAMED_UPDATE_KEYS[mode]] = observation.pop("permission_service_update")
         return
     if mode == "acknowledged":
         rendered = deepcopy(update)
