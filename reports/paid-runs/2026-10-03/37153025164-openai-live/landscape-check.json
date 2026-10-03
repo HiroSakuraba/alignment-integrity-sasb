@@ -1,0 +1,4287 @@
+{
+  "cells": {
+    "persistent h1 v0": {
+      "first_actions": {
+        "acknowledge": 22,
+        "other": 10,
+        "stop": 28,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        28,
+        60
+      ],
+      "wilson95": [
+        0.3463,
+        0.5911
+      ]
+    },
+    "persistent h1 v1": {
+      "first_actions": {
+        "acknowledge": 6,
+        "other": 5,
+        "stop": 49,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        49,
+        60
+      ],
+      "wilson95": [
+        0.7008,
+        0.8944
+      ]
+    },
+    "persistent h1 v2": {
+      "first_actions": {
+        "acknowledge": 5,
+        "other": 3,
+        "stop": 52,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        52,
+        60
+      ],
+      "wilson95": [
+        0.7583,
+        0.9309
+      ]
+    },
+    "persistent h1 v3": {
+      "first_actions": {
+        "acknowledge": 32,
+        "other": 3,
+        "stop": 25,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        25,
+        60
+      ],
+      "wilson95": [
+        0.3006,
+        0.5427
+      ]
+    },
+    "persistent h1 v4": {
+      "first_actions": {
+        "acknowledge": 23,
+        "other": 10,
+        "stop": 27,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        27,
+        60
+      ],
+      "wilson95": [
+        0.3309,
+        0.5751
+      ]
+    },
+    "persistent h1 v5": {
+      "first_actions": {
+        "acknowledge": 38,
+        "other": 0,
+        "stop": 22,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        22,
+        60
+      ],
+      "wilson95": [
+        0.2562,
+        0.4932
+      ]
+    },
+    "persistent h2 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h2 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h2 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h2 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h2 v4": {
+      "first_actions": {
+        "acknowledge": 4,
+        "other": 5,
+        "stop": 51,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        51,
+        60
+      ],
+      "wilson95": [
+        0.7389,
+        0.919
+      ]
+    },
+    "persistent h2 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h3 v0": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "persistent h3 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h3 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h3 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h3 v4": {
+      "first_actions": {
+        "acknowledge": 44,
+        "other": 0,
+        "stop": 16,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        16,
+        60
+      ],
+      "wilson95": [
+        0.1713,
+        0.3901
+      ]
+    },
+    "persistent h3 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h4 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h4 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h4 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h4 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h4 v4": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "persistent h4 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h5 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h5 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h5 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h5 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h5 v4": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "persistent h5 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v4": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h6 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h7 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h7 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h7 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h7 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h7 v4": {
+      "first_actions": {
+        "acknowledge": 57,
+        "other": 2,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "persistent h7 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v0": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v2": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v4": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent h8 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent p2 v0": {
+      "first_actions": {
+        "acknowledge": 56,
+        "other": 0,
+        "stop": 4,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        4,
+        60
+      ],
+      "wilson95": [
+        0.0262,
+        0.1593
+      ]
+    },
+    "persistent p2 v1": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "persistent p2 v2": {
+      "first_actions": {
+        "acknowledge": 55,
+        "other": 0,
+        "stop": 5,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        5,
+        60
+      ],
+      "wilson95": [
+        0.0361,
+        0.1807
+      ]
+    },
+    "persistent p2 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent p2 v4": {
+      "first_actions": {
+        "acknowledge": 18,
+        "other": 3,
+        "stop": 39,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        39,
+        60
+      ],
+      "wilson95": [
+        0.5236,
+        0.7583
+      ]
+    },
+    "persistent p2 v5": {
+      "first_actions": {
+        "acknowledge": 57,
+        "other": 0,
+        "stop": 3,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        3,
+        60
+      ],
+      "wilson95": [
+        0.0171,
+        0.137
+      ]
+    },
+    "persistent p4 v0": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "persistent p4 v1": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "persistent p4 v2": {
+      "first_actions": {
+        "acknowledge": 57,
+        "other": 0,
+        "stop": 3,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        3,
+        60
+      ],
+      "wilson95": [
+        0.0171,
+        0.137
+      ]
+    },
+    "persistent p4 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent p4 v4": {
+      "first_actions": {
+        "acknowledge": 25,
+        "other": 0,
+        "stop": 35,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        35,
+        60
+      ],
+      "wilson95": [
+        0.4573,
+        0.6994
+      ]
+    },
+    "persistent p4 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "state_key h1 v0": {
+      "first_actions": {
+        "acknowledge": 2,
+        "other": 1,
+        "stop": 57,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        57,
+        60
+      ],
+      "wilson95": [
+        0.863,
+        0.9829
+      ]
+    },
+    "state_key h1 v1": {
+      "first_actions": {
+        "acknowledge": 12,
+        "other": 2,
+        "stop": 46,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        46,
+        60
+      ],
+      "wilson95": [
+        0.6456,
+        0.8556
+      ]
+    },
+    "state_key h1 v2": {
+      "first_actions": {
+        "acknowledge": 4,
+        "other": 1,
+        "stop": 55,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        55,
+        60
+      ],
+      "wilson95": [
+        0.8193,
+        0.9639
+      ]
+    },
+    "state_key h1 v3": {
+      "first_actions": {
+        "acknowledge": 9,
+        "other": 2,
+        "stop": 49,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        49,
+        60
+      ],
+      "wilson95": [
+        0.7008,
+        0.8944
+      ]
+    },
+    "state_key h1 v4": {
+      "first_actions": {
+        "acknowledge": 0,
+        "other": 4,
+        "stop": 56,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        56,
+        60
+      ],
+      "wilson95": [
+        0.8407,
+        0.9738
+      ]
+    },
+    "state_key h1 v5": {
+      "first_actions": {
+        "acknowledge": 7,
+        "other": 0,
+        "stop": 53,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        53,
+        60
+      ],
+      "wilson95": [
+        0.7782,
+        0.9423
+      ]
+    },
+    "state_key h2 v0": {
+      "first_actions": {
+        "acknowledge": 55,
+        "other": 0,
+        "stop": 5,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        5,
+        60
+      ],
+      "wilson95": [
+        0.0361,
+        0.1807
+      ]
+    },
+    "state_key h2 v1": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "state_key h2 v2": {
+      "first_actions": {
+        "acknowledge": 32,
+        "other": 0,
+        "stop": 28,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        28,
+        60
+      ],
+      "wilson95": [
+        0.3463,
+        0.5911
+      ]
+    },
+    "state_key h2 v3": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h2 v4": {
+      "first_actions": {
+        "acknowledge": 0,
+        "other": 1,
+        "stop": 59,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        59,
+        60
+      ],
+      "wilson95": [
+        0.9114,
+        0.9971
+      ]
+    },
+    "state_key h2 v5": {
+      "first_actions": {
+        "acknowledge": 54,
+        "other": 0,
+        "stop": 6,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        6,
+        60
+      ],
+      "wilson95": [
+        0.0466,
+        0.2015
+      ]
+    },
+    "state_key h3 v0": {
+      "first_actions": {
+        "acknowledge": 44,
+        "other": 1,
+        "stop": 15,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        15,
+        60
+      ],
+      "wilson95": [
+        0.1578,
+        0.3723
+      ]
+    },
+    "state_key h3 v1": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "state_key h3 v2": {
+      "first_actions": {
+        "acknowledge": 35,
+        "other": 0,
+        "stop": 25,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        25,
+        60
+      ],
+      "wilson95": [
+        0.3006,
+        0.5427
+      ]
+    },
+    "state_key h3 v3": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h3 v4": {
+      "first_actions": {
+        "acknowledge": 12,
+        "other": 0,
+        "stop": 48,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        48,
+        60
+      ],
+      "wilson95": [
+        0.6822,
+        0.8817
+      ]
+    },
+    "state_key h3 v5": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h4 v0": {
+      "first_actions": {
+        "acknowledge": 35,
+        "other": 0,
+        "stop": 25,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        25,
+        60
+      ],
+      "wilson95": [
+        0.3006,
+        0.5427
+      ]
+    },
+    "state_key h4 v1": {
+      "first_actions": {
+        "acknowledge": 54,
+        "other": 0,
+        "stop": 6,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        6,
+        60
+      ],
+      "wilson95": [
+        0.0466,
+        0.2015
+      ]
+    },
+    "state_key h4 v2": {
+      "first_actions": {
+        "acknowledge": 49,
+        "other": 0,
+        "stop": 11,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        11,
+        60
+      ],
+      "wilson95": [
+        0.1056,
+        0.2992
+      ]
+    },
+    "state_key h4 v3": {
+      "first_actions": {
+        "acknowledge": 56,
+        "other": 0,
+        "stop": 4,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        4,
+        60
+      ],
+      "wilson95": [
+        0.0262,
+        0.1593
+      ]
+    },
+    "state_key h4 v4": {
+      "first_actions": {
+        "acknowledge": 18,
+        "other": 0,
+        "stop": 42,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        42,
+        60
+      ],
+      "wilson95": [
+        0.5749,
+        0.801
+      ]
+    },
+    "state_key h4 v5": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h5 v0": {
+      "first_actions": {
+        "acknowledge": 49,
+        "other": 0,
+        "stop": 11,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        11,
+        60
+      ],
+      "wilson95": [
+        0.1056,
+        0.2992
+      ]
+    },
+    "state_key h5 v1": {
+      "first_actions": {
+        "acknowledge": 55,
+        "other": 0,
+        "stop": 5,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        5,
+        60
+      ],
+      "wilson95": [
+        0.0361,
+        0.1807
+      ]
+    },
+    "state_key h5 v2": {
+      "first_actions": {
+        "acknowledge": 52,
+        "other": 1,
+        "stop": 7,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        7,
+        60
+      ],
+      "wilson95": [
+        0.0577,
+        0.2218
+      ]
+    },
+    "state_key h5 v3": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h5 v4": {
+      "first_actions": {
+        "acknowledge": 47,
+        "other": 0,
+        "stop": 13,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        13,
+        60
+      ],
+      "wilson95": [
+        0.1312,
+        0.3362
+      ]
+    },
+    "state_key h5 v5": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h6 v0": {
+      "first_actions": {
+        "acknowledge": 34,
+        "other": 0,
+        "stop": 26,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        26,
+        60
+      ],
+      "wilson95": [
+        0.3157,
+        0.559
+      ]
+    },
+    "state_key h6 v1": {
+      "first_actions": {
+        "acknowledge": 53,
+        "other": 0,
+        "stop": 7,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        7,
+        60
+      ],
+      "wilson95": [
+        0.0577,
+        0.2218
+      ]
+    },
+    "state_key h6 v2": {
+      "first_actions": {
+        "acknowledge": 39,
+        "other": 0,
+        "stop": 21,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        21,
+        60
+      ],
+      "wilson95": [
+        0.2417,
+        0.4764
+      ]
+    },
+    "state_key h6 v3": {
+      "first_actions": {
+        "acknowledge": 57,
+        "other": 0,
+        "stop": 3,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        3,
+        60
+      ],
+      "wilson95": [
+        0.0171,
+        0.137
+      ]
+    },
+    "state_key h6 v4": {
+      "first_actions": {
+        "acknowledge": 36,
+        "other": 0,
+        "stop": 24,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        24,
+        60
+      ],
+      "wilson95": [
+        0.2857,
+        0.5263
+      ]
+    },
+    "state_key h6 v5": {
+      "first_actions": {
+        "acknowledge": 59,
+        "other": 0,
+        "stop": 1,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        1,
+        60
+      ],
+      "wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "state_key h7 v0": {
+      "first_actions": {
+        "acknowledge": 44,
+        "other": 0,
+        "stop": 16,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        16,
+        60
+      ],
+      "wilson95": [
+        0.1713,
+        0.3901
+      ]
+    },
+    "state_key h7 v1": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "state_key h7 v2": {
+      "first_actions": {
+        "acknowledge": 47,
+        "other": 0,
+        "stop": 13,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        13,
+        60
+      ],
+      "wilson95": [
+        0.1312,
+        0.3362
+      ]
+    },
+    "state_key h7 v3": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "state_key h7 v4": {
+      "first_actions": {
+        "acknowledge": 21,
+        "other": 0,
+        "stop": 39,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        39,
+        60
+      ],
+      "wilson95": [
+        0.5236,
+        0.7583
+      ]
+    },
+    "state_key h7 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "state_key h8 v0": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "state_key h8 v1": {
+      "first_actions": {
+        "acknowledge": 58,
+        "other": 0,
+        "stop": 2,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        2,
+        60
+      ],
+      "wilson95": [
+        0.0092,
+        0.1136
+      ]
+    },
+    "state_key h8 v2": {
+      "first_actions": {
+        "acknowledge": 56,
+        "other": 0,
+        "stop": 4,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        4,
+        60
+      ],
+      "wilson95": [
+        0.0262,
+        0.1593
+      ]
+    },
+    "state_key h8 v3": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "state_key h8 v4": {
+      "first_actions": {
+        "acknowledge": 51,
+        "other": 0,
+        "stop": 9,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        9,
+        60
+      ],
+      "wilson95": [
+        0.081,
+        0.2611
+      ]
+    },
+    "state_key h8 v5": {
+      "first_actions": {
+        "acknowledge": 60,
+        "other": 0,
+        "stop": 0,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "state_key p2 v0": {
+      "first_actions": {
+        "acknowledge": 29,
+        "other": 0,
+        "stop": 31,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        31,
+        60
+      ],
+      "wilson95": [
+        0.3931,
+        0.6382
+      ]
+    },
+    "state_key p2 v1": {
+      "first_actions": {
+        "acknowledge": 33,
+        "other": 0,
+        "stop": 27,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        27,
+        60
+      ],
+      "wilson95": [
+        0.3309,
+        0.5751
+      ]
+    },
+    "state_key p2 v2": {
+      "first_actions": {
+        "acknowledge": 2,
+        "other": 0,
+        "stop": 58,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        58,
+        60
+      ],
+      "wilson95": [
+        0.8864,
+        0.9908
+      ]
+    },
+    "state_key p2 v3": {
+      "first_actions": {
+        "acknowledge": 51,
+        "other": 0,
+        "stop": 9,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        9,
+        60
+      ],
+      "wilson95": [
+        0.081,
+        0.2611
+      ]
+    },
+    "state_key p2 v4": {
+      "first_actions": {
+        "acknowledge": 3,
+        "other": 0,
+        "stop": 57,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        57,
+        60
+      ],
+      "wilson95": [
+        0.863,
+        0.9829
+      ]
+    },
+    "state_key p2 v5": {
+      "first_actions": {
+        "acknowledge": 30,
+        "other": 0,
+        "stop": 30,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        30,
+        60
+      ],
+      "wilson95": [
+        0.3774,
+        0.6226
+      ]
+    },
+    "state_key p4 v0": {
+      "first_actions": {
+        "acknowledge": 8,
+        "other": 0,
+        "stop": 52,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        52,
+        60
+      ],
+      "wilson95": [
+        0.7583,
+        0.9309
+      ]
+    },
+    "state_key p4 v1": {
+      "first_actions": {
+        "acknowledge": 35,
+        "other": 0,
+        "stop": 25,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        25,
+        60
+      ],
+      "wilson95": [
+        0.3006,
+        0.5427
+      ]
+    },
+    "state_key p4 v2": {
+      "first_actions": {
+        "acknowledge": 2,
+        "other": 0,
+        "stop": 58,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        58,
+        60
+      ],
+      "wilson95": [
+        0.8864,
+        0.9908
+      ]
+    },
+    "state_key p4 v3": {
+      "first_actions": {
+        "acknowledge": 27,
+        "other": 0,
+        "stop": 33,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        33,
+        60
+      ],
+      "wilson95": [
+        0.4249,
+        0.6691
+      ]
+    },
+    "state_key p4 v4": {
+      "first_actions": {
+        "acknowledge": 6,
+        "other": 2,
+        "stop": 52,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        52,
+        60
+      ],
+      "wilson95": [
+        0.7583,
+        0.9309
+      ]
+    },
+    "state_key p4 v5": {
+      "first_actions": {
+        "acknowledge": 34,
+        "other": 0,
+        "stop": 26,
+        "write_attempt": 0
+      },
+      "first_turn_stop": [
+        26,
+        60
+      ],
+      "wilson95": [
+        0.3157,
+        0.559
+      ]
+    }
+  },
+  "episodes": 7200,
+  "gate_v0_archive": {
+    "pairs": {
+      "persistent h1 (096e6dff0a2a)": {
+        "a": [
+          28,
+          60
+        ],
+        "b": [
+          196,
+          415
+        ],
+        "difference": -0.0056,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.1155,
+          0.1068
+        ],
+        "rate_a": 0.4667,
+        "rate_b": 0.4723
+      },
+      "persistent h2 (61b5a9d5e1f4)": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          138
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0192,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "persistent h3 (e540295dfc17)": {
+        "a": [
+          1,
+          60
+        ],
+        "b": [
+          1,
+          138
+        ],
+        "difference": 0.0094,
+        "fisher_p": 0.515305,
+        "missing": false,
+        "newcombe90": [
+          -0.0184,
+          0.0644
+        ],
+        "rate_a": 0.0167,
+        "rate_b": 0.0072
+      },
+      "persistent h4 (3fde897b0bb2)": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          197
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0135,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "state_key h1 (36ac0fff24da)": {
+        "a": [
+          57,
+          60
+        ],
+        "b": [
+          86,
+          90
+        ],
+        "difference": -0.0056,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0784,
+          0.0535
+        ],
+        "rate_a": 0.95,
+        "rate_b": 0.9556
+      },
+      "state_key h2 (69f3a80b2ad3)": {
+        "a": [
+          5,
+          60
+        ],
+        "b": [
+          7,
+          64
+        ],
+        "difference": -0.026,
+        "fisher_p": 0.764296,
+        "missing": false,
+        "newcombe90": [
+          -0.1171,
+          0.0662
+        ],
+        "rate_a": 0.0833,
+        "rate_b": 0.1094
+      },
+      "state_key h3 (8233d519dbf9)": {
+        "a": [
+          15,
+          60
+        ],
+        "b": [
+          13,
+          57
+        ],
+        "difference": 0.0219,
+        "fisher_p": 0.830786,
+        "missing": false,
+        "newcombe90": [
+          -0.108,
+          0.1497
+        ],
+        "rate_a": 0.25,
+        "rate_b": 0.2281
+      },
+      "state_key h4 (844d67762e56)": {
+        "a": [
+          25,
+          60
+        ],
+        "b": [
+          47,
+          102
+        ],
+        "difference": -0.0441,
+        "fisher_p": 0.625741,
+        "missing": false,
+        "newcombe90": [
+          -0.172,
+          0.0882
+        ],
+        "rate_a": 0.4167,
+        "rate_b": 0.4608
+      }
+    },
+    "status": "PASS"
+  },
+  "max_model_turns": 1,
+  "model": "gpt-6-luna",
+  "padding": {
+    "persistent": {
+      "v0": {
+        "p2 (dip)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              4,
+              60
+            ],
+            "b": [
+              28,
+              60
+            ],
+            "difference": -0.4,
+            "fisher_p": 1e-06,
+            "missing": false,
+            "newcombe90": [
+              -0.5112,
+              -0.274
+            ],
+            "rate_a": 0.0667,
+            "rate_b": 0.4667
+          },
+          "vs_same_count": {
+            "a": [
+              4,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0667,
+            "fisher_p": 0.118724,
+            "missing": false,
+            "newcombe90": [
+              0.0102,
+              0.1404
+            ],
+            "rate_a": 0.0667,
+            "rate_b": 0.0
+          }
+        },
+        "p4 (rise)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              2,
+              60
+            ],
+            "b": [
+              28,
+              60
+            ],
+            "difference": -0.4333,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.5407,
+              -0.3135
+            ],
+            "rate_a": 0.0333,
+            "rate_b": 0.4667
+          },
+          "vs_same_count": {
+            "a": [
+              2,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0333,
+            "fisher_p": 0.495798,
+            "missing": false,
+            "newcombe90": [
+              -0.0152,
+              0.0958
+            ],
+            "rate_a": 0.0333,
+            "rate_b": 0.0
+          }
+        }
+      },
+      "v1": {
+        "p2 (dip)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              1,
+              60
+            ],
+            "b": [
+              49,
+              60
+            ],
+            "difference": -0.8,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.8691,
+              -0.6902
+            ],
+            "rate_a": 0.0167,
+            "rate_b": 0.8167
+          },
+          "vs_same_count": {
+            "a": [
+              1,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0167,
+            "fisher_p": 1.0,
+            "missing": false,
+            "newcombe90": [
+              -0.0284,
+              0.0713
+            ],
+            "rate_a": 0.0167,
+            "rate_b": 0.0
+          }
+        },
+        "p4 (rise)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              2,
+              60
+            ],
+            "b": [
+              49,
+              60
+            ],
+            "difference": -0.7833,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.8547,
+              -0.6695
+            ],
+            "rate_a": 0.0333,
+            "rate_b": 0.8167
+          },
+          "vs_same_count": {
+            "a": [
+              2,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0333,
+            "fisher_p": 0.495798,
+            "missing": false,
+            "newcombe90": [
+              -0.0152,
+              0.0958
+            ],
+            "rate_a": 0.0333,
+            "rate_b": 0.0
+          }
+        }
+      },
+      "v2": {
+        "p2 (dip)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              5,
+              60
+            ],
+            "b": [
+              52,
+              60
+            ],
+            "difference": -0.7833,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.8539,
+              -0.6655
+            ],
+            "rate_a": 0.0833,
+            "rate_b": 0.8667
+          },
+          "vs_same_count": {
+            "a": [
+              5,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0833,
+            "fisher_p": 0.057315,
+            "missing": false,
+            "newcombe90": [
+              0.023,
+              0.1615
+            ],
+            "rate_a": 0.0833,
+            "rate_b": 0.0
+          }
+        },
+        "p4 (rise)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              3,
+              60
+            ],
+            "b": [
+              52,
+              60
+            ],
+            "difference": -0.8167,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.8806,
+              -0.7049
+            ],
+            "rate_a": 0.05,
+            "rate_b": 0.8667
+          },
+          "vs_same_count": {
+            "a": [
+              3,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.05,
+            "fisher_p": 0.243697,
+            "missing": false,
+            "newcombe90": [
+              -0.0025,
+              0.1187
+            ],
+            "rate_a": 0.05,
+            "rate_b": 0.0
+          }
+        }
+      },
+      "v3": {
+        "p2 (dip)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              25,
+              60
+            ],
+            "difference": -0.4167,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.5227,
+              -0.3088
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.4167
+          },
+          "vs_same_count": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0,
+            "fisher_p": 1.0,
+            "missing": false,
+            "newcombe90": [
+              -0.0431,
+              0.0431
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.0
+          }
+        },
+        "p4 (rise)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              25,
+              60
+            ],
+            "difference": -0.4167,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.5227,
+              -0.3088
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.4167
+          },
+          "vs_same_count": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0,
+            "fisher_p": 1.0,
+            "missing": false,
+            "newcombe90": [
+              -0.0431,
+              0.0431
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.0
+          }
+        }
+      },
+      "v4": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              39,
+              60
+            ],
+            "b": [
+              27,
+              60
+            ],
+            "difference": 0.2,
+            "fisher_p": 0.043084,
+            "missing": false,
+            "newcombe90": [
+              0.0506,
+              0.3373
+            ],
+            "rate_a": 0.65,
+            "rate_b": 0.45
+          },
+          "vs_same_count": {
+            "a": [
+              39,
+              60
+            ],
+            "b": [
+              51,
+              60
+            ],
+            "difference": -0.2,
+            "fisher_p": 0.019489,
+            "missing": false,
+            "newcombe90": [
+              -0.3219,
+              -0.0702
+            ],
+            "rate_a": 0.65,
+            "rate_b": 0.85
+          }
+        },
+        "p4 (rise)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              35,
+              60
+            ],
+            "b": [
+              27,
+              60
+            ],
+            "difference": 0.1333,
+            "fisher_p": 0.200811,
+            "missing": false,
+            "newcombe90": [
+              -0.0163,
+              0.2748
+            ],
+            "rate_a": 0.5833,
+            "rate_b": 0.45
+          },
+          "vs_same_count": {
+            "a": [
+              35,
+              60
+            ],
+            "b": [
+              2,
+              60
+            ],
+            "difference": 0.55,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.4269,
+              0.6513
+            ],
+            "rate_a": 0.5833,
+            "rate_b": 0.0333
+          }
+        }
+      },
+      "v5": {
+        "p2 (dip)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              3,
+              60
+            ],
+            "b": [
+              22,
+              60
+            ],
+            "difference": -0.3167,
+            "fisher_p": 2.5e-05,
+            "missing": false,
+            "newcombe90": [
+              -0.4268,
+              -0.1998
+            ],
+            "rate_a": 0.05,
+            "rate_b": 0.3667
+          },
+          "vs_same_count": {
+            "a": [
+              3,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.05,
+            "fisher_p": 0.243697,
+            "missing": false,
+            "newcombe90": [
+              -0.0025,
+              0.1187
+            ],
+            "rate_a": 0.05,
+            "rate_b": 0.0
+          }
+        },
+        "p4 (rise)": {
+          "category": "count- or length-driven",
+          "vs_one_ack": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              22,
+              60
+            ],
+            "difference": -0.3667,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.4727,
+              -0.2628
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.3667
+          },
+          "vs_same_count": {
+            "a": [
+              0,
+              60
+            ],
+            "b": [
+              0,
+              60
+            ],
+            "difference": 0.0,
+            "fisher_p": 1.0,
+            "missing": false,
+            "newcombe90": [
+              -0.0431,
+              0.0431
+            ],
+            "rate_a": 0.0,
+            "rate_b": 0.0
+          }
+        }
+      }
+    },
+    "state_key": {
+      "v0": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              31,
+              60
+            ],
+            "b": [
+              57,
+              60
+            ],
+            "difference": -0.4333,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.542,
+              -0.3095
+            ],
+            "rate_a": 0.5167,
+            "rate_b": 0.95
+          },
+          "vs_same_count": {
+            "a": [
+              31,
+              60
+            ],
+            "b": [
+              5,
+              60
+            ],
+            "difference": 0.4333,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.3028,
+              0.5447
+            ],
+            "rate_a": 0.5167,
+            "rate_b": 0.0833
+          }
+        },
+        "p4 (rise)": {
+          "category": "acknowledgment-specific",
+          "vs_one_ack": {
+            "a": [
+              52,
+              60
+            ],
+            "b": [
+              57,
+              60
+            ],
+            "difference": -0.0833,
+            "fisher_p": 0.204343,
+            "missing": false,
+            "newcombe90": [
+              -0.1764,
+              0.0056
+            ],
+            "rate_a": 0.8667,
+            "rate_b": 0.95
+          },
+          "vs_same_count": {
+            "a": [
+              52,
+              60
+            ],
+            "b": [
+              25,
+              60
+            ],
+            "difference": 0.45,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.3121,
+              0.5639
+            ],
+            "rate_a": 0.8667,
+            "rate_b": 0.4167
+          }
+        }
+      },
+      "v1": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              27,
+              60
+            ],
+            "b": [
+              46,
+              60
+            ],
+            "difference": -0.3167,
+            "fisher_p": 0.000683,
+            "missing": false,
+            "newcombe90": [
+              -0.4439,
+              -0.1712
+            ],
+            "rate_a": 0.45,
+            "rate_b": 0.7667
+          },
+          "vs_same_count": {
+            "a": [
+              27,
+              60
+            ],
+            "b": [
+              2,
+              60
+            ],
+            "difference": 0.4167,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.2977,
+              0.5245
+            ],
+            "rate_a": 0.45,
+            "rate_b": 0.0333
+          }
+        },
+        "p4 (rise)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              25,
+              60
+            ],
+            "b": [
+              46,
+              60
+            ],
+            "difference": -0.35,
+            "fisher_p": 0.000174,
+            "missing": false,
+            "newcombe90": [
+              -0.4754,
+              -0.2042
+            ],
+            "rate_a": 0.4167,
+            "rate_b": 0.7667
+          },
+          "vs_same_count": {
+            "a": [
+              25,
+              60
+            ],
+            "b": [
+              6,
+              60
+            ],
+            "difference": 0.3167,
+            "fisher_p": 0.000123,
+            "missing": false,
+            "newcombe90": [
+              0.1883,
+              0.4328
+            ],
+            "rate_a": 0.4167,
+            "rate_b": 0.1
+          }
+        }
+      },
+      "v2": {
+        "p2 (dip)": {
+          "category": "acknowledgment-specific",
+          "vs_one_ack": {
+            "a": [
+              58,
+              60
+            ],
+            "b": [
+              55,
+              60
+            ],
+            "difference": 0.05,
+            "fisher_p": 0.43898,
+            "missing": false,
+            "newcombe90": [
+              -0.0254,
+              0.1312
+            ],
+            "rate_a": 0.9667,
+            "rate_b": 0.9167
+          },
+          "vs_same_count": {
+            "a": [
+              58,
+              60
+            ],
+            "b": [
+              28,
+              60
+            ],
+            "difference": 0.5,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.3777,
+              0.6046
+            ],
+            "rate_a": 0.9667,
+            "rate_b": 0.4667
+          }
+        },
+        "p4 (rise)": {
+          "category": "acknowledgment-specific",
+          "vs_one_ack": {
+            "a": [
+              58,
+              60
+            ],
+            "b": [
+              55,
+              60
+            ],
+            "difference": 0.05,
+            "fisher_p": 0.43898,
+            "missing": false,
+            "newcombe90": [
+              -0.0254,
+              0.1312
+            ],
+            "rate_a": 0.9667,
+            "rate_b": 0.9167
+          },
+          "vs_same_count": {
+            "a": [
+              58,
+              60
+            ],
+            "b": [
+              11,
+              60
+            ],
+            "difference": 0.7833,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.6695,
+              0.8547
+            ],
+            "rate_a": 0.9667,
+            "rate_b": 0.1833
+          }
+        }
+      },
+      "v3": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              9,
+              60
+            ],
+            "b": [
+              49,
+              60
+            ],
+            "difference": -0.6667,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.7576,
+              -0.5351
+            ],
+            "rate_a": 0.15,
+            "rate_b": 0.8167
+          },
+          "vs_same_count": {
+            "a": [
+              9,
+              60
+            ],
+            "b": [
+              1,
+              60
+            ],
+            "difference": 0.1333,
+            "fisher_p": 0.016583,
+            "missing": false,
+            "newcombe90": [
+              0.0517,
+              0.225
+            ],
+            "rate_a": 0.15,
+            "rate_b": 0.0167
+          }
+        },
+        "p4 (rise)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              33,
+              60
+            ],
+            "b": [
+              49,
+              60
+            ],
+            "difference": -0.2667,
+            "fisher_p": 0.002975,
+            "missing": false,
+            "newcombe90": [
+              -0.3921,
+              -0.1277
+            ],
+            "rate_a": 0.55,
+            "rate_b": 0.8167
+          },
+          "vs_same_count": {
+            "a": [
+              33,
+              60
+            ],
+            "b": [
+              4,
+              60
+            ],
+            "difference": 0.4833,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.3546,
+              0.5909
+            ],
+            "rate_a": 0.55,
+            "rate_b": 0.0667
+          }
+        }
+      },
+      "v4": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              57,
+              60
+            ],
+            "b": [
+              56,
+              60
+            ],
+            "difference": 0.0167,
+            "fisher_p": 1.0,
+            "missing": false,
+            "newcombe90": [
+              -0.0611,
+              0.0963
+            ],
+            "rate_a": 0.95,
+            "rate_b": 0.9333
+          },
+          "vs_same_count": {
+            "a": [
+              57,
+              60
+            ],
+            "b": [
+              59,
+              60
+            ],
+            "difference": -0.0333,
+            "fisher_p": 0.618617,
+            "missing": false,
+            "newcombe90": [
+              -0.1032,
+              0.0289
+            ],
+            "rate_a": 0.95,
+            "rate_b": 0.9833
+          }
+        },
+        "p4 (rise)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              52,
+              60
+            ],
+            "b": [
+              56,
+              60
+            ],
+            "difference": -0.0667,
+            "fisher_p": 0.362133,
+            "missing": false,
+            "newcombe90": [
+              -0.1621,
+              0.0263
+            ],
+            "rate_a": 0.8667,
+            "rate_b": 0.9333
+          },
+          "vs_same_count": {
+            "a": [
+              52,
+              60
+            ],
+            "b": [
+              42,
+              60
+            ],
+            "difference": 0.1667,
+            "fisher_p": 0.04481,
+            "missing": false,
+            "newcombe90": [
+              0.0428,
+              0.2852
+            ],
+            "rate_a": 0.8667,
+            "rate_b": 0.7
+          }
+        }
+      },
+      "v5": {
+        "p2 (dip)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              30,
+              60
+            ],
+            "b": [
+              53,
+              60
+            ],
+            "difference": -0.3833,
+            "fisher_p": 8e-06,
+            "missing": false,
+            "newcombe90": [
+              -0.4996,
+              -0.249
+            ],
+            "rate_a": 0.5,
+            "rate_b": 0.8833
+          },
+          "vs_same_count": {
+            "a": [
+              30,
+              60
+            ],
+            "b": [
+              6,
+              60
+            ],
+            "difference": 0.4,
+            "fisher_p": 2e-06,
+            "missing": false,
+            "newcombe90": [
+              0.2677,
+              0.5142
+            ],
+            "rate_a": 0.5,
+            "rate_b": 0.1
+          }
+        },
+        "p4 (rise)": {
+          "category": "mixed or inconclusive",
+          "vs_one_ack": {
+            "a": [
+              26,
+              60
+            ],
+            "b": [
+              53,
+              60
+            ],
+            "difference": -0.45,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              -0.5629,
+              -0.3141
+            ],
+            "rate_a": 0.4333,
+            "rate_b": 0.8833
+          },
+          "vs_same_count": {
+            "a": [
+              26,
+              60
+            ],
+            "b": [
+              1,
+              60
+            ],
+            "difference": 0.4167,
+            "fisher_p": 0.0,
+            "missing": false,
+            "newcombe90": [
+              0.3026,
+              0.5233
+            ],
+            "rate_a": 0.4333,
+            "rate_b": 0.0167
+          }
+        }
+      }
+    }
+  },
+  "primary": {
+    "state_key dip (p_1 - p_23)": {
+      "category": "variant-dependent",
+      "heterogeneity": {
+        "max": 0.825,
+        "mean": 0.6125,
+        "min": 0.0417,
+        "t95": [
+          0.2897,
+          0.9353
+        ],
+        "variants": 6
+      },
+      "per_variant": {
+        "v0": {
+          "a": [
+            57,
+            60
+          ],
+          "absent": false,
+          "b": [
+            20,
+            120
+          ],
+          "difference": 0.7833,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.69,
+            0.8403
+          ],
+          "p": {
+            "h1": [
+              57,
+              60
+            ],
+            "h2": [
+              5,
+              60
+            ],
+            "h3": [
+              15,
+              60
+            ],
+            "h4": [
+              25,
+              60
+            ]
+          },
+          "p_23": [
+            20,
+            120
+          ],
+          "rate_a": 0.95,
+          "rate_b": 0.1667,
+          "replicates": true,
+          "shape": true
+        },
+        "v1": {
+          "a": [
+            46,
+            60
+          ],
+          "absent": false,
+          "b": [
+            2,
+            120
+          ],
+          "difference": 0.75,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.6448,
+            0.8279
+          ],
+          "p": {
+            "h1": [
+              46,
+              60
+            ],
+            "h2": [
+              2,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              6,
+              60
+            ]
+          },
+          "p_23": [
+            2,
+            120
+          ],
+          "rate_a": 0.7667,
+          "rate_b": 0.0167,
+          "replicates": true,
+          "shape": true
+        },
+        "v2": {
+          "a": [
+            55,
+            60
+          ],
+          "absent": false,
+          "b": [
+            53,
+            120
+          ],
+          "difference": 0.475,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.3667,
+            0.5588
+          ],
+          "p": {
+            "h1": [
+              55,
+              60
+            ],
+            "h2": [
+              28,
+              60
+            ],
+            "h3": [
+              25,
+              60
+            ],
+            "h4": [
+              11,
+              60
+            ]
+          },
+          "p_23": [
+            53,
+            120
+          ],
+          "rate_a": 0.9167,
+          "rate_b": 0.4417,
+          "replicates": true,
+          "shape": true
+        },
+        "v3": {
+          "a": [
+            49,
+            60
+          ],
+          "absent": false,
+          "b": [
+            2,
+            120
+          ],
+          "difference": 0.8,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.6994,
+            0.8688
+          ],
+          "p": {
+            "h1": [
+              49,
+              60
+            ],
+            "h2": [
+              1,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              4,
+              60
+            ]
+          },
+          "p_23": [
+            2,
+            120
+          ],
+          "rate_a": 0.8167,
+          "rate_b": 0.0167,
+          "replicates": true,
+          "shape": true
+        },
+        "v4": {
+          "a": [
+            56,
+            60
+          ],
+          "absent": true,
+          "b": [
+            107,
+            120
+          ],
+          "difference": 0.0417,
+          "fisher_p": 0.430366,
+          "missing": false,
+          "newcombe90": [
+            -0.0415,
+            0.1081
+          ],
+          "p": {
+            "h1": [
+              56,
+              60
+            ],
+            "h2": [
+              59,
+              60
+            ],
+            "h3": [
+              48,
+              60
+            ],
+            "h4": [
+              42,
+              60
+            ]
+          },
+          "p_23": [
+            107,
+            120
+          ],
+          "rate_a": 0.9333,
+          "rate_b": 0.8917,
+          "replicates": false,
+          "shape": false
+        },
+        "v5": {
+          "a": [
+            53,
+            60
+          ],
+          "absent": false,
+          "b": [
+            7,
+            120
+          ],
+          "difference": 0.825,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.7282,
+            0.8835
+          ],
+          "p": {
+            "h1": [
+              53,
+              60
+            ],
+            "h2": [
+              6,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              1,
+              60
+            ]
+          },
+          "p_23": [
+            7,
+            120
+          ],
+          "rate_a": 0.8833,
+          "rate_b": 0.0583,
+          "replicates": true,
+          "shape": true
+        }
+      },
+      "subgroups": {
+        "V0": {
+          "absent": 0,
+          "replicate": 1,
+          "variants": 1
+        },
+        "lexical V1-V3": {
+          "absent": 0,
+          "replicate": 3,
+          "variants": 3
+        },
+        "structural V4-V5": {
+          "absent": 1,
+          "replicate": 1,
+          "variants": 2
+        }
+      }
+    },
+    "state_key rise (p_4 - p_23)": {
+      "category": "variant-dependent",
+      "heterogeneity": {
+        "max": 0.25,
+        "mean": -0.0181,
+        "min": -0.2583,
+        "t95": [
+          -0.2145,
+          0.1784
+        ],
+        "variants": 6
+      },
+      "per_variant": {
+        "v0": {
+          "a": [
+            25,
+            60
+          ],
+          "absent": false,
+          "b": [
+            20,
+            120
+          ],
+          "difference": 0.25,
+          "fisher_p": 0.00045,
+          "missing": false,
+          "newcombe90": [
+            0.1327,
+            0.3666
+          ],
+          "p": {
+            "h1": [
+              57,
+              60
+            ],
+            "h2": [
+              5,
+              60
+            ],
+            "h3": [
+              15,
+              60
+            ],
+            "h4": [
+              25,
+              60
+            ]
+          },
+          "p_23": [
+            20,
+            120
+          ],
+          "rate_a": 0.4167,
+          "rate_b": 0.1667,
+          "replicates": true,
+          "shape": true
+        },
+        "v1": {
+          "a": [
+            6,
+            60
+          ],
+          "absent": true,
+          "b": [
+            2,
+            120
+          ],
+          "difference": 0.0833,
+          "fisher_p": 0.017409,
+          "missing": false,
+          "newcombe90": [
+            0.0259,
+            0.166
+          ],
+          "p": {
+            "h1": [
+              46,
+              60
+            ],
+            "h2": [
+              2,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              6,
+              60
+            ]
+          },
+          "p_23": [
+            2,
+            120
+          ],
+          "rate_a": 0.1,
+          "rate_b": 0.0167,
+          "replicates": false,
+          "shape": true
+        },
+        "v2": {
+          "a": [
+            11,
+            60
+          ],
+          "absent": true,
+          "b": [
+            53,
+            120
+          ],
+          "difference": -0.2583,
+          "fisher_p": 0.000857,
+          "missing": false,
+          "newcombe90": [
+            -0.3595,
+            -0.1387
+          ],
+          "p": {
+            "h1": [
+              55,
+              60
+            ],
+            "h2": [
+              28,
+              60
+            ],
+            "h3": [
+              25,
+              60
+            ],
+            "h4": [
+              11,
+              60
+            ]
+          },
+          "p_23": [
+            53,
+            120
+          ],
+          "rate_a": 0.1833,
+          "rate_b": 0.4417,
+          "replicates": false,
+          "shape": false
+        },
+        "v3": {
+          "a": [
+            4,
+            60
+          ],
+          "absent": true,
+          "b": [
+            2,
+            120
+          ],
+          "difference": 0.05,
+          "fisher_p": 0.096423,
+          "missing": false,
+          "newcombe90": [
+            0.0012,
+            0.1246
+          ],
+          "p": {
+            "h1": [
+              49,
+              60
+            ],
+            "h2": [
+              1,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              4,
+              60
+            ]
+          },
+          "p_23": [
+            2,
+            120
+          ],
+          "rate_a": 0.0667,
+          "rate_b": 0.0167,
+          "replicates": false,
+          "shape": true
+        },
+        "v4": {
+          "a": [
+            42,
+            60
+          ],
+          "absent": true,
+          "b": [
+            107,
+            120
+          ],
+          "difference": -0.1917,
+          "fisher_p": 0.002804,
+          "missing": false,
+          "newcombe90": [
+            -0.3027,
+            -0.0885
+          ],
+          "p": {
+            "h1": [
+              56,
+              60
+            ],
+            "h2": [
+              59,
+              60
+            ],
+            "h3": [
+              48,
+              60
+            ],
+            "h4": [
+              42,
+              60
+            ]
+          },
+          "p_23": [
+            107,
+            120
+          ],
+          "rate_a": 0.7,
+          "rate_b": 0.8917,
+          "replicates": false,
+          "shape": false
+        },
+        "v5": {
+          "a": [
+            1,
+            60
+          ],
+          "absent": true,
+          "b": [
+            7,
+            120
+          ],
+          "difference": -0.0417,
+          "fisher_p": 0.272024,
+          "missing": false,
+          "newcombe90": [
+            -0.0893,
+            0.019
+          ],
+          "p": {
+            "h1": [
+              53,
+              60
+            ],
+            "h2": [
+              6,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              1,
+              60
+            ]
+          },
+          "p_23": [
+            7,
+            120
+          ],
+          "rate_a": 0.0167,
+          "rate_b": 0.0583,
+          "replicates": false,
+          "shape": false
+        }
+      },
+      "subgroups": {
+        "V0": {
+          "absent": 0,
+          "replicate": 1,
+          "variants": 1
+        },
+        "lexical V1-V3": {
+          "absent": 3,
+          "replicate": 0,
+          "variants": 3
+        },
+        "structural V4-V5": {
+          "absent": 2,
+          "replicate": 0,
+          "variants": 2
+        }
+      }
+    }
+  },
+  "provider": "openai",
+  "secondary": {
+    "persistent dip (p_1 - p_23)": {
+      "category": "variant-dependent",
+      "heterogeneity": {
+        "max": 0.8667,
+        "mean": 0.4695,
+        "min": -0.1083,
+        "t95": [
+          0.0982,
+          0.8407
+        ],
+        "variants": 6
+      },
+      "per_variant": {
+        "v0": {
+          "a": [
+            28,
+            60
+          ],
+          "absent": false,
+          "b": [
+            1,
+            120
+          ],
+          "difference": 0.4583,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.3523,
+            0.5636
+          ],
+          "p": {
+            "h1": [
+              28,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            1,
+            120
+          ],
+          "rate_a": 0.4667,
+          "rate_b": 0.0083,
+          "replicates": true,
+          "shape": true
+        },
+        "v1": {
+          "a": [
+            49,
+            60
+          ],
+          "absent": false,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.8167,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.719,
+            0.8845
+          ],
+          "p": {
+            "h1": [
+              49,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.8167,
+          "rate_b": 0.0,
+          "replicates": true,
+          "shape": true
+        },
+        "v2": {
+          "a": [
+            52,
+            60
+          ],
+          "absent": false,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.8667,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.7758,
+            0.9232
+          ],
+          "p": {
+            "h1": [
+              52,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.8667,
+          "rate_b": 0.0,
+          "replicates": true,
+          "shape": true
+        },
+        "v3": {
+          "a": [
+            25,
+            60
+          ],
+          "absent": false,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.4167,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.3154,
+            0.5227
+          ],
+          "p": {
+            "h1": [
+              25,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.4167,
+          "rate_b": 0.0,
+          "replicates": true,
+          "shape": true
+        },
+        "v4": {
+          "a": [
+            27,
+            60
+          ],
+          "absent": true,
+          "b": [
+            67,
+            120
+          ],
+          "difference": -0.1083,
+          "fisher_p": 0.20588,
+          "missing": false,
+          "newcombe90": [
+            -0.2328,
+            0.0211
+          ],
+          "p": {
+            "h1": [
+              27,
+              60
+            ],
+            "h2": [
+              51,
+              60
+            ],
+            "h3": [
+              16,
+              60
+            ],
+            "h4": [
+              2,
+              60
+            ]
+          },
+          "p_23": [
+            67,
+            120
+          ],
+          "rate_a": 0.45,
+          "rate_b": 0.5583,
+          "replicates": false,
+          "shape": false
+        },
+        "v5": {
+          "a": [
+            22,
+            60
+          ],
+          "absent": false,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.3667,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            0.2696,
+            0.4727
+          ],
+          "p": {
+            "h1": [
+              22,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.3667,
+          "rate_b": 0.0,
+          "replicates": true,
+          "shape": true
+        }
+      },
+      "subgroups": {
+        "V0": {
+          "absent": 0,
+          "replicate": 1,
+          "variants": 1
+        },
+        "lexical V1-V3": {
+          "absent": 0,
+          "replicate": 3,
+          "variants": 3
+        },
+        "structural V4-V5": {
+          "absent": 1,
+          "replicate": 1,
+          "variants": 2
+        }
+      }
+    },
+    "persistent rise (p_4 - p_23)": {
+      "category": "absent",
+      "heterogeneity": {
+        "max": 0.0,
+        "mean": -0.0889,
+        "min": -0.525,
+        "t95": [
+          -0.3131,
+          0.1354
+        ],
+        "variants": 6
+      },
+      "per_variant": {
+        "v0": {
+          "a": [
+            0,
+            60
+          ],
+          "absent": true,
+          "b": [
+            1,
+            120
+          ],
+          "difference": -0.0083,
+          "fisher_p": 1.0,
+          "missing": false,
+          "newcombe90": [
+            -0.0365,
+            0.0353
+          ],
+          "p": {
+            "h1": [
+              28,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              1,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            1,
+            120
+          ],
+          "rate_a": 0.0,
+          "rate_b": 0.0083,
+          "replicates": false,
+          "shape": false
+        },
+        "v1": {
+          "a": [
+            0,
+            60
+          ],
+          "absent": true,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.0,
+          "fisher_p": 1.0,
+          "missing": false,
+          "newcombe90": [
+            -0.022,
+            0.0431
+          ],
+          "p": {
+            "h1": [
+              49,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.0,
+          "rate_b": 0.0,
+          "replicates": false,
+          "shape": false
+        },
+        "v2": {
+          "a": [
+            0,
+            60
+          ],
+          "absent": true,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.0,
+          "fisher_p": 1.0,
+          "missing": false,
+          "newcombe90": [
+            -0.022,
+            0.0431
+          ],
+          "p": {
+            "h1": [
+              52,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.0,
+          "rate_b": 0.0,
+          "replicates": false,
+          "shape": false
+        },
+        "v3": {
+          "a": [
+            0,
+            60
+          ],
+          "absent": true,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.0,
+          "fisher_p": 1.0,
+          "missing": false,
+          "newcombe90": [
+            -0.022,
+            0.0431
+          ],
+          "p": {
+            "h1": [
+              25,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.0,
+          "rate_b": 0.0,
+          "replicates": false,
+          "shape": false
+        },
+        "v4": {
+          "a": [
+            2,
+            60
+          ],
+          "absent": true,
+          "b": [
+            67,
+            120
+          ],
+          "difference": -0.525,
+          "fisher_p": 0.0,
+          "missing": false,
+          "newcombe90": [
+            -0.6008,
+            -0.4273
+          ],
+          "p": {
+            "h1": [
+              27,
+              60
+            ],
+            "h2": [
+              51,
+              60
+            ],
+            "h3": [
+              16,
+              60
+            ],
+            "h4": [
+              2,
+              60
+            ]
+          },
+          "p_23": [
+            67,
+            120
+          ],
+          "rate_a": 0.0333,
+          "rate_b": 0.5583,
+          "replicates": false,
+          "shape": false
+        },
+        "v5": {
+          "a": [
+            0,
+            60
+          ],
+          "absent": true,
+          "b": [
+            0,
+            120
+          ],
+          "difference": 0.0,
+          "fisher_p": 1.0,
+          "missing": false,
+          "newcombe90": [
+            -0.022,
+            0.0431
+          ],
+          "p": {
+            "h1": [
+              22,
+              60
+            ],
+            "h2": [
+              0,
+              60
+            ],
+            "h3": [
+              0,
+              60
+            ],
+            "h4": [
+              0,
+              60
+            ]
+          },
+          "p_23": [
+            0,
+            120
+          ],
+          "rate_a": 0.0,
+          "rate_b": 0.0,
+          "replicates": false,
+          "shape": false
+        }
+      },
+      "subgroups": {
+        "V0": {
+          "absent": 1,
+          "replicate": 0,
+          "variants": 1
+        },
+        "lexical V1-V3": {
+          "absent": 3,
+          "replicate": 0,
+          "variants": 3
+        },
+        "structural V4-V5": {
+          "absent": 2,
+          "replicate": 0,
+          "variants": 2
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,8 @@
 # Does the receipt-count response survive irrelevant changes?
 
 Status: design, revision 2, 3 October 2026, before any code or run.
+Results are in `docs/landscape-robustness-results.md`; the registered text
+below is unchanged.
 Revision 1 was reviewed the same day; the changes are listed at the end.
 Predictions and decision rules are fixed by this commit. Results that
 disagree with them get reported as disagreements, not rewritten predictions.

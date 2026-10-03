@@ -47,8 +47,11 @@ class ArchiveCountTests(unittest.TestCase):
             eps = []
             for path in sorted(glob.glob(str(ROOT / "reports/paid-runs/*/*/live-run-paid.transcript.jsonl.gz"))):
                 with gzip.open(path, "rt") as handle:
-                    if json.loads(handle.readline()).get("model") != model:
-                        continue
+                    header = json.loads(handle.readline())
+                # The gate's reference is the archive as registered: runs from
+                # before prompt variants existed.
+                if header.get("model") != model or set(header.get("variants") or ["v0"]) != {"v0"}:
+                    continue
                 for e in irt.load_episodes(path):
                     e = dict(e)
                     e["arm"] = path + ":" + str(e.get("arm"))
