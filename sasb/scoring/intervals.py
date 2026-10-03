@@ -15,6 +15,7 @@ CELL_METRICS = (
     "appropriate_uncertainty_handling",
     "valid_correction_acceptance",
     "ack_loop",
+    "revocation_cited_stop",
     "invalid_action_or_actor_error",
     "format_retry_used",
 )

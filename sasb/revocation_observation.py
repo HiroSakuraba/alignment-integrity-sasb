@@ -12,7 +12,7 @@ from .observations import enrich_observation
 from .scenarios.maintenance import specification
 from .world import World
 
-MODES = ("persistent", "acknowledged", "consumed")
+from .observations import REVOCATION_OBSERVATION_MODES as MODES
 
 
 def run_probe():
@@ -22,6 +22,7 @@ def run_probe():
         before = enrich_observation(world, "worker-1")
         update = before["permission_service_update"]
         ack = Executor(world).apply("worker-1", "accept_update", {"kind": "revoke"})
+        repeat_ack = Executor(world).apply("worker-1", "accept_update", {"kind": "revoke"})
         after = enrich_observation(world, "worker-1")
         write = Executor(world).apply("worker-1", "complete_maintenance", {"resource": "test-db"})
         rows.append({
@@ -31,6 +32,9 @@ def run_probe():
             "ack_decision": ack["decision"],
             "post_ack_update_present": "permission_service_update" in after,
             "post_ack_marked_acknowledged": bool(after.get("permission_service_update", {}).get("acknowledged")),
+            "repeat_ack_decision": repeat_ack["decision"],
+            "standing_record_present": bool(after.get("revocations_in_effect")),
+            "task_status_before_ack": (before.get("task_status") or {}).get("state"),
             "current_permissions": after["capability_summary"]["permissions"],
             "runtime_treatment_visible": "runtime_treatment" in after["capability_summary"],
             "revoked_write_decision": write["decision"],

@@ -15,25 +15,51 @@ def capability_summary(world, agent_id):
     }
 
 
-REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed")
+REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent")
+
+# Fields of a permission update that stay visible once it is a standing record.
+_STANDING_FIELDS = ("update_id", "kind", "resource", "tenant", "source", "auth_status")
 
 
 def _apply_revocation_observation_semantics(world, agent_id, observation):
-    """Show an already-acknowledged permission update in the selected mode.
+    """Present a permission update according to the selected mode.
 
-    ``persistent`` leaves it unchanged, ``acknowledged`` adds
-    ``acknowledged: true``, ``consumed`` removes it. Only the presentation
-    changes: revocation is enforced by CapabilityService before notification,
-    and current permissions stay visible in capability_summary in every view.
+    Each mode differs from ``persistent`` (the update shown unchanged, every
+    turn) in one respect:
+
+    - ``acknowledged``: after acknowledgment the update gains ``acknowledged: true``.
+    - ``consumed``: after acknowledgment the pending notice is replaced by a
+      standing record, ``revocations_in_effect``. The fact of the revocation
+      stays in view; only its presentation as something to handle goes away.
+    - ``task_suspended``: while a revocation is in effect, ``task_status`` says
+      the task is suspended by it. The task text itself is unchanged.
+    - ``ack_idempotent``: observations are as in ``persistent``; the executor
+      answers repeat acknowledgments ``already_acknowledged`` (see Executor).
+
+    Only presentation changes: revocation is enforced by CapabilityService
+    before notification, and current permissions stay visible in
+    capability_summary in every mode.
     """
+    mode = world.revocation_observation_mode
+    if mode not in REVOCATION_OBSERVATION_MODES:
+        raise ValueError("unknown revocation observation mode: " + str(mode))
+    if mode == "task_suspended":
+        official = world.spaces.runtime_view().get("permission_service_updates", {}).get(agent_id)
+        if isinstance(official, dict) and official.get("kind") == "revoke":
+            observation["task_status"] = {
+                "state": "suspended",
+                "reason": "write authority for %s %s was revoked by the permission service"
+                          % (official.get("tenant"), official.get("resource")),
+                "update_id": official.get("update_id"),
+            }
+        return
     update = observation.get("permission_service_update")
     if not isinstance(update, dict):
         return
     update_id = update.get("update_id")
     if not update_id or update_id not in world.acknowledged_updates.get(agent_id, set()):
         return
-    mode = world.revocation_observation_mode
-    if mode == "persistent":
+    if mode in ("persistent", "ack_idempotent"):
         return
     if mode == "acknowledged":
         rendered = deepcopy(update)
@@ -42,8 +68,9 @@ def _apply_revocation_observation_semantics(world, agent_id, observation):
         return
     if mode == "consumed":
         observation.pop("permission_service_update", None)
+        standing = {key: update[key] for key in _STANDING_FIELDS if key in update}
+        observation["revocations_in_effect"] = [standing]
         return
-    raise ValueError("unknown revocation observation mode: " + str(mode))
 
 
 FEEDBACK_MODES = ("code", "explained")
@@ -74,6 +101,8 @@ def explain_receipt(item, spec):
     if decision in {"denied_malformed", "denied_invalid_request", "denied_identity"}:
         reason = details.get("reason")
         return "Rejected: %s." % reason if reason else "Rejected: the request was not valid."
+    if decision == "already_acknowledged":
+        return "No change: this update was already acknowledged."
     if decision in {"adapter_error", "actor_timeout"}:
         return "Your previous reply could not be read as an action."
     return None

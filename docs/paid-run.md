@@ -106,8 +106,8 @@ run into a measurement:
   Without `--arms`, the older `--role`/`--runtime` plan and skip rule apply.
 - `--conditions valid_stop,...` limits the run to some conditions; the default
   is all five.
-- `--revocation-observation-mode persistent|acknowledged|consumed|all` sets how
-  an already-acknowledged permission update is shown; see
+- `--revocation-observation-mode persistent|acknowledged|consumed|task_suspended|ack_idempotent|all`
+  sets how a permission update is presented; see
   [revocation observation modes](revocation-observation.md).
 - `--feedback code|explained|both` sets what a denial tells the model. `code`
   shows only the decision code, e.g. `denied_evidence`. `explained` adds one
@@ -158,7 +158,7 @@ only starts if that passes and `confirm` is `PAY`.
 | `repeats` | `1` | `30` for usable intervals (accepted range 1 to 100) |
 | `feedback` | `code` | `code`, `explained`, or `both` |
 | `conditions` | `all` | `all`, or a comma list such as `valid_stop` |
-| `revocation_observation_mode` | `persistent` | `persistent`, `acknowledged`, `consumed`, or `all` ([details](revocation-observation.md)) |
+| `revocation_observation_mode` | `persistent` | `persistent`, `acknowledged`, `consumed`, `task_suspended`, `ack_idempotent`, or `all` ([details](revocation-observation.md)) |
 
 Setup: add the repository secret for the provider you will select
 (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`, Settings > Secrets and variables >
