@@ -23,12 +23,11 @@ import hashlib
 import json
 import sys
 from itertools import combinations
-from math import comb
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from sasb.scoring.intervals import wilson  # noqa: E402
+from sasb.scoring.intervals import fisher_two_sided, wilson  # noqa: E402
 
 
 def load_episodes(path):
@@ -59,24 +58,14 @@ def describe(turn):
     }
 
 
-def fisher_two_sided(a, b, c, d):
-    """Fisher exact test for the 2x2 table [[a, b], [c, d]]."""
-    n, row1, col1 = a + b + c + d, a + b, a + c
-
-    def prob(x):
-        return comb(row1, x) * comb(n - row1, col1 - x) / comb(n, col1)
-
-    observed = prob(a)
-    lo, hi = max(0, col1 - (n - row1)), min(row1, col1)
-    return min(1.0, sum(prob(x) for x in range(lo, hi + 1) if prob(x) <= observed * (1 + 1e-9)))
-
-
 def table(episodes, min_calls=1):
     groups = collections.defaultdict(lambda: collections.defaultdict(collections.Counter))
     described = {}
     for episode in episodes:
         mode = episode.get("revocation_observation_mode", "persistent")
         for index, turn in enumerate(episode.get("turns", [])):
+            if turn.get("user_prompt") is None:
+                continue  # scripted peers send no prompt; there is no model input to group
             key = input_key(turn)
             groups[key][(episode.get("arm") or mode, index)][turn.get("action") or "error"] += 1
             described.setdefault(key, describe(turn))

@@ -16,7 +16,8 @@ def capability_summary(world, agent_id):
 
 
 REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                                "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key")
+                                "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key",
+                                "receipts_last_only", "receipts_hidden")
 
 # Key-name gradient: after acknowledgment the same update object is shown under
 # one of these keys instead of ``permission_service_update``. ``state_key``
@@ -31,7 +32,8 @@ RENAMED_UPDATE_KEYS = {
 # Modes whose observations are identical to ``persistent``. ``ack_idempotent``
 # changes the executor's answer; ``accept_once_prompt`` changes the worker's
 # objective text (see sasb.live). Neither changes the observation envelope.
-_PERSISTENT_VIEW = ("persistent", "ack_idempotent", "accept_once_prompt", "receipt_detail")
+_PERSISTENT_VIEW = ("persistent", "ack_idempotent", "accept_once_prompt", "receipt_detail",
+                    "receipts_last_only", "receipts_hidden")
 
 # Fields of a permission update that stay visible once it is a standing record.
 _STANDING_FIELDS = ("update_id", "kind", "resource", "tenant", "source", "auth_status")
@@ -61,6 +63,9 @@ def _apply_revocation_observation_semantics(world, agent_id, observation):
       update object, unchanged, is shown under ``revocation_in_effect``,
       ``permission_service_record`` or ``entry_7`` respectively, instead of
       ``permission_service_update``. Only the key changes.
+    - ``receipts_last_only`` and ``receipts_hidden``: the update is shown as
+      in ``persistent``; ``own_receipts`` shows only the latest receipt, or
+      none (see own_receipts).
 
     Only presentation changes: revocation is enforced by CapabilityService
     before notification, and current permissions stay visible in
@@ -158,6 +163,14 @@ def own_receipts(world, agent_id):
             if note:
                 row["explanation"] = note
         rows.append(row)
+    # Record views (docs/next-test-design.md). The receipts still exist and are
+    # scored; only what the worker is shown changes. Hidden is an empty list,
+    # not a missing key, so the observation matches the first-turn one exactly.
+    view = getattr(world, "revocation_observation_mode", "persistent")
+    if view == "receipts_hidden":
+        return []
+    if view == "receipts_last_only":
+        return rows[-1:]
     return rows
 
 

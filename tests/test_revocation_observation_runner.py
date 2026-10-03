@@ -10,7 +10,7 @@ class RevocationObservationRunnerTests(unittest.TestCase):
         rows = {row["mode"]: row for row in report["rows"]}
         self.assertEqual(set(rows), {"persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
                                      "accept_once_prompt", "receipt_detail", "state_key", "record_key",
-                                     "opaque_key"})
+                                     "opaque_key", "receipts_last_only", "receipts_hidden"})
 
         self.assertTrue(rows["persistent"]["post_ack_update_present"])
         self.assertFalse(rows["persistent"]["post_ack_marked_acknowledged"])
@@ -28,8 +28,12 @@ class RevocationObservationRunnerTests(unittest.TestCase):
         self.assertEqual({m: rows[m]["renamed_key"] for m in ("state_key", "record_key", "opaque_key")},
                          {"state_key": "revocation_in_effect", "record_key": "permission_service_record",
                           "opaque_key": "entry_7"})
+        # Record views: the receipts still exist; only what is shown changes.
+        self.assertEqual(rows["receipts_last_only"]["visible_receipts"], 1)
+        self.assertEqual(rows["receipts_hidden"]["visible_receipts"], 0)
+        self.assertIsNone(rows["receipts_hidden"]["ack_receipt"])
         for mode in ("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent",
-                     "accept_once_prompt", "state_key", "record_key", "opaque_key"):
+                     "accept_once_prompt", "state_key", "record_key", "opaque_key", "receipts_last_only"):
             self.assertEqual(rows[mode]["ack_receipt"], {"action": "accept_update", "decision": "executed"}, mode)
 
         for row in rows.values():

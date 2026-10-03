@@ -59,9 +59,9 @@ class LiveRunTests(unittest.TestCase):
                                 arms="honest@proposed", conditions=("valid_stop",), repeats=2,
                                 revocation_observation_mode="all", cap_usd=1.0,
                                 transcript_path=str(transcript))
-        self.assertEqual(report["revocation_observation_modes"], ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "record_key", "state_key", "task_suspended"])
-        self.assertEqual(sorted(report["arms"]), ["honest@proposed/code/" + m for m in ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "record_key", "state_key", "task_suspended"]])
-        self.assertEqual(len(report["by_cell"]), 10)
+        self.assertEqual(report["revocation_observation_modes"], ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "receipts_hidden", "receipts_last_only", "record_key", "state_key", "task_suspended"])
+        self.assertEqual(sorted(report["arms"]), ["honest@proposed/code/" + m for m in ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "receipts_hidden", "receipts_last_only", "record_key", "state_key", "task_suspended"]])
+        self.assertEqual(len(report["by_cell"]), 12)
         for cell in report["by_cell"].values():
             self.assertEqual(cell["episodes"], 2)
             # The stub always acknowledges and never stops, so every episode loops.
@@ -69,8 +69,8 @@ class LiveRunTests(unittest.TestCase):
         rows = [r for r in report["rows"] if r["skipped"] is None]
         self.assertTrue(all(r["update_acknowledgments"] == 6 for r in rows))
         header, episodes = load(transcript)
-        self.assertEqual(header["revocation_observation_modes"], ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "record_key", "state_key", "task_suspended"])
-        self.assertEqual(sorted({e["revocation_observation_mode"] for e in episodes}), ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "record_key", "state_key", "task_suspended"])
+        self.assertEqual(header["revocation_observation_modes"], ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "receipts_hidden", "receipts_last_only", "record_key", "state_key", "task_suspended"])
+        self.assertEqual(sorted({e["revocation_observation_mode"] for e in episodes}), ["accept_once_prompt", "ack_idempotent", "acknowledged", "consumed", "opaque_key", "persistent", "receipt_detail", "receipts_hidden", "receipts_last_only", "record_key", "state_key", "task_suspended"])
         for key in ("SASB_ENABLE_NETWORK", "SASB_PROVIDER_VALIDATED", "ANTHROPIC_API_KEY"):
             os.environ.pop(key, None)
         replayed = run_experiment(replay_path=str(transcript), cap_usd=1.0)
@@ -87,7 +87,7 @@ class LiveRunTests(unittest.TestCase):
 
     def test_cli_choice_expands_like_feedback(self):
         arms = parse_arms("honest@proposed", "both", "all")
-        self.assertEqual(len(arms), 20)  # 2 feedback modes x 10 observation modes
+        self.assertEqual(len(arms), 24)  # 2 feedback modes x 12 observation modes
 
 
 if __name__ == "__main__":
@@ -130,7 +130,8 @@ class RevocationFixTests(unittest.TestCase):
 
     def test_task_status_appears_only_in_its_own_mode_and_only_with_a_revocation(self):
         for mode in ("persistent", "acknowledged", "consumed", "ack_idempotent",
-                     "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key"):
+                     "accept_once_prompt", "receipt_detail", "state_key", "record_key", "opaque_key",
+                     "receipts_last_only", "receipts_hidden"):
             episode = self._episode(mode, [("noop", {})])
             first = [t for t in episode["trace"] if t["agent_id"] == "worker-1"][0]["observation"]
             self.assertNotIn("task_status", first, mode)

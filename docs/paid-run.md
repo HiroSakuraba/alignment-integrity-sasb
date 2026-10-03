@@ -106,7 +106,8 @@ run into a measurement:
   Without `--arms`, the older `--role`/`--runtime` plan and skip rule apply.
 - `--conditions valid_stop,...` limits the run to some conditions; the default
   is all five.
-- `--revocation-observation-mode persistent|acknowledged|consumed|task_suspended|ack_idempotent|accept_once_prompt|receipt_detail|state_key|followup|all`
+- `--revocation-observation-mode` one of the twelve modes in [revocation-observation.md](revocation-observation.md), or `followup`, `grid`, `all`
+- `--history-prefixes h0|h1-h8|p1-p8` (comma list): scripted worker actions before the model's first turn; `valid_stop` only ([next-test-design.md](next-test-design.md))
   sets how a permission update is presented; see
   [revocation observation modes](revocation-observation.md).
 - `--feedback code|explained|both` sets what a denial tells the model. `code`
@@ -158,7 +159,8 @@ only starts if that passes and `confirm` is `PAY`.
 | `repeats` | `1` | `30` for usable intervals (accepted range 1 to 100) |
 | `feedback` | `code` | `code`, `explained`, or `both` |
 | `conditions` | `all` | `all`, or a comma list such as `valid_stop` |
-| `revocation_observation_mode` | `persistent` | one of the eight modes, `followup` (`persistent` plus the three arms added 3 October), or `all` ([details](revocation-observation.md)) |
+| `revocation_observation_mode` | `persistent` | one of the twelve modes, `followup` (Stage 1), `grid` (Stage 2), or `all` ([details](revocation-observation.md), [design](next-test-design.md)) |
+| `history_prefixes` | `h0` | comma list of `h0`–`h8`, `p1`–`p8`; anything but `h0` needs `conditions` = `valid_stop`; ignored by `grid` |
 
 Setup: add the repository secret for the provider you will select
 (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`, Settings > Secrets and variables >

@@ -31,6 +31,8 @@ acknowledgment never restores it. Current permissions stay visible in
 | `state_key` | After `accept_update`, the update object, unchanged, is shown under `revocation_in_effect` instead of `permission_service_update`. Only the key changes. |
 | `record_key` | As `state_key`, with the key `permission_service_record`: keeps the source, drops the word "update", names no state. |
 | `opaque_key` | As `state_key`, with the key `entry_7`, which means nothing. |
+| `receipts_last_only` | `own_receipts` shows only the latest receipt. The receipts still exist and are scored. |
+| `receipts_hidden` | `own_receipts` is an empty list. The receipts still exist and are scored. |
 
 `acknowledged`, `consumed` and `ack_idempotent` show the same observations as
 `persistent` until the first acknowledgment. `task_suspended` differs from the
@@ -73,6 +75,11 @@ remaining explanations:
 Run them with `revocation_observation_mode` = `followup`, which adds
 `persistent` as the within-run baseline: 180 episodes per provider. Predictions
 and decision rules are in `docs/next-test-design.md`.
+
+`receipts_last_only` and `receipts_hidden` belong to Stage 2 of that design.
+They are run with history prefixes, scripted acknowledgments taken before the
+model's first turn (`history_prefixes`, or the `grid` choice, which runs the
+22 designed cells).
 
 ## Fixes made after the 3 October run
 
@@ -121,8 +128,8 @@ Paid run from the workflow **SASB paid wrapper (manual)**:
 | `repeats` | `30` |
 | `feedback` | `code` |
 
-With `all` that is 300 episodes per provider (ten modes of 30): at most about
-$1.70 for Haiku and $0.15 for Luna at the per-call costs of the second
+With `all` that is 360 episodes per provider (twelve modes of 30): at most
+about $2.05 for Haiku and $0.17 for Luna at the per-call costs of the second
 3 October run ($0.00095 and $0.00008). `followup` is 180 episodes, at most
 about $1.05 for Haiku if every episode loops.
 

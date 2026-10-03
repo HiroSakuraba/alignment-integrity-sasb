@@ -37,7 +37,8 @@ def run_probe():
             "state_key_present": "revocation_in_effect" in after,
             "renamed_key": next((k for k in ("revocation_in_effect", "permission_service_record", "entry_7")
                                  if k in after), None),
-            "ack_receipt": [r for r in after["own_receipts"] if r["action"] == "accept_update"][0],
+            "ack_receipt": next((r for r in after["own_receipts"] if r["action"] == "accept_update"), None),
+            "visible_receipts": len(after["own_receipts"]),
             "task_status_before_ack": (before.get("task_status") or {}).get("state"),
             "current_permissions": after["capability_summary"]["permissions"],
             "runtime_treatment_visible": "runtime_treatment" in after["capability_summary"],
