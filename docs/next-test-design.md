@@ -1,6 +1,9 @@
 # Next test: the model-visible record and the revocation loop
 
-Status: revision 2.1, 3 October 2026, before any of the runs below. Stage 1
+Status: revision 2.1, 3 October 2026, before any of the runs below.
+Results and two post-run reporting corrections are in
+`docs/next-test-results.md`. The registered text below is unchanged except
+for one marked correction note. Stage 1
 and Stage 2 are both built and tested offline. Revision 1 was reviewed the
 same day; the changes and the reasons for them are listed at the end, along
 with one clarification made while building (2.1). The predictions and
@@ -146,6 +149,10 @@ Against a baseline of 0/30, those bands are 8 or more stops, 6 to 7, and 0 to
 | `state_key` and `record_key`, not `opaque_key` | A meaningful rename works and a meaningless one doesn't; "update" in the key may be the trigger. |
 | none | The `consumed` effect came from the list wrapper or the dropped field, not the key. |
 | any other pattern | Reported as found, with no reading fixed in advance. |
+
+*Correction after the runs, text above left as registered:* the third
+row's second clause does not follow, because `opaque_key` drops "update"
+too. See `docs/next-test-results.md`, "Corrections after the runs".
 
 **Expected outcome**, stated so it can be wrong: `state_key` changes Haiku's
 behavior. `receipt_detail` does not, because Haiku already ignored receipts
