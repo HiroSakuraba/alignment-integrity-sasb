@@ -171,6 +171,7 @@ class ReplayActor:
         self.index = 0
         self.last_usage = Usage(0, 0, 0)
         self.last_reported_model = "replay"
+        self.attempts = []
 
     @property
     def steps(self):
@@ -182,6 +183,9 @@ class ReplayActor:
             raise AdapterError("replay exhausted at turn %d" % self.index)
         turn = self.turns[self.index]
         self.index += 1
+        # Carry the recorded format retries forward so replayed reports count
+        # them; the retried replies themselves are not re-asked.
+        self.attempts = [dict(item) for item in turn.get("format_attempts") or []]
         if turn.get("error") or turn.get("raw_response") is None:
             raise AdapterError(turn.get("error_reason") or turn.get("error") or "recorded response was unparseable")
         return Decision(turn["action"], turn["arguments"],
