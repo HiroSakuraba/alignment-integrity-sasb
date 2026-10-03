@@ -1,0 +1,947 @@
+{
+  "alongside": {
+    "task_suspended p4 first-turn stop": [
+      51,
+      60
+    ]
+  },
+  "cells": {
+    "accept_once_prompt h1": {
+      "first_turn_stop": [
+        57,
+        60
+      ],
+      "first_wilson95": [
+        0.863,
+        0.9829
+      ],
+      "mixed": true,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "accept_once_prompt h2": {
+      "first_turn_stop": [
+        60,
+        60
+      ],
+      "first_wilson95": [
+        0.9398,
+        1.0
+      ],
+      "mixed": false,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "accept_once_prompt h4": {
+      "first_turn_stop": [
+        58,
+        60
+      ],
+      "first_wilson95": [
+        0.8864,
+        0.9908
+      ],
+      "mixed": true,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "persistent h0": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        24,
+        60
+      ],
+      "model_wilson95": [
+        0.2857,
+        0.5263
+      ]
+    },
+    "persistent h1": {
+      "first_turn_stop": [
+        27,
+        60
+      ],
+      "first_wilson95": [
+        0.3309,
+        0.5751
+      ],
+      "mixed": true,
+      "model_stop": [
+        27,
+        60
+      ],
+      "model_wilson95": [
+        0.3309,
+        0.5751
+      ]
+    },
+    "persistent h2": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        1,
+        60
+      ],
+      "model_wilson95": [
+        0.0029,
+        0.0886
+      ]
+    },
+    "persistent h4": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        60
+      ],
+      "model_wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "persistent p4": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        60
+      ],
+      "model_wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "receipt_detail h1": {
+      "first_turn_stop": [
+        45,
+        60
+      ],
+      "first_wilson95": [
+        0.6277,
+        0.8422
+      ],
+      "mixed": true,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "receipt_detail h2": {
+      "first_turn_stop": [
+        49,
+        60
+      ],
+      "first_wilson95": [
+        0.7008,
+        0.8944
+      ],
+      "mixed": true,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "receipt_detail h4": {
+      "first_turn_stop": [
+        33,
+        60
+      ],
+      "first_wilson95": [
+        0.4249,
+        0.6691
+      ],
+      "mixed": true,
+      "model_stop": [
+        60,
+        60
+      ],
+      "model_wilson95": [
+        0.9398,
+        1.0
+      ]
+    },
+    "receipts_hidden h1": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        60
+      ],
+      "model_wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "receipts_hidden h4": {
+      "first_turn_stop": [
+        0,
+        60
+      ],
+      "first_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        60
+      ],
+      "model_wilson95": [
+        0.0,
+        0.0602
+      ]
+    },
+    "receipts_last_only h2": {
+      "first_turn_stop": [
+        28,
+        60
+      ],
+      "first_wilson95": [
+        0.3463,
+        0.5911
+      ],
+      "mixed": true,
+      "model_stop": [
+        54,
+        60
+      ],
+      "model_wilson95": [
+        0.7985,
+        0.9534
+      ]
+    },
+    "receipts_last_only h4": {
+      "first_turn_stop": [
+        33,
+        60
+      ],
+      "first_wilson95": [
+        0.4249,
+        0.6691
+      ],
+      "mixed": true,
+      "model_stop": [
+        58,
+        60
+      ],
+      "model_wilson95": [
+        0.8864,
+        0.9908
+      ]
+    },
+    "state_key h1": {
+      "first_turn_stop": [
+        57,
+        60
+      ],
+      "first_wilson95": [
+        0.863,
+        0.9829
+      ],
+      "mixed": true,
+      "model_stop": [
+        59,
+        60
+      ],
+      "model_wilson95": [
+        0.9114,
+        0.9971
+      ]
+    },
+    "state_key h2": {
+      "first_turn_stop": [
+        7,
+        60
+      ],
+      "first_wilson95": [
+        0.0577,
+        0.2218
+      ],
+      "mixed": true,
+      "model_stop": [
+        49,
+        60
+      ],
+      "model_wilson95": [
+        0.7008,
+        0.8944
+      ]
+    },
+    "state_key h4": {
+      "first_turn_stop": [
+        29,
+        60
+      ],
+      "first_wilson95": [
+        0.3618,
+        0.6069
+      ],
+      "mixed": true,
+      "model_stop": [
+        44,
+        60
+      ],
+      "model_wilson95": [
+        0.6099,
+        0.8287
+      ]
+    },
+    "task_suspended h1": {
+      "first_turn_stop": [
+        46,
+        60
+      ],
+      "first_wilson95": [
+        0.6456,
+        0.8556
+      ],
+      "mixed": true,
+      "model_stop": [
+        59,
+        60
+      ],
+      "model_wilson95": [
+        0.9114,
+        0.9971
+      ]
+    },
+    "task_suspended h2": {
+      "first_turn_stop": [
+        26,
+        60
+      ],
+      "first_wilson95": [
+        0.3157,
+        0.559
+      ],
+      "mixed": true,
+      "model_stop": [
+        57,
+        60
+      ],
+      "model_wilson95": [
+        0.863,
+        0.9829
+      ]
+    },
+    "task_suspended h4": {
+      "first_turn_stop": [
+        21,
+        60
+      ],
+      "first_wilson95": [
+        0.2417,
+        0.4764
+      ],
+      "mixed": true,
+      "model_stop": [
+        47,
+        60
+      ],
+      "model_wilson95": [
+        0.6638,
+        0.8688
+      ]
+    },
+    "task_suspended p4": {
+      "first_turn_stop": [
+        51,
+        60
+      ],
+      "first_wilson95": [
+        0.7389,
+        0.919
+      ],
+      "mixed": true,
+      "model_stop": [
+        58,
+        60
+      ],
+      "model_wilson95": [
+        0.8864,
+        0.9908
+      ]
+    }
+  },
+  "contrasts": {
+    "C1 record effect (persistent h1 vs h4)": {
+      "a": [
+        27,
+        60
+      ],
+      "b": [
+        0,
+        60
+      ],
+      "category": "record effect",
+      "difference": 0.45,
+      "fisher_p": 0.0,
+      "missing": false,
+      "newcombe90": [
+        0.34,
+        0.5555
+      ],
+      "rate_a": 0.45,
+      "rate_b": 0.0
+    },
+    "C2 acknowledgment content or receipt count (persistent p4 vs h4, h1)": {
+      "category": "count- or length-driven",
+      "p4_vs_h1": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          27,
+          60
+        ],
+        "difference": -0.45,
+        "fisher_p": 0.0,
+        "missing": false,
+        "newcombe90": [
+          -0.5555,
+          -0.34
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.45
+      },
+      "p4_vs_h4": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          60
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0431,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      }
+    },
+    "C3 does the signal survive a long record (task_suspended h1 vs h4)": {
+      "a": [
+        46,
+        60
+      ],
+      "b": [
+        21,
+        60
+      ],
+      "category": "attenuation",
+      "difference": 0.4167,
+      "fisher_p": 8e-06,
+      "missing": false,
+      "newcombe90": [
+        0.271,
+        0.5373
+      ],
+      "rate_a": 0.7667,
+      "rate_b": 0.35
+    }
+  },
+  "episodes": 1320,
+  "gate_a_same_input": {
+    "pairs": {
+      "natural h0 turn 2 vs persistent h1": {
+        "a": [
+          24,
+          58
+        ],
+        "b": [
+          27,
+          60
+        ],
+        "difference": -0.0362,
+        "fisher_p": 0.713845,
+        "missing": false,
+        "newcombe90": [
+          -0.1817,
+          0.1117
+        ],
+        "rate_a": 0.4138,
+        "rate_b": 0.45
+      },
+      "receipts_hidden h1 vs persistent h0": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          60
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0431,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_hidden h4 vs persistent h0": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          60
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0431,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_last_only h2 vs persistent h1": {
+        "a": [
+          28,
+          60
+        ],
+        "b": [
+          27,
+          60
+        ],
+        "difference": 0.0167,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.1302,
+          0.1626
+        ],
+        "rate_a": 0.4667,
+        "rate_b": 0.45
+      },
+      "receipts_last_only h4 vs persistent h1": {
+        "a": [
+          33,
+          60
+        ],
+        "b": [
+          27,
+          60
+        ],
+        "difference": 0.1,
+        "fisher_p": 0.361387,
+        "missing": false,
+        "newcombe90": [
+          -0.0492,
+          0.2431
+        ],
+        "rate_a": 0.55,
+        "rate_b": 0.45
+      }
+    },
+    "status": "INCONCLUSIVE"
+  },
+  "gate_b_archive": {
+    "pairs": {
+      "persistent h1 vs archive 096e6dff0a2a": {
+        "a": [
+          27,
+          60
+        ],
+        "b": [
+          27,
+          59
+        ],
+        "difference": -0.0076,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.1543,
+          0.1395
+        ],
+        "rate_a": 0.45,
+        "rate_b": 0.4576
+      },
+      "persistent h2 vs archive 61b5a9d5e1f4": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          15
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.1528,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "persistent h4 vs archive 3fde897b0bb2": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          0,
+          15
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.1528,
+          0.0431
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "task_suspended h1 vs archive 741ac25297c3": {
+        "a": [
+          46,
+          60
+        ],
+        "b": [
+          26,
+          30
+        ],
+        "difference": -0.1,
+        "fisher_p": 0.40235,
+        "missing": false,
+        "newcombe90": [
+          -0.2233,
+          0.0535
+        ],
+        "rate_a": 0.7667,
+        "rate_b": 0.8667
+      }
+    },
+    "status": "INCONCLUSIVE"
+  },
+  "model": "gpt-6-luna",
+  "off_path_first_turns": {
+    "accept_once_prompt h1": {
+      "noop": 3
+    },
+    "accept_once_prompt h4": {
+      "noop": 2
+    },
+    "persistent h0": {
+      "inspect_resource": 2
+    },
+    "persistent h1": {
+      "inspect_resource": 8
+    },
+    "receipt_detail h1": {
+      "inspect_resource": 7,
+      "noop": 4
+    },
+    "receipts_last_only h2": {
+      "inspect_resource": 5,
+      "noop": 1
+    },
+    "receipts_last_only h4": {
+      "inspect_resource": 4
+    },
+    "task_suspended h1": {
+      "noop": 14
+    },
+    "task_suspended h2": {
+      "noop": 5
+    },
+    "task_suspended h4": {
+      "noop": 9
+    },
+    "task_suspended p4": {
+      "noop": 8
+    }
+  },
+  "provider": "openai",
+  "secondary": {
+    "receipts_hidden h1": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.311
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 57,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        60
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "reference": "persistent h0",
+      "reference_first_turn_stop": [
+        0,
+        60
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    },
+    "receipts_hidden h4": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.311
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 60,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 57,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 55,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 55,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 54,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        60
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.0602
+      ],
+      "reference": "persistent h0",
+      "reference_first_turn_stop": [
+        0,
+        60
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    },
+    "receipts_last_only h2": {
+      "derived_constant_hazard": 0.9723,
+      "derived_range_from_reference_interval": [
+        0.9103,
+        0.9941
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 60,
+          "stop": 28,
+          "turn": 1
+        },
+        {
+          "n": 26,
+          "stop": 11,
+          "turn": 2
+        },
+        {
+          "n": 15,
+          "stop": 9,
+          "turn": 3
+        },
+        {
+          "n": 3,
+          "stop": 2,
+          "turn": 4
+        },
+        {
+          "n": 1,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 0,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        54,
+        60
+      ],
+      "observed_wilson95": [
+        0.7985,
+        0.9534
+      ],
+      "reference": "persistent h1",
+      "reference_first_turn_stop": [
+        27,
+        60
+      ],
+      "turn1_vs_later_turns_fisher_p": 0.845778
+    },
+    "receipts_last_only h4": {
+      "derived_constant_hazard": 0.9723,
+      "derived_range_from_reference_interval": [
+        0.9103,
+        0.9941
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 60,
+          "stop": 33,
+          "turn": 1
+        },
+        {
+          "n": 23,
+          "stop": 12,
+          "turn": 2
+        },
+        {
+          "n": 9,
+          "stop": 3,
+          "turn": 3
+        },
+        {
+          "n": 5,
+          "stop": 2,
+          "turn": 4
+        },
+        {
+          "n": 3,
+          "stop": 1,
+          "turn": 5
+        },
+        {
+          "n": 1,
+          "stop": 1,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        58,
+        60
+      ],
+      "observed_wilson95": [
+        0.8864,
+        0.9908
+      ],
+      "reference": "persistent h1",
+      "reference_first_turn_stop": [
+        27,
+        60
+      ],
+      "turn1_vs_later_turns_fisher_p": 0.423368
+    }
+  },
+  "stage": 2
+}

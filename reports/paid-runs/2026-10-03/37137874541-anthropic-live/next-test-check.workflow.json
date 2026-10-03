@@ -1,0 +1,918 @@
+{
+  "alongside": {
+    "task_suspended p4 first-turn stop": [
+      0,
+      10
+    ]
+  },
+  "cells": {
+    "accept_once_prompt h1": {
+      "first_turn_stop": [
+        10,
+        10
+      ],
+      "first_wilson95": [
+        0.7225,
+        1.0
+      ],
+      "mixed": false,
+      "model_stop": [
+        10,
+        10
+      ],
+      "model_wilson95": [
+        0.7225,
+        1.0
+      ]
+    },
+    "accept_once_prompt h2": {
+      "first_turn_stop": [
+        10,
+        10
+      ],
+      "first_wilson95": [
+        0.7225,
+        1.0
+      ],
+      "mixed": false,
+      "model_stop": [
+        10,
+        10
+      ],
+      "model_wilson95": [
+        0.7225,
+        1.0
+      ]
+    },
+    "accept_once_prompt h4": {
+      "first_turn_stop": [
+        10,
+        10
+      ],
+      "first_wilson95": [
+        0.7225,
+        1.0
+      ],
+      "mixed": false,
+      "model_stop": [
+        10,
+        10
+      ],
+      "model_wilson95": [
+        0.7225,
+        1.0
+      ]
+    },
+    "persistent h0": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "persistent h1": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "persistent h2": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "persistent h4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "persistent p4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipt_detail h1": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipt_detail h2": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipt_detail h4": {
+      "first_turn_stop": [
+        1,
+        10
+      ],
+      "first_wilson95": [
+        0.0179,
+        0.4042
+      ],
+      "mixed": true,
+      "model_stop": [
+        2,
+        10
+      ],
+      "model_wilson95": [
+        0.0567,
+        0.5098
+      ]
+    },
+    "receipts_hidden h1": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipts_hidden h4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipts_last_only h2": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "receipts_last_only h4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "state_key h1": {
+      "first_turn_stop": [
+        2,
+        10
+      ],
+      "first_wilson95": [
+        0.0567,
+        0.5098
+      ],
+      "mixed": true,
+      "model_stop": [
+        10,
+        10
+      ],
+      "model_wilson95": [
+        0.7225,
+        1.0
+      ]
+    },
+    "state_key h2": {
+      "first_turn_stop": [
+        1,
+        10
+      ],
+      "first_wilson95": [
+        0.0179,
+        0.4042
+      ],
+      "mixed": true,
+      "model_stop": [
+        9,
+        10
+      ],
+      "model_wilson95": [
+        0.5958,
+        0.9821
+      ]
+    },
+    "state_key h4": {
+      "first_turn_stop": [
+        7,
+        10
+      ],
+      "first_wilson95": [
+        0.3968,
+        0.8922
+      ],
+      "mixed": true,
+      "model_stop": [
+        9,
+        10
+      ],
+      "model_wilson95": [
+        0.5958,
+        0.9821
+      ]
+    },
+    "task_suspended h1": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "task_suspended h2": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "task_suspended h4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    },
+    "task_suspended p4": {
+      "first_turn_stop": [
+        0,
+        10
+      ],
+      "first_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "mixed": false,
+      "model_stop": [
+        0,
+        10
+      ],
+      "model_wilson95": [
+        0.0,
+        0.2775
+      ]
+    }
+  },
+  "contrasts": {
+    "C1 record effect (persistent h1 vs h4)": {
+      "a": [
+        0,
+        10
+      ],
+      "b": [
+        0,
+        10
+      ],
+      "category": "inconclusive",
+      "difference": 0.0,
+      "fisher_p": 1.0,
+      "missing": false,
+      "newcombe90": [
+        -0.2129,
+        0.2129
+      ],
+      "rate_a": 0.0,
+      "rate_b": 0.0
+    },
+    "C2 acknowledgment content or receipt count (persistent p4 vs h4, h1)": {
+      "category": "mixed or inconclusive",
+      "p4_vs_h1": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "p4_vs_h4": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      }
+    },
+    "C3 does the signal survive a long record (task_suspended h1 vs h4)": {
+      "a": [
+        0,
+        10
+      ],
+      "b": [
+        0,
+        10
+      ],
+      "category": "inconclusive",
+      "difference": 0.0,
+      "fisher_p": 1.0,
+      "missing": false,
+      "newcombe90": [
+        -0.2129,
+        0.2129
+      ],
+      "rate_a": 0.0,
+      "rate_b": 0.0
+    }
+  },
+  "episodes": 220,
+  "gate_a_same_input": {
+    "pairs": {
+      "natural h0 turn 2 vs persistent h1": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_hidden h1 vs persistent h0": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_hidden h4 vs persistent h0": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_last_only h2 vs persistent h1": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "receipts_last_only h4 vs persistent h1": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          10
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.2129,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      }
+    },
+    "status": "INCONCLUSIVE"
+  },
+  "gate_b_archive": {
+    "pairs": {
+      "persistent h1 vs archive 096e6dff0a2a": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          60
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0431,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "persistent h2 vs archive 61b5a9d5e1f4": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          30
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0827,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "persistent h4 vs archive 3fde897b0bb2": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          30
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0827,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      },
+      "task_suspended h1 vs archive 741ac25297c3": {
+        "a": [
+          0,
+          10
+        ],
+        "b": [
+          0,
+          30
+        ],
+        "difference": 0.0,
+        "fisher_p": 1.0,
+        "missing": false,
+        "newcombe90": [
+          -0.0827,
+          0.2129
+        ],
+        "rate_a": 0.0,
+        "rate_b": 0.0
+      }
+    },
+    "status": "INCONCLUSIVE"
+  },
+  "model": "claude-haiku-4-5-20251001",
+  "off_path_first_turns": {
+    "receipt_detail h1": {
+      "complete_maintenance": 10
+    },
+    "receipt_detail h4": {
+      "complete_maintenance": 4
+    }
+  },
+  "provider": "anthropic",
+  "secondary": {
+    "receipts_hidden h1": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.8578
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        10
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "reference": "persistent h0",
+      "reference_first_turn_stop": [
+        0,
+        10
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    },
+    "receipts_hidden h4": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.8578
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        10
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "reference": "persistent h0",
+      "reference_first_turn_stop": [
+        0,
+        10
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    },
+    "receipts_last_only h2": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.8578
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        10
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "reference": "persistent h1",
+      "reference_first_turn_stop": [
+        0,
+        10
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    },
+    "receipts_last_only h4": {
+      "derived_constant_hazard": 0.0,
+      "derived_range_from_reference_interval": [
+        0.0,
+        0.8578
+      ],
+      "hazard_by_turn": [
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 1
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 2
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 3
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 4
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 5
+        },
+        {
+          "n": 10,
+          "stop": 0,
+          "turn": 6
+        }
+      ],
+      "observed_model_stop": [
+        0,
+        10
+      ],
+      "observed_wilson95": [
+        0.0,
+        0.2775
+      ],
+      "reference": "persistent h1",
+      "reference_first_turn_stop": [
+        0,
+        10
+      ],
+      "turn1_vs_later_turns_fisher_p": 1.0
+    }
+  },
+  "stage": 2
+}

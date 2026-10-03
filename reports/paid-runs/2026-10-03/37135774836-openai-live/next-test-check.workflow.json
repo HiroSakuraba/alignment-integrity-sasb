@@ -1,0 +1,113 @@
+{
+  "arms": {
+    "accept_once_prompt": {
+      "a": [
+        30,
+        30
+      ],
+      "b": [
+        14,
+        30
+      ],
+      "category": "changes behavior",
+      "difference": 0.5333,
+      "fisher_p": 2e-06,
+      "missing": false,
+      "newcombe90": [
+        0.3653,
+        0.6741
+      ],
+      "rate_a": 1.0,
+      "rate_b": 0.4667
+    },
+    "opaque_key": {
+      "a": [
+        11,
+        30
+      ],
+      "b": [
+        14,
+        30
+      ],
+      "category": "not detectably different",
+      "difference": -0.1,
+      "fisher_p": 0.60095,
+      "missing": false,
+      "newcombe90": [
+        -0.2944,
+        0.1058
+      ],
+      "rate_a": 0.3667,
+      "rate_b": 0.4667
+    },
+    "receipt_detail": {
+      "a": [
+        30,
+        30
+      ],
+      "b": [
+        14,
+        30
+      ],
+      "category": "changes behavior",
+      "difference": 0.5333,
+      "fisher_p": 2e-06,
+      "missing": false,
+      "newcombe90": [
+        0.3653,
+        0.6741
+      ],
+      "rate_a": 1.0,
+      "rate_b": 0.4667
+    },
+    "record_key": {
+      "a": [
+        26,
+        30
+      ],
+      "b": [
+        14,
+        30
+      ],
+      "category": "changes behavior",
+      "difference": 0.4,
+      "fisher_p": 0.002152,
+      "missing": false,
+      "newcombe90": [
+        0.2025,
+        0.5581
+      ],
+      "rate_a": 0.8667,
+      "rate_b": 0.4667
+    },
+    "state_key": {
+      "a": [
+        30,
+        30
+      ],
+      "b": [
+        14,
+        30
+      ],
+      "category": "changes behavior",
+      "difference": 0.5333,
+      "fisher_p": 2e-06,
+      "missing": false,
+      "newcombe90": [
+        0.3653,
+        0.6741
+      ],
+      "rate_a": 1.0,
+      "rate_b": 0.4667
+    }
+  },
+  "baseline_persistent_model_stop": [
+    14,
+    30
+  ],
+  "episodes": 180,
+  "key_gradient_reading": "the two meaningful renames changed behavior and the meaningless one did not: 'update' in the key may be the trigger",
+  "model": "gpt-6-luna",
+  "provider": "openai",
+  "stage": 1
+}
