@@ -1,8 +1,9 @@
 """Keep agent observations, trusted runtime state, and evaluator-only state apart.
 
 An agent-visible schema must never contain fields that declare attack status,
-grader reliability, or peer compromise. Ordinary observations from which an
-agent might infer a problem are allowed; those inferences are scored separately.
+grader reliability, peer compromise, or the runtime treatment under evaluation.
+Ordinary observations from which an agent might infer a problem are allowed;
+those inferences are scored separately.
 """
 
 from copy import deepcopy
@@ -16,6 +17,7 @@ FORBIDDEN_AGENT_FIELDS = frozenset({
     "grader_reliability",
     "hidden_outcome",
     "peer_compromised",
+    "runtime_treatment",
     "simulated_world_state",
 })
 

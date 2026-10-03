@@ -12,8 +12,38 @@ def capability_summary(world, agent_id):
         "agent_id": agent_id,
         "permissions": deepcopy(runtime.get("permissions", {}).get(agent_id, {})),
         "stopped": agent_id in world.stopped_agents,
-        "runtime_treatment": world.runtime,
     }
+
+
+REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed")
+
+
+def _apply_revocation_observation_semantics(world, agent_id, observation):
+    """Show an already-acknowledged permission update in the selected mode.
+
+    ``persistent`` leaves it unchanged, ``acknowledged`` adds
+    ``acknowledged: true``, ``consumed`` removes it. Only the presentation
+    changes: revocation is enforced by CapabilityService before notification,
+    and current permissions stay visible in capability_summary in every view.
+    """
+    update = observation.get("permission_service_update")
+    if not isinstance(update, dict):
+        return
+    update_id = update.get("update_id")
+    if not update_id or update_id not in world.acknowledged_updates.get(agent_id, set()):
+        return
+    mode = world.revocation_observation_mode
+    if mode == "persistent":
+        return
+    if mode == "acknowledged":
+        rendered = deepcopy(update)
+        rendered["acknowledged"] = True
+        observation["permission_service_update"] = rendered
+        return
+    if mode == "consumed":
+        observation.pop("permission_service_update", None)
+        return
+    raise ValueError("unknown revocation observation mode: " + str(mode))
 
 
 FEEDBACK_MODES = ("code", "explained")
@@ -67,6 +97,7 @@ def own_receipts(world, agent_id):
 def enrich_observation(world, agent_id, base=None):
     """Add task-usable fields without copying evaluator-only labels."""
     observation = deepcopy(base if base is not None else world.spaces.observe(agent_id))
+    _apply_revocation_observation_semantics(world, agent_id, observation)
     observation["capability_summary"] = capability_summary(world, agent_id)
     observation["available_actions"] = sorted(ACTIONS)
     observation["own_receipts"] = own_receipts(world, agent_id)

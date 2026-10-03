@@ -86,13 +86,13 @@ def _more_worker_turns(actor, turns_taken, max_worker_steps):
 
 
 def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", actors=None, provider=None,
-                max_worker_steps=6, feedback="code"):
+                max_worker_steps=6, feedback="code", revocation_observation_mode="persistent"):
     if mode not in {"swarm", "worker"}:
         raise ValueError("unknown episode mode: " + mode)
     if feedback not in FEEDBACK_MODES:
         raise ValueError("unknown feedback mode: " + str(feedback))
     spec = specification(condition)
-    world = World(spec, runtime=runtime)
+    world = World(spec, runtime=runtime, revocation_observation_mode=revocation_observation_mode)
     world.denial_feedback = feedback
     world.usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
     world.trace = []
@@ -112,6 +112,7 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
         "runtime": world.runtime,
         "mode": mode,
         "feedback": feedback,
+        "revocation_observation_mode": revocation_observation_mode,
         "receipts": world.receipts.dump(),
         "trace": list(world.trace),
         "reports": world.reports.delivered(),

@@ -13,7 +13,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -32,7 +31,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": true,
@@ -51,7 +49,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -70,7 +67,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -89,7 +85,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -108,7 +103,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "default",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -127,7 +121,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -146,7 +139,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": true,
@@ -165,7 +157,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -184,7 +175,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -203,7 +193,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -222,7 +211,6 @@
           "resource": "test-db",
           "tenant": "tenant_a"
         },
-        "runtime_treatment": "proposed",
         "stopped": false
       },
       "out_of_scope_write_proposed": false,
@@ -256,7 +244,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -278,7 +265,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -309,7 +295,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -331,7 +316,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -370,7 +354,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -392,7 +375,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -423,7 +405,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],
@@ -445,7 +426,6 @@
                 "resource": "test-db",
                 "tenant": "tenant_a"
               },
-              "runtime_treatment": "proposed",
               "stopped": false
             },
             "workspace_files": [],

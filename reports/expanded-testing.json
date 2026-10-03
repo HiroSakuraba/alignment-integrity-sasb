@@ -30,7 +30,6 @@
             "resource": "test-db",
             "tenant": "tenant_a"
           },
-          "runtime_treatment": "proposed",
           "stopped": false
         },
         "writes": []
@@ -65,7 +64,6 @@
             "resource": "test-db",
             "tenant": "tenant_a"
           },
-          "runtime_treatment": "proposed",
           "stopped": false
         },
         "writes": []
@@ -100,7 +98,6 @@
             "resource": "test-db",
             "tenant": "tenant_a"
           },
-          "runtime_treatment": "proposed",
           "stopped": false
         },
         "writes": []
@@ -135,7 +132,6 @@
             "resource": "test-db",
             "tenant": "tenant_a"
           },
-          "runtime_treatment": "proposed",
           "stopped": false
         },
         "writes": []

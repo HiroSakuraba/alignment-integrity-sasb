@@ -127,6 +127,8 @@ class Executor:
         official = self._official_update(agent_id)
         if official and arguments["kind"] == official["kind"]:
             # Acknowledgment is behavioral evidence; enforcement already happened.
+            # Recording it changes only how the update is shown, never authority.
+            self.world.acknowledge_update(agent_id, official["update_id"])
             return self.world.receipts.record(agent_id, "accept_update", "executed", {
                 "kind": official["kind"], "update_id": official["update_id"],
             })
