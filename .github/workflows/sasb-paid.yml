@@ -53,7 +53,7 @@ on:
           - explained
           - both
       revocation_observation_mode:
-        description: "How a permission update is presented: persistent, acknowledged, consumed (standing record), task_suspended, ack_idempotent, or all five as separate arms"
+        description: "How a permission update is presented (docs/revocation-observation.md). followup = Stage 1, grid = Stage 2 of docs/next-test-design.md (22 cells, valid_stop only); all = all twelve modes"
         required: true
         type: choice
         default: persistent
@@ -63,7 +63,20 @@ on:
           - consumed
           - task_suspended
           - ack_idempotent
+          - accept_once_prompt
+          - receipt_detail
+          - state_key
+          - record_key
+          - opaque_key
+          - receipts_last_only
+          - receipts_hidden
+          - followup
+          - grid
           - all
+      history_prefixes:
+        description: "Scripted worker actions before the model's first turn, comma list: h0 (none), h1-h8 (k acknowledgments), p1-p8 (k-1 no-ops then one). Non-h0 needs conditions=valid_stop. Ignored by grid."
+        required: true
+        default: "h0"
 
 permissions:
   contents: read
@@ -105,6 +118,7 @@ jobs:
       REPEATS: ${{ inputs.repeats }}
       FEEDBACK: ${{ inputs.feedback }}
       OBSERVATION_MODE: ${{ inputs.revocation_observation_mode }}
+      HISTORY_PREFIXES: ${{ inputs.history_prefixes }}
       CONDITIONS: ${{ inputs.conditions }}
     steps:
       - uses: actions/checkout@v4
@@ -135,16 +149,20 @@ jobs:
           if not re.fullmatch(r"\d+", reps) or not 1 <= int(reps) <= 100:
               sys.exit("::error::repeats must be a whole number from 1 to 100 (got %r)" % reps)
           sys.path.insert(0, ".")
-          from sasb.live import parse_arms, parse_conditions
+          from sasb.live import arm_label, parse_arms, parse_conditions
+          from sasb.scenarios.maintenance import specification
           raw_conditions = os.environ["CONDITIONS"].strip()
           try:
-              arms = parse_arms(os.environ["ARMS"], os.environ["FEEDBACK"], os.environ["OBSERVATION_MODE"])
+              arms = parse_arms(os.environ["ARMS"], os.environ["FEEDBACK"], os.environ["OBSERVATION_MODE"],
+                                os.environ["HISTORY_PREFIXES"])
               conditions = parse_conditions(None if raw_conditions == "all" else raw_conditions)
           except ValueError as exc:
               sys.exit("::error::%s" % exc)
+          if any(a["prefix"] != "h0" for a in arms) and any(not specification(c).get("valid_update")
+                                                            for c in conditions):
+              sys.exit("::error::History prefixes acknowledge a revocation; set conditions=valid_stop.")
           print("Conditions: %s" % ", ".join(conditions))
-          print("Arms: %s" % ", ".join("%s@%s/%s/%s" % (a["role"], a["runtime"], a["feedback"], a["observation_mode"])
-                                         for a in arms))
+          print("Arms: %s" % ", ".join(arm_label(a) for a in arms))
           print("Planned episodes: %d (%d conditions x %d arms x %s repeats)"
                 % (len(conditions) * len(arms) * int(reps), len(conditions), len(arms), reps))
           PY
@@ -181,6 +199,7 @@ jobs:
           args=(--provider "$PROVIDER" --mode worker --cap-usd "$CAP_USD" --force
                 --arms "$ARMS" --repeats "$REPEATS" --feedback "$FEEDBACK"
                 --revocation-observation-mode "$OBSERVATION_MODE"
+                --history-prefixes "$HISTORY_PREFIXES"
                 --out reports/live-run-paid.json
                 --transcript reports/live-run-paid.transcript.jsonl)
           if [ "$CONDITIONS" != "all" ]; then
@@ -215,21 +234,35 @@ jobs:
               if cells:
                   print("\n### Per cell (k/n, 95% interval)\n")
                   cols = ("prohibited_attempt", "completed_violation", "authorized_task_completion",
-                          "valid_correction_acceptance", "revocation_cited_stop", "ack_loop", "malformed_write_target",
-                          "format_retry_used")
+                          "valid_correction_acceptance", "revocation_cited_stop", "first_turn_stop", "model_stop",
+                          "ack_loop", "malformed_write_target", "format_retry_used")
                   print("| arm | condition | n | " + " | ".join(cols) + " |")
                   print("| --- | --- | --- | " + " | ".join("---" for _ in cols) + " |")
                   for c in cells.values():
                       def fmt(m):
-                          x = c["metrics"][m]
-                          if not x["n"]:
+                          x = c["metrics"].get(m)
+                          if not x or not x["n"]:
                               return "n/a"
                           lo, hi = x["wilson95"]
                           return "%d/%d (%.2f-%.2f)" % (x["k"], x["n"], lo, hi)
-                      print("| %s@%s/%s/%s | %s | %d | %s |" % (
-                          c["role"], c["runtime"], c["feedback"], c["revocation_observation_mode"], c["condition"],
+                      prefix = c.get("history_prefix") or "h0"
+                      print("| %s@%s/%s/%s%s | %s | %d | %s |" % (
+                          c["role"], c["runtime"], c["feedback"], c["revocation_observation_mode"],
+                          "" if prefix == "h0" else "/" + prefix, c["condition"],
                           c["episodes"], " | ".join(fmt(m) for m in cols)))
           PY
+
+      - name: Decision rules (docs/next-test-design.md)
+        if: always() && (inputs.revocation_observation_mode == 'followup' || inputs.revocation_observation_mode == 'grid')
+        run: |
+          if [ -f reports/live-run-paid.json ]; then
+            {
+              echo "### Decision rules"
+              echo '```'
+              python tools/check_next_test.py reports/live-run-paid.json --json reports/next-test-check.json || true
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -238,5 +271,6 @@ jobs:
           path: |
             reports/live-run-paid.json
             reports/live-run-paid.transcript.jsonl
+            reports/next-test-check.json
           if-no-files-found: warn
           retention-days: 90

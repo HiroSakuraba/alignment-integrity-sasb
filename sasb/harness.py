@@ -1,4 +1,5 @@
 """Four-role episode runner. Scripted results do not measure model alignment."""
+import re
 from dataclasses import asdict, is_dataclass
 
 from .executor import Executor, completed_violation
@@ -79,6 +80,38 @@ def _take_turn(world, executor, agent_id, actor):
     executor.apply(agent_id, decision.action, decision.arguments)
 
 
+_PREFIX = re.compile(r"^([hp])([0-8])$")
+_ACK = ("accept_update", {"kind": "revoke"})
+
+
+def prefix_actions(history_prefix="h0"):
+    """Scripted worker actions taken before the model's first turn.
+
+    ``h<k>``: k acknowledgments of the revocation. ``p<k>`` (k >= 1): k - 1
+    no-ops, then one acknowledgment, so the record has k receipts of which
+    exactly one is an acknowledgment and the latest receipt matches ``h1``.
+    ``h0`` is no prefix. See docs/next-test-design.md.
+    """
+    match = _PREFIX.match(str(history_prefix))
+    if not match or (match.group(1) == "p" and match.group(2) == "0"):
+        raise ValueError("history prefix must be h0-h8 or p1-p8, got %r" % (history_prefix,))
+    count = int(match.group(2))
+    if match.group(1) == "h":
+        return [_ACK] * count
+    return [("noop", {})] * (count - 1) + [_ACK]
+
+
+def _run_prefix(world, executor, steps):
+    """Execute the prefix through the real executor, so the runtime writes real
+    receipts. Kept out of the trace: the trace holds model-loop turns only."""
+    rows = []
+    for action, arguments in steps:
+        receipt = executor.apply("worker-1", action, dict(arguments))
+        rows.append({"agent_id": "worker-1", "action": action, "arguments": dict(arguments),
+                     "decision": receipt["decision"], "scripted_prefix": True})
+    return rows
+
+
 def _more_worker_turns(actor, turns_taken, max_worker_steps):
     if hasattr(actor, "steps"):
         return actor.index < len(actor.steps)
@@ -86,12 +119,16 @@ def _more_worker_turns(actor, turns_taken, max_worker_steps):
 
 
 def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", actors=None, provider=None,
-                max_worker_steps=6, feedback="code", revocation_observation_mode="persistent"):
+                max_worker_steps=6, feedback="code", revocation_observation_mode="persistent",
+                history_prefix="h0"):
     if mode not in {"swarm", "worker"}:
         raise ValueError("unknown episode mode: " + mode)
+    prefix_steps = prefix_actions(history_prefix)
     if feedback not in FEEDBACK_MODES:
         raise ValueError("unknown feedback mode: " + str(feedback))
     spec = specification(condition)
+    if prefix_steps and not spec.get("valid_update"):
+        raise ValueError("a history prefix acknowledges a revocation; condition %r has none" % condition)
     world = World(spec, runtime=runtime, revocation_observation_mode=revocation_observation_mode)
     world.denial_feedback = feedback
     world.usage = {"input_tokens": 0, "output_tokens": 0, "retries": 0}
@@ -99,7 +136,10 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
     actors = actors_for(condition, policy) if actors is None else actors
     executor = Executor(world)
     order = ("worker-1",) if mode == "worker" else TURN_ORDER
+    prefix_rows = []
     for agent_id in order:
+        if agent_id == "worker-1" and prefix_steps:
+            prefix_rows = _run_prefix(world, executor, prefix_steps)
         _take_turn(world, executor, agent_id, actors[agent_id])
         if agent_id == "worker-1":
             turns = 1
@@ -113,6 +153,8 @@ def run_episode(condition, policy="compliant", runtime=PROPOSED, mode="swarm", a
         "mode": mode,
         "feedback": feedback,
         "revocation_observation_mode": revocation_observation_mode,
+        "history_prefix": history_prefix,
+        "prefix": prefix_rows,
         "receipts": world.receipts.dump(),
         "trace": list(world.trace),
         "reports": world.reports.delivered(),

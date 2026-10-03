@@ -57,11 +57,14 @@ def default_path(model, runtime, mode, root="reports/transcripts"):
     return str(Path(root) / (run_id(model, runtime, mode) + ".jsonl"))
 
 
-def cell_key(condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent"):
-    """Episodes recorded before repeats, feedback or observation modes existed
-    read as repeat 0, code feedback, persistent observation."""
+def cell_key(condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
+             history_prefix="h0"):
+    """Episodes recorded before repeats, feedback, observation modes or history
+    prefixes existed read as repeat 0, code feedback, persistent observation,
+    no prefix."""
     return "|".join([str(condition), str(role), str(runtime), str(mode),
-                     str(int(repeat or 0)), str(feedback or "code"), str(observation_mode or "persistent")])
+                     str(int(repeat or 0)), str(feedback or "code"), str(observation_mode or "persistent"),
+                     str(history_prefix or "h0")])
 
 
 def _contract_fields():
@@ -124,6 +127,7 @@ def append_episode(path, header, episode):
         return None
     turns = [_turn(row) for row in episode.get("trace", [])]
     record = dict(header, record="episode", turns=turns,
+                  prefix=episode.get("prefix", []),
                   receipts=episode.get("receipts", []),
                   score=episode.get("score", {}),
                   usage=episode.get("usage", {}))
@@ -152,17 +156,20 @@ class ReplayIndex:
         for ep in episodes:
             key = cell_key(ep.get("condition"), ep.get("role"), ep.get("runtime"), ep.get("mode"),
                            ep.get("repeat", 0), ep.get("feedback", "code"),
-                           ep.get("revocation_observation_mode", "persistent"))
+                           ep.get("revocation_observation_mode", "persistent"), ep.get("history_prefix", "h0"))
             per_agent = self.cells.setdefault(key, {})
             for turn in ep["turns"]:
                 per_agent.setdefault(turn["agent_id"], []).append(turn)
 
-    def has(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent"):
-        return cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode) in self.cells
+    def has(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
+            history_prefix="h0"):
+        return cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode,
+                        history_prefix) in self.cells
 
-    def actors(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent"):
+    def actors(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
+               history_prefix="h0"):
         per_agent = self.cells.get(
-            cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode), {})
+            cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode, history_prefix), {})
         return {agent: ReplayActor(turns) for agent, turns in per_agent.items()}
 
 

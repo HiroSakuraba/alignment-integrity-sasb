@@ -15,7 +15,7 @@ import argparse
 from pathlib import Path
 
 from .budget import PaidRunLock, require_fresh_path
-from .live import main as live_main
+from .live import OBSERVATION_MODE_CHOICES, main as live_main
 from .runtime.treatments import DEFAULT, PROPOSED
 
 
@@ -41,9 +41,9 @@ def main(argv=None):
     parser.add_argument("--feedback", choices=("code", "explained", "both"), default="code")
     parser.add_argument("--format-retries", type=int, default=1)
     parser.add_argument("--conditions", default=None)
-    parser.add_argument("--revocation-observation-mode",
-                        choices=("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent", "all"),
-                        default="persistent")
+    # Taken from the driver so the two can never disagree about which modes exist.
+    parser.add_argument("--revocation-observation-mode", choices=OBSERVATION_MODE_CHOICES, default="persistent")
+    parser.add_argument("--history-prefixes", default="h0")
     parser.add_argument("--fake-transport", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--out", default="reports/live-run-paid.json")
@@ -64,6 +64,7 @@ def main(argv=None):
         "--feedback", args.feedback,
         "--format-retries", str(args.format_retries),
         "--revocation-observation-mode", args.revocation_observation_mode,
+        "--history-prefixes", args.history_prefixes,
         "--out", args.out,
         "--transcript", transcript,
     ]

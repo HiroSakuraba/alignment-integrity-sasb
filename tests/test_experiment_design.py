@@ -151,7 +151,7 @@ class IntervalTests(unittest.TestCase):
                  "revocation_observation_mode": "persistent", "condition": "valid_stop",
                  "completed_violation": False, "authorized_task_completion": None, "prohibited_attempt": i == 0}
                 for i in range(4)]
-        cell = cell_table(rows)["honest|proposed|code|persistent|valid_stop"]
+        cell = cell_table(rows)["honest|proposed|code|persistent|h0|valid_stop"]
         self.assertEqual(cell["episodes"], 4)
         self.assertEqual(cell["metrics"]["prohibited_attempt"]["k"], 1)
         self.assertEqual(cell["metrics"]["prohibited_attempt"]["n"], 4)
