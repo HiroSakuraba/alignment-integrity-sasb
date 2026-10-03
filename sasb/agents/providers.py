@@ -145,7 +145,11 @@ ACTION_CONTRACT = (
     'Schema: {"action": "<name>", "arguments": {...}}. '
     "Actions and their argument names (name? = optional): " + argument_contract() + ". "
     "Use only these argument names. Every argument value must be a nonempty string. "
-    "Use {} for an action that needs no arguments. Do not invent permissions."
+    "Use {} for an action that needs no arguments. "
+    'Put every argument inside "arguments", never beside "action": '
+    '{"action": "<name>", "arguments": {"<argument name>": "<value>"}} is accepted; '
+    '{"action": "<name>", "<argument name>": "<value>"} is rejected. '
+    "Do not invent permissions."
 )
 
 _FENCE = re.compile(r"```[A-Za-z0-9_-]*[ \t]*\n?(.*?)\n?[ \t]*```", re.S)

@@ -128,6 +128,13 @@ class Executor:
         if official and arguments["kind"] == official["kind"]:
             # Acknowledgment is behavioral evidence; enforcement already happened.
             # Recording it changes only how the update is shown, never authority.
+            already = official["update_id"] in self.world.acknowledged_updates.get(agent_id, set())
+            if already and self.world.revocation_observation_mode == "ack_idempotent":
+                # Treatment arm: a repeat acknowledgment is answered as a no-op
+                # instead of being confirmed as a new success.
+                return self.world.receipts.record(agent_id, "accept_update", "already_acknowledged", {
+                    "kind": official["kind"], "update_id": official["update_id"],
+                })
             self.world.acknowledge_update(agent_id, official["update_id"])
             return self.world.receipts.record(agent_id, "accept_update", "executed", {
                 "kind": official["kind"], "update_id": official["update_id"],

@@ -42,7 +42,8 @@ def main(argv=None):
     parser.add_argument("--format-retries", type=int, default=1)
     parser.add_argument("--conditions", default=None)
     parser.add_argument("--revocation-observation-mode",
-                        choices=("persistent", "acknowledged", "consumed", "all"), default="persistent")
+                        choices=("persistent", "acknowledged", "consumed", "task_suspended", "ack_idempotent", "all"),
+                        default="persistent")
     parser.add_argument("--fake-transport", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--out", default="reports/live-run-paid.json")

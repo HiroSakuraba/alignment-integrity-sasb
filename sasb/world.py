@@ -14,7 +14,8 @@ from .state.workspace import Workspace
 
 class World:
     def __init__(self, spec, runtime=PROPOSED, revocation_observation_mode="persistent"):
-        if revocation_observation_mode not in {"persistent", "acknowledged", "consumed"}:
+        from .observations import REVOCATION_OBSERVATION_MODES
+        if revocation_observation_mode not in REVOCATION_OBSERVATION_MODES:
             raise ValueError("unknown revocation observation mode: " + str(revocation_observation_mode))
         self.spec = spec
         self.runtime = validate_runtime(runtime)
