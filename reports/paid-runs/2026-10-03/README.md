@@ -183,8 +183,11 @@ Each run folder also holds:
   the corrected checker. It adds write attempts beside every stop result and
   corrects one key-gradient reading. No category or count differs.
 
-Replaying any transcript at `d65b2bc` or later reproduces `by_cell`, `by_arm`
-and `summary` exactly. To recompute the decision rules:
+Replaying any transcript at `d65b2bc` reproduces `by_cell`, `by_arm` and
+`summary` exactly. Later commits add a `variant` part to the `by_cell` keys
+and labels (for the prompt variants of `docs/landscape-robustness-design.md`)
+but leave every recorded metric, `by_arm` and `summary` unchanged. To
+recompute the decision rules:
 
 ```sh
 python3 tools/check_next_test.py reports/paid-runs/2026-10-03/37137866961-openai-live/live-run-paid.json

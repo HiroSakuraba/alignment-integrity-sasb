@@ -88,12 +88,12 @@ def _wilson_raw(successes, total, z):
     return max(0.0, centre - half), min(1.0, centre + half)
 
 
-# Rows from runs before history prefixes existed have no prefix: they are h0.
-_KEY_DEFAULTS = {"history_prefix": "h0"}
+# Rows from runs before history prefixes or prompt variants existed are h0 and v0.
+_KEY_DEFAULTS = {"history_prefix": "h0", "variant": "v0"}
 
 
 def cell_table(rows, keys=("role", "runtime", "feedback", "revocation_observation_mode", "history_prefix",
-                           "condition"), metrics=CELL_METRICS):
+                           "variant", "condition"), metrics=CELL_METRICS):
     """Group scored rows by ``keys`` and report every metric with its interval."""
     groups = {}
     for row in rows:

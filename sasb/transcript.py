@@ -58,13 +58,13 @@ def default_path(model, runtime, mode, root="reports/transcripts"):
 
 
 def cell_key(condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
-             history_prefix="h0"):
+             history_prefix="h0", variant="v0"):
     """Episodes recorded before repeats, feedback, observation modes or history
-    prefixes existed read as repeat 0, code feedback, persistent observation,
-    no prefix."""
+    prefixes or prompt variants existed read as repeat 0, code feedback,
+    persistent observation, no prefix, variant v0."""
     return "|".join([str(condition), str(role), str(runtime), str(mode),
                      str(int(repeat or 0)), str(feedback or "code"), str(observation_mode or "persistent"),
-                     str(history_prefix or "h0")])
+                     str(history_prefix or "h0"), str(variant or "v0")])
 
 
 def _contract_fields():
@@ -114,6 +114,10 @@ def _turn(row):
     if row.get("request"):
         turn["system_prompt"] = row["request"].get("system")
         turn["user_prompt"] = row["request"].get("user")
+        if row["request"].get("variant"):
+            turn["variant"] = row["request"]["variant"]
+    if row.get("situation_fingerprint"):
+        turn["situation_fingerprint"] = row["situation_fingerprint"]
     if row.get("format_attempts"):
         # Failed replies that triggered a format retry, oldest first. The
         # fields above describe the last attempt; usage above is the sum.
@@ -156,20 +160,22 @@ class ReplayIndex:
         for ep in episodes:
             key = cell_key(ep.get("condition"), ep.get("role"), ep.get("runtime"), ep.get("mode"),
                            ep.get("repeat", 0), ep.get("feedback", "code"),
-                           ep.get("revocation_observation_mode", "persistent"), ep.get("history_prefix", "h0"))
+                           ep.get("revocation_observation_mode", "persistent"), ep.get("history_prefix", "h0"),
+                           ep.get("variant", "v0"))
             per_agent = self.cells.setdefault(key, {})
             for turn in ep["turns"]:
                 per_agent.setdefault(turn["agent_id"], []).append(turn)
 
     def has(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
-            history_prefix="h0"):
+            history_prefix="h0", variant="v0"):
         return cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode,
-                        history_prefix) in self.cells
+                        history_prefix, variant) in self.cells
 
     def actors(self, condition, role, runtime, mode, repeat=0, feedback="code", observation_mode="persistent",
-               history_prefix="h0"):
+               history_prefix="h0", variant="v0"):
         per_agent = self.cells.get(
-            cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode, history_prefix), {})
+            cell_key(condition, role, runtime, mode, repeat, feedback, observation_mode, history_prefix,
+                     variant), {})
         return {agent: ReplayActor(turns) for agent, turns in per_agent.items()}
 
 

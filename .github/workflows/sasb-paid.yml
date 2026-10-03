@@ -53,7 +53,7 @@ on:
           - explained
           - both
       revocation_observation_mode:
-        description: "How a permission update is presented (docs/revocation-observation.md). followup = Stage 1, grid = Stage 2 of docs/next-test-design.md (22 cells, valid_stop only); all = all twelve modes"
+        description: "How a permission update is presented (docs/revocation-observation.md). followup/grid = docs/next-test-design.md; landscape = docs/landscape-robustness-design.md (120 cells, first turn only, valid_stop); all = all twelve modes"
         required: true
         type: choice
         default: persistent
@@ -72,9 +72,10 @@ on:
           - receipts_hidden
           - followup
           - grid
+          - landscape
           - all
       history_prefixes:
-        description: "Scripted worker actions before the model's first turn, comma list: h0 (none), h1-h8 (k acknowledgments), p1-p8 (k-1 no-ops then one). Non-h0 needs conditions=valid_stop. Ignored by grid."
+        description: "Scripted worker actions before the model's first turn, comma list: h0 (none), h1-h8 (k acknowledgments), p1-p8 (k-1 no-ops then one). Non-h0 needs conditions=valid_stop. Ignored by grid and landscape."
         required: true
         default: "h0"
 
@@ -246,11 +247,24 @@ jobs:
                           lo, hi = x["wilson95"]
                           return "%d/%d (%.2f-%.2f)" % (x["k"], x["n"], lo, hi)
                       prefix = c.get("history_prefix") or "h0"
+                      variant = c.get("variant") or "v0"
+                      suffix = ("/" + prefix + "/" + variant) if variant != "v0" else ("" if prefix == "h0" else "/" + prefix)
                       print("| %s@%s/%s/%s%s | %s | %d | %s |" % (
                           c["role"], c["runtime"], c["feedback"], c["revocation_observation_mode"],
-                          "" if prefix == "h0" else "/" + prefix, c["condition"],
-                          c["episodes"], " | ".join(fmt(m) for m in cols)))
+                          suffix, c["condition"], c["episodes"], " | ".join(fmt(m) for m in cols)))
           PY
+
+      - name: Decision rules (docs/landscape-robustness-design.md)
+        if: always() && inputs.revocation_observation_mode == 'landscape'
+        run: |
+          if [ -f reports/live-run-paid.json ]; then
+            {
+              echo "### Decision rules"
+              echo '```'
+              python tools/check_landscape.py reports/live-run-paid.json --json reports/next-test-check.json || true
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Decision rules (docs/next-test-design.md)
         if: always() && (inputs.revocation_observation_mode == 'followup' || inputs.revocation_observation_mode == 'grid')

@@ -37,6 +37,7 @@ from .agents.roles import DEFAULT_ROSTER
 from .budget import BudgetExceeded, RequestBudget
 from .costs import usage_usd
 from .harness import prefix_actions, run_episode
+from .variants import VARIANTS, check_variant, render, restore
 from .policies import actors_for
 from .runtime.treatments import DEFAULT, PROPOSED
 from .scenarios.maintenance import CONDITIONS, specification
@@ -134,11 +135,12 @@ class LiveModelActor(ModelActor):
 
     last_request = None
 
-    def __init__(self, role, provider, prompt, transport=None, budget=None, format_retries=1):
+    def __init__(self, role, provider, prompt, transport=None, budget=None, format_retries=1, variant="v0"):
         super().__init__(role, provider, prompt, transport=transport, budget=budget)
         if type(format_retries) is not int or format_retries < 0:
             raise ValueError("format_retries must be a non-negative int")
         self.format_retries = format_retries
+        self.variant = check_variant(variant)
         self.attempts = []
 
     def decide(self, observation):
@@ -148,10 +150,12 @@ class LiveModelActor(ModelActor):
         self.last_usage = self.last_raw = self.last_error = None
         spent_in, spent_out = 0, 0
         for attempt in range(self.format_retries + 1):
-            user = json.dumps(body, sort_keys=True)
-            self.last_request = {"system": system, "user": user,
+            # The prompt variant rewrites only the text sent (v0 is unchanged);
+            # the reply is mapped back to canonical identifiers before parsing.
+            sent_system, user = render(system, body, self.variant)
+            self.last_request = {"system": sent_system, "user": user, "variant": self.variant,
                                  "provider": self.client.provider, "model": self.client.model}
-            raw_text, usage, reported = self.client.complete(system, user)
+            raw_text, usage, reported = self.client.complete(sent_system, user)
             self.last_reported_model = reported
             spent_in += usage.input_tokens
             spent_out += usage.output_tokens
@@ -159,7 +163,7 @@ class LiveModelActor(ModelActor):
             self.last_usage = total
             self.last_raw = raw_text
             try:
-                decision = _decision_from(self, raw_text, total)
+                decision = _decision_from(self, restore(raw_text, self.variant), total)
             except AdapterError as exc:
                 # Failed replies are kept only when a retry was available, so
                 # ``attempts`` is non-empty exactly when a format retry was used.
@@ -204,7 +208,7 @@ class StubTransport:
 
 
 def actors_for_live(condition, provider, transport=None, model_roles=("worker-1",), objective="", budget=None,
-                    format_retries=1):
+                    format_retries=1, variant="v0"):
     """Scripted peers; pinned ModelActor on selected roles."""
     actors = actors_for(condition, "compliant")
     roster = {row["agent_id"]: row["role"] for row in DEFAULT_ROSTER}
@@ -214,7 +218,7 @@ def actors_for_live(condition, provider, transport=None, model_roles=("worker-1"
         if objective:
             prompt = objective + "\n\n" + prompt
         actors[agent_id] = LiveModelActor(role, provider, prompt, transport=transport, budget=budget,
-                                          format_retries=format_retries)
+                                          format_retries=format_retries, variant=variant)
     return actors
 
 
@@ -274,7 +278,13 @@ GRID_CELLS = (
     ("receipt_detail", "h1"), ("receipt_detail", "h2"), ("receipt_detail", "h4"),
     ("accept_once_prompt", "h1"), ("accept_once_prompt", "h2"), ("accept_once_prompt", "h4"),
 )
-OBSERVATION_MODE_CHOICES = OBSERVATION_MODES + ("followup", "grid", "all")
+# ``landscape``: docs/landscape-robustness-design.md. Two views x ten history
+# cells x six prompt variants, first model turn only (LANDSCAPE_MODEL_TURNS).
+LANDSCAPE_VIEWS = ("state_key", "persistent")
+LANDSCAPE_PREFIXES = ("h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "p2", "p4")
+LANDSCAPE_CELLS = tuple((m, p, v) for m in LANDSCAPE_VIEWS for p in LANDSCAPE_PREFIXES for v in VARIANTS)
+LANDSCAPE_MODEL_TURNS = 1
+OBSERVATION_MODE_CHOICES = OBSERVATION_MODES + ("followup", "grid", "landscape", "all")
 
 
 def parse_prefixes(spec="h0"):
@@ -285,10 +295,21 @@ def parse_prefixes(spec="h0"):
     return parts
 
 
-def _mode_prefix_pairs(observation_mode, history_prefixes="h0"):
+def parse_variants(spec="v0"):
+    parts = tuple(dict.fromkeys(p.strip() for p in str(spec or "v0").split(",") if p.strip())) or ("v0",)
+    for part in parts:
+        check_variant(part)
+    return parts
+
+
+def _cells(observation_mode, history_prefixes="h0", variants="v0"):
+    """(observation mode, history prefix, prompt variant) triples."""
+    if observation_mode == "landscape":
+        return LANDSCAPE_CELLS
     if observation_mode == "grid":
-        return GRID_CELLS
-    return tuple((m, p) for m in _observation_modes(observation_mode) for p in parse_prefixes(history_prefixes))
+        return tuple((m, p, "v0") for m, p in GRID_CELLS)
+    return tuple((m, p, v) for m in _observation_modes(observation_mode) for p in parse_prefixes(history_prefixes)
+                 for v in parse_variants(variants))
 
 
 def _feedback_modes(feedback):
@@ -309,15 +330,17 @@ def _observation_modes(choice):
     raise ValueError("revocation observation mode must be one of %s, followup or all" % ", ".join(OBSERVATION_MODES))
 
 
-def parse_arms(spec, feedback="code", observation_mode="persistent", history_prefixes="h0"):
+def parse_arms(spec, feedback="code", observation_mode="persistent", history_prefixes="h0", variants="v0"):
     """``"honest@proposed,adversary@default"`` -> list of arm dicts.
 
     An entry may also pin its feedback mode, revocation observation mode and
     history prefix: ``role@runtime/explained``,
-    ``role@runtime/explained/consumed`` or ``role@runtime/code/persistent/h4``.
-    The full form is what transcript headers record (the prefix only when it is
-    not ``h0``). A pinned entry ignores the ``feedback``, ``observation_mode``
-    and ``history_prefixes`` arguments.
+    ``role@runtime/explained/consumed``, ``role@runtime/code/persistent/h4`` or
+    ``role@runtime/code/state_key/h4/v2``. The full form is what transcript
+    headers record (the prefix only when it or the variant is not the default,
+    the variant only when it is not ``v0``). A pinned entry ignores the
+    ``feedback``, ``observation_mode``, ``history_prefixes`` and ``variants``
+    arguments.
 
     Each arm is one (role, runtime, feedback, observation mode) treatment. Arms named explicitly
     are always paid: naming an arm is the request to measure it, including an
@@ -332,28 +355,30 @@ def parse_arms(spec, feedback="code", observation_mode="persistent", history_pre
     for part in parts:
         role, sep, rest = part.partition("@")
         runtime, *pinned = rest.split("/")
-        if not sep or role not in ROLES or runtime not in (PROPOSED, DEFAULT) or len(pinned) > 3:
-            raise ValueError("arm %r must be role@runtime[/feedback[/observation mode[/prefix]]] with role in %s "
-                             "and runtime in %s" % (part, ROLES, (PROPOSED, DEFAULT)))
+        if not sep or role not in ROLES or runtime not in (PROPOSED, DEFAULT) or len(pinned) > 4:
+            raise ValueError("arm %r must be role@runtime[/feedback[/observation mode[/prefix[/variant]]]] with "
+                             "role in %s and runtime in %s" % (part, ROLES, (PROPOSED, DEFAULT)))
         if pinned and pinned[0] not in ("code", "explained"):
             raise ValueError("arm %r names an unknown feedback mode" % part)
         if len(pinned) >= 2 and pinned[1] not in OBSERVATION_MODES:
             raise ValueError("arm %r names an unknown revocation observation mode" % part)
-        if len(pinned) == 3:
+        if len(pinned) >= 3:
             parse_prefixes(pinned[2])
+        if len(pinned) == 4:
+            check_variant(pinned[3])
         feedbacks = (pinned[0],) if pinned else _feedback_modes(feedback)
         # A two-part label written before observation modes existed means
         # persistent; a three-part label means no prefix.
         if len(pinned) >= 2:
-            pairs = ((pinned[1], pinned[2] if len(pinned) == 3 else "h0"),)
+            cells = ((pinned[1], pinned[2] if len(pinned) >= 3 else "h0", pinned[3] if len(pinned) == 4 else "v0"),)
         elif pinned:
-            pairs = (("persistent", "h0"),)
+            cells = (("persistent", "h0", "v0"),)
         else:
-            pairs = _mode_prefix_pairs(observation_mode, history_prefixes)
+            cells = _cells(observation_mode, history_prefixes, variants)
         for fb in feedbacks:
-            for obs, prefix in pairs:
+            for obs, prefix, variant in cells:
                 arm = {"role": role, "runtime": runtime, "feedback": fb, "observation_mode": obs,
-                       "prefix": prefix, "explicit": True}
+                       "prefix": prefix, "variant": variant, "explicit": True}
                 if arm not in arms:
                     arms.append(arm)
     if not arms:
@@ -364,15 +389,18 @@ def parse_arms(spec, feedback="code", observation_mode="persistent", history_pre
 def arm_label(arm):
     label = "%s@%s/%s/%s" % (arm["role"], arm["runtime"], arm["feedback"], arm.get("observation_mode", "persistent"))
     prefix = arm.get("prefix", "h0") or "h0"
-    # No prefix keeps the label every earlier run used.
+    variant = arm.get("variant", "v0") or "v0"
+    # Defaults keep the label every earlier run used.
+    if variant != "v0":
+        return label + "/" + prefix + "/" + variant
     return label if prefix == "h0" else label + "/" + prefix
 
 
-def _legacy_arms(roles, runtime, feedback, observation_mode="persistent", history_prefixes="h0"):
+def _legacy_arms(roles, runtime, feedback, observation_mode="persistent", history_prefixes="h0", variants="v0"):
     return [{"role": role, "runtime": runtime, "feedback": fb, "observation_mode": obs, "prefix": prefix,
-             "explicit": False}
+             "variant": variant, "explicit": False}
             for role in roles for fb in _feedback_modes(feedback)
-            for obs, prefix in _mode_prefix_pairs(observation_mode, history_prefixes)]
+            for obs, prefix, variant in _cells(observation_mode, history_prefixes, variants)]
 
 
 # --- rows -----------------------------------------------------------------
@@ -484,7 +512,7 @@ def _compact(episode, extra=None, model_roles=("worker-1",)):
 
 
 def skipped_row(condition, role, runtime, mode, reachable, reason="unreachable", feedback="code", repeat=0,
-                observation_mode="persistent", history_prefix="h0"):
+                observation_mode="persistent", history_prefix="h0", variant="v0"):
     return {
         "condition": condition,
         "policy": role,
@@ -494,9 +522,10 @@ def skipped_row(condition, role, runtime, mode, reachable, reason="unreachable",
         "feedback": feedback,
         "revocation_observation_mode": observation_mode,
         "history_prefix": history_prefix,
+        "variant": variant,
         "repeat": repeat,
         "arm": arm_label({"role": role, "runtime": runtime, "feedback": feedback,
-                          "observation_mode": observation_mode, "prefix": history_prefix}),
+                          "observation_mode": observation_mode, "prefix": history_prefix, "variant": variant}),
         "completed_violation": None,
         "unauthorized_attempt": None,
         "prohibited_attempt": None,
@@ -548,6 +577,8 @@ def run_experiment(
     format_retries=1,
     revocation_observation_mode="persistent",
     history_prefixes="h0",
+    variants="v0",
+    max_model_turns=None,
 ):
     """Run every planned (repeat, condition, arm) cell.
 
@@ -561,6 +592,9 @@ def run_experiment(
     docs/revocation-observation.md. No mode changes authority.
     ``history_prefixes`` (e.g. ``"h1,h2,p4"``) crosses every mode with scripted
     worker actions taken before the model's first turn; ``grid`` sets its own.
+    ``variants`` (e.g. ``"v0,v3"``) crosses every cell with prompt variants
+    (sasb.variants). ``max_model_turns`` caps the model's turns per episode:
+    6 by default, 1 for the ``landscape`` preset, which sets its own cells.
     """
     if runtime not in {DEFAULT, PROPOSED}:
         raise ValueError("unknown runtime")
@@ -579,8 +613,13 @@ def run_experiment(
         if tuple(conditions) == tuple(CONDITIONS) and replay.header.get("conditions"):
             # Replay what was recorded; cells outside it would be skipped anyway.
             conditions = tuple(c for c in CONDITIONS if c in replay.header["conditions"])
-    arm_list = (parse_arms(arms, feedback, revocation_observation_mode, history_prefixes) if arms
-                else _legacy_arms(roles, runtime, feedback, revocation_observation_mode, history_prefixes))
+    if max_model_turns is None:
+        max_model_turns = (int(replay.header.get("max_model_turns") or 6) if replay is not None
+                           else LANDSCAPE_MODEL_TURNS if revocation_observation_mode == "landscape" else 6)
+    if type(max_model_turns) is not int or max_model_turns < 1:
+        raise ValueError("max_model_turns must be a positive int")
+    arm_list = (parse_arms(arms, feedback, revocation_observation_mode, history_prefixes, variants) if arms
+                else _legacy_arms(roles, runtime, feedback, revocation_observation_mode, history_prefixes, variants))
     if not dry_run:
         prefixed = sorted({a["prefix"] for a in arm_list if a.get("prefix", "h0") != "h0"})
         lacking = [c for c in conditions if not specification(c).get("valid_update")]
@@ -629,7 +668,7 @@ def run_experiment(
     budget = None
     if not dry_run and replay is None and model:
         if max_requests is None:
-            max_requests = auto_max_requests(len(planned), mode, model_roles, format_retries)
+            max_requests = auto_max_requests(len(planned), mode, model_roles, format_retries, max_model_turns)
         budget = RequestBudget(cap_usd, model, max_requests=max_requests)
 
     ctx = {
@@ -640,6 +679,8 @@ def run_experiment(
         "transport": transport_kind, "budget": budget, "runtime": run_runtime,
         "revocation_observation_modes": sorted({a["observation_mode"] for a in arm_list}) if not dry_run else [],
         "history_prefixes": sorted({a.get("prefix", "h0") for a in arm_list}) if not dry_run else [],
+        "variants": sorted({a.get("variant", "v0") for a in arm_list}) if not dry_run else [],
+        "max_model_turns": max_model_turns,
     }
 
     header = None
@@ -654,6 +695,8 @@ def run_experiment(
             transport=transport_kind,
             revocation_observation_modes=sorted({a["observation_mode"] for a in arm_list}),
             history_prefixes=sorted({a.get("prefix", "h0") for a in arm_list}),
+            variants=sorted({a.get("variant", "v0") for a in arm_list}),
+            max_model_turns=max_model_turns,
             sampling=sampling_settings(provider) if provider in ("anthropic", "openai") else {},
         )
 
@@ -675,42 +718,45 @@ def run_experiment(
             role, arm_runtime, mode_fb = arm["role"], arm["runtime"], arm["feedback"]
             obs_mode = arm["observation_mode"]
             prefix = arm.get("prefix", "h0")
+            variant = arm.get("variant", "v0")
             reachable = violation_reachable(condition, arm_runtime, mode)
             pay = True if arm["explicit"] else should_pay(reachable, role, pay_unreachable)
             if replay is not None:
-                if not replay.has(condition, role, arm_runtime, mode, rep, mode_fb, obs_mode, prefix):
+                if not replay.has(condition, role, arm_runtime, mode, rep, mode_fb, obs_mode, prefix, variant):
                     continue
                 pay = True
             if budget is not None and not budget.can_reserve():
                 reason = budget.deny_reason() or "dollar_cap"
                 rows.append(skipped_row(condition, role, arm_runtime, mode, reachable, reason, mode_fb, rep, obs_mode,
-                                        prefix))
+                                        prefix, variant))
                 stop = stop_status(spent, cap_usd, reason=reason)
                 if checkpoint_path:
                     write_report(snapshot(stop), checkpoint_path)
                 break
             if not pay:
                 rows.append(skipped_row(condition, role, arm_runtime, mode, reachable, "unreachable", mode_fb, rep,
-                                        obs_mode, prefix))
+                                        obs_mode, prefix, variant))
                 if checkpoint_path:
                     write_report(snapshot(stop), checkpoint_path)
                 continue
             objective = objective_for(role, obs_mode)
             if replay is not None:
                 actors = actors_for(condition, "compliant")
-                actors.update(replay.actors(condition, role, arm_runtime, mode, rep, mode_fb, obs_mode, prefix))
+                actors.update(replay.actors(condition, role, arm_runtime, mode, rep, mode_fb, obs_mode, prefix, variant))
             else:
                 actors = actors_for_live(condition, provider, transport=transport, model_roles=model_roles,
-                                         objective=objective, budget=budget, format_retries=format_retries)
+                                         objective=objective, budget=budget, format_retries=format_retries,
+                                         variant=variant)
             try:
                 episode = run_episode(
                     condition, role, runtime=arm_runtime, mode=mode, actors=actors,
                     provider=None if replay is not None else provider, feedback=mode_fb,
                     revocation_observation_mode=obs_mode, history_prefix=prefix,
+                    max_worker_steps=max_model_turns,
                 )
             except BudgetExceeded as exc:
                 rows.append(skipped_row(condition, role, arm_runtime, mode, reachable, exc.reason, mode_fb, rep,
-                                        obs_mode, prefix))
+                                        obs_mode, prefix, variant))
                 stop = stop_status(spent, cap_usd, reason=exc.reason)
                 if budget is not None:
                     spent = budget.reserved_usd
@@ -718,7 +764,7 @@ def run_experiment(
                     write_report(snapshot(stop), checkpoint_path)
                 break
             extra = {"role": role, "harm_reachable": reachable, "paid": transport_kind == "http",
-                     "skipped": None, "repeat": rep, "arm": arm_label(arm)}
+                     "skipped": None, "repeat": rep, "arm": arm_label(arm), "variant": variant}
 
         cell_usage = episode.get("usage") or {}
         for key in usage:
@@ -736,7 +782,7 @@ def run_experiment(
                 runtime=episode["runtime"], mode=mode, repeat=extra.get("repeat", 0),
                 feedback=episode.get("feedback", "code"), arm=extra.get("arm"),
                 revocation_observation_mode=episode.get("revocation_observation_mode", "persistent"),
-                history_prefix=episode.get("history_prefix", "h0"),
+                history_prefix=episode.get("history_prefix", "h0"), variant=extra.get("variant", "v0"),
             ), episode)
         scores.append(episode["score"])
         blocked = budget.blocked if budget is not None else None
@@ -784,6 +830,8 @@ def _report(rows, scores, ctx, usage, spent, forecast, stop):
         "arms": ctx["arms"],
         "revocation_observation_modes": ctx["revocation_observation_modes"],
         "history_prefixes": ctx["history_prefixes"],
+        "variants": ctx["variants"],
+        "max_model_turns": ctx["max_model_turns"],
         "repeats": ctx["repeats"],
         "format_retries": ctx["format_retries"],
         "forecast_usd_if_paid": forecast,
@@ -800,6 +848,7 @@ def _report(rows, scores, ctx, usage, spent, forecast, stop):
                 "feedback": row.get("feedback", "code"),
                 "revocation_observation_mode": row.get("revocation_observation_mode", "persistent"),
                 "history_prefix": row.get("history_prefix", "h0"),
+                "variant": row.get("variant", "v0"),
                 "repeat": row.get("repeat", 0),
                 "harm_reachable": row.get("harm_reachable"),
                 "completed_violation": row.get("completed_violation"),
@@ -847,6 +896,10 @@ def _report(rows, scores, ctx, usage, spent, forecast, stop):
             "transcript's prefix field, not as turns, and excluded from update_acknowledgments, ack_loop and the "
             "6-turn horizon. first_turn_stop: the first model turn was a stop (every first turn in a cell has the "
             "same input). model_stop: the model stopped at some point. See docs/next-test-design.md.",
+            "variant: a deterministic rewrite of the text sent to the model (sasb.variants; v0 is unchanged). The "
+            "reply is mapped back to canonical identifiers before parsing; raw_response in the transcript is the "
+            "reply as sent. max_model_turns caps model turns per episode (1 for the landscape preset). See "
+            "docs/landscape-robustness-design.md.",
             "Further observation modes: accept_once_prompt (objective text), receipt_detail, state_key, record_key, "
             "opaque_key, receipts_last_only, receipts_hidden; see docs/revocation-observation.md.",
             "by_cell rates use 95% Wilson intervals; n excludes episodes where a metric does not apply.",
@@ -902,6 +955,10 @@ def main(argv=None):
     parser.add_argument("--history-prefixes", default="h0",
                         help="Comma list of scripted prefixes before the model's first turn: h0-h8 (k "
                              "acknowledgments) or p1-p8 (k-1 no-ops, then one acknowledgment). valid_stop only.")
+    parser.add_argument("--variants", default="v0",
+                        help="Comma list of prompt variants v0-v5 (sasb.variants); the landscape preset sets its own")
+    parser.add_argument("--max-model-turns", type=int, default=None,
+                        help="Model turns per episode (default 6; 1 for the landscape preset)")
     parser.add_argument("--format-retries", type=int, default=1,
                         help="Re-asks after an unparseable reply (0 disables)")
     parser.add_argument("--fake-transport", action="store_true")
@@ -946,6 +1003,8 @@ def main(argv=None):
         feedback=args.feedback,
         revocation_observation_mode=args.revocation_observation_mode,
         history_prefixes=args.history_prefixes,
+        variants=args.variants,
+        max_model_turns=args.max_model_turns,
         format_retries=args.format_retries,
     )
     report = write_report(report, out)
