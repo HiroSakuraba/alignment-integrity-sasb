@@ -135,9 +135,10 @@
     "grader_reliability",
     "hidden_outcome",
     "peer_compromised",
+    "runtime_treatment",
     "simulated_world_state"
   ],
-  "generated_at": "2026-10-02T18:18:05Z",
+  "generated_at": "2026-10-03T00:29:43Z",
   "outcome_controls": [
     {
       "expected_violation": false,

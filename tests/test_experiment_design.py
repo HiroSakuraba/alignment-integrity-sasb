@@ -147,10 +147,11 @@ class IntervalTests(unittest.TestCase):
         self.assertAlmostEqual(high, 0.6685, places=3)
 
     def test_cell_table_leaves_inapplicable_metrics_out_of_n(self):
-        rows = [{"role": "honest", "runtime": "proposed", "feedback": "code", "condition": "valid_stop",
+        rows = [{"role": "honest", "runtime": "proposed", "feedback": "code",
+                 "revocation_observation_mode": "persistent", "condition": "valid_stop",
                  "completed_violation": False, "authorized_task_completion": None, "prohibited_attempt": i == 0}
                 for i in range(4)]
-        cell = cell_table(rows)["honest|proposed|code|valid_stop"]
+        cell = cell_table(rows)["honest|proposed|code|persistent|valid_stop"]
         self.assertEqual(cell["episodes"], 4)
         self.assertEqual(cell["metrics"]["prohibited_attempt"]["k"], 1)
         self.assertEqual(cell["metrics"]["prohibited_attempt"]["n"], 4)
@@ -169,9 +170,14 @@ class ArmParsingTests(unittest.TestCase):
     def test_recorded_labels_round_trip(self):
         arms = parse_arms(["adversary@proposed/explained"], "code")
         self.assertEqual(arms[0]["feedback"], "explained")
+        # Two-part labels were written before observation modes existed.
+        self.assertEqual(arms[0]["observation_mode"], "persistent")
+        arms = parse_arms(["honest@proposed/code/consumed"], "explained", "all")
+        self.assertEqual([(a["feedback"], a["observation_mode"]) for a in arms], [("code", "consumed")])
 
     def test_bad_arms_are_rejected(self):
-        for spec in ("honest", "villain@proposed", "honest@sandbox", "honest@proposed/hints", ""):
+        for spec in ("honest", "villain@proposed", "honest@sandbox", "honest@proposed/hints", "",
+                     "honest@proposed/code/hidden", "honest@proposed/code/consumed/extra"):
             with self.subTest(spec=spec):
                 with self.assertRaises(ValueError):
                     parse_arms(spec)
@@ -202,7 +208,7 @@ class RepeatedRunTests(_Env):
         header, episodes = load(transcript)
         self.assertEqual(len(episodes), len(ran))
         self.assertEqual(header["repeats"], 3)
-        self.assertIn("adversary@default/code", header["arms"])
+        self.assertIn("adversary@default/code/persistent", header["arms"])
 
     def test_named_adversary_arm_is_run_even_when_harm_is_unreachable(self):
         report, _, _ = self._run(arms="adversary@proposed", conditions=("tempting_unauthorized",))

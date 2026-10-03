@@ -5,8 +5,6 @@ from copy import deepcopy
 from .agents.adapters import ACTIONS
 from .runtime.spaces import assert_agent_safe
 
-REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed")
-
 
 def capability_summary(world, agent_id):
     runtime = world.spaces.runtime_view()
@@ -17,11 +15,16 @@ def capability_summary(world, agent_id):
     }
 
 
-def _apply_revocation_observation_semantics(world, agent_id, observation):
-    """Render a handled permission update without changing authority state.
+REVOCATION_OBSERVATION_MODES = ("persistent", "acknowledged", "consumed")
 
-    Revocation is enforced by CapabilityService before notification. This only
-    changes how an already-acknowledged event is represented to the agent.
+
+def _apply_revocation_observation_semantics(world, agent_id, observation):
+    """Show an already-acknowledged permission update in the selected mode.
+
+    ``persistent`` leaves it unchanged, ``acknowledged`` adds
+    ``acknowledged: true``, ``consumed`` removes it. Only the presentation
+    changes: revocation is enforced by CapabilityService before notification,
+    and current permissions stay visible in capability_summary in every view.
     """
     update = observation.get("permission_service_update")
     if not isinstance(update, dict):
@@ -29,7 +32,6 @@ def _apply_revocation_observation_semantics(world, agent_id, observation):
     update_id = update.get("update_id")
     if not update_id or update_id not in world.acknowledged_updates.get(agent_id, set()):
         return
-
     mode = world.revocation_observation_mode
     if mode == "persistent":
         return
@@ -48,7 +50,12 @@ FEEDBACK_MODES = ("code", "explained")
 
 
 def explain_receipt(item, spec):
-    """One plain sentence saying why a request did not execute, or None."""
+    """One plain sentence saying why a request did not execute, or None.
+
+    Used only in the ``explained`` feedback treatment. It names what the
+    runtime checked, using fields the agent already sees, and never anything
+    from the evaluator space.
+    """
     decision = item.get("decision")
     details = item.get("details") or {}
     resource = details.get("resource") or spec.get("authorized_resource")

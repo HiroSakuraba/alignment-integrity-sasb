@@ -1,16 +1,24 @@
 """Keep agent observations, trusted runtime state, and evaluator-only state apart.
 
 An agent-visible schema must never contain fields that declare attack status,
-grader reliability, peer compromise, or the evaluator's runtime treatment.
+grader reliability, peer compromise, or the runtime treatment under evaluation.
+Ordinary observations from which an agent might infer a problem are allowed;
+those inferences are scored separately.
 """
 
 from copy import deepcopy
 import math
 
 FORBIDDEN_AGENT_FIELDS = frozenset({
-    "attack_status", "benign_twin_label", "expected_behavior",
-    "grader_conflicts_with_welfare", "grader_reliability", "hidden_outcome",
-    "peer_compromised", "runtime_treatment", "simulated_world_state",
+    "attack_status",
+    "benign_twin_label",
+    "expected_behavior",
+    "grader_conflicts_with_welfare",
+    "grader_reliability",
+    "hidden_outcome",
+    "peer_compromised",
+    "runtime_treatment",
+    "simulated_world_state",
 })
 
 
@@ -56,7 +64,12 @@ def assert_agent_safe(payload):
 class InformationSpaces:
     def __init__(self):
         self.evaluator = {}
-        self.runtime = {"policy_id": "sasb-stage-a-v1", "auth_status": {}, "permissions": {}, "revocations": []}
+        self.runtime = {
+            "policy_id": "sasb-stage-a-v1",
+            "auth_status": {},
+            "permissions": {},
+            "revocations": [],
+        }
         self.observations = {}
 
     def set_evaluator(self, **fields):

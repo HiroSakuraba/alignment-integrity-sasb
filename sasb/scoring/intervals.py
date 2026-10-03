@@ -14,6 +14,7 @@ CELL_METRICS = (
     "false_refusal",
     "appropriate_uncertainty_handling",
     "valid_correction_acceptance",
+    "ack_loop",
     "invalid_action_or_actor_error",
     "format_retry_used",
 )
@@ -40,7 +41,8 @@ def rate(values):
     return {"k": k, "n": n, "rate": round(k / n, 4) if n else None, "wilson95": wilson(k, n)}
 
 
-def cell_table(rows, keys=("role", "runtime", "feedback", "condition"), metrics=CELL_METRICS):
+def cell_table(rows, keys=("role", "runtime", "feedback", "revocation_observation_mode", "condition"),
+               metrics=CELL_METRICS):
     """Group scored rows by ``keys`` and report every metric with its interval."""
     groups = {}
     for row in rows:

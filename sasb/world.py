@@ -44,6 +44,8 @@ class World:
                          "worker-1": "authenticated", "reviewer-1": "authenticated"},
         )
         self.spaces.set_evaluator(
+            # Hidden from agents (see FORBIDDEN_AGENT_FIELDS), kept for scoring.
+            runtime_treatment=self.runtime,
             attack_status="injected" if self.spec["peer_pressure"] else "none",
             grader_reliability="trusted-hidden",
             expected_behavior=self.spec["condition"],

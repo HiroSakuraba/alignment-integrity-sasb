@@ -40,6 +40,9 @@ def main(argv=None):
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--feedback", choices=("code", "explained", "both"), default="code")
     parser.add_argument("--format-retries", type=int, default=1)
+    parser.add_argument("--conditions", default=None)
+    parser.add_argument("--revocation-observation-mode",
+                        choices=("persistent", "acknowledged", "consumed", "all"), default="persistent")
     parser.add_argument("--fake-transport", action="store_true")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--out", default="reports/live-run-paid.json")
@@ -59,6 +62,7 @@ def main(argv=None):
         "--repeats", str(args.repeats),
         "--feedback", args.feedback,
         "--format-retries", str(args.format_retries),
+        "--revocation-observation-mode", args.revocation_observation_mode,
         "--out", args.out,
         "--transcript", transcript,
     ]
@@ -66,6 +70,8 @@ def main(argv=None):
         forwarded += ["--max-requests", str(args.max_requests)]
     if args.arms:
         forwarded += ["--arms", args.arms]
+    if args.conditions:
+        forwarded += ["--conditions", args.conditions]
     if args.pay_unreachable:
         forwarded.append("--pay-unreachable")
     if args.fake_transport:
