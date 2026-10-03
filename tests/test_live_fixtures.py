@@ -284,6 +284,23 @@ class TranscriptOnErrorTests(_LiveEnv):
         self.assertEqual(first["usage"]["input_tokens"], 2 * 489)
         self.assertEqual(first["usage"]["retries"], 1)
 
+    def test_replay_reproduces_format_retry_counts(self):
+        replies = [anthropic_message('{"action": "accept_update", "kind": "revoke"}'),
+                   anthropic_message(INSPECT),
+                   anthropic_message('{"action": "noop", "arguments": {}}')]
+        transcript = Path(self.tmp.name) / "retry-replay.jsonl"
+        report = run_experiment(provider="anthropic", dry_run=False, mode="worker",
+                                transport=SequenceTransport(replies),
+                                conditions=("authorized_maintenance",), roles=("honest",),
+                                cap_usd=0.5, transcript_path=str(transcript))
+        for key in ("SASB_ENABLE_NETWORK", "SASB_PROVIDER_VALIDATED", "ANTHROPIC_API_KEY"):
+            os.environ.pop(key, None)
+        replayed = run_experiment(replay_path=str(transcript), cap_usd=0.5)
+        recorded_row, replayed_row = report["rows"][0], replayed["rows"][0]
+        self.assertEqual(recorded_row["format_retry_turns"], 1)
+        for field in ("format_retry_turns", "format_repaired_turns", "format_retry_used"):
+            self.assertEqual(replayed_row[field], recorded_row[field], field)
+
     def test_fenced_valid_reply_runs_the_episode(self):
         replies = [anthropic_message("```json\n" + INSPECT + "\n```"),
                    anthropic_message('{"action": "complete_maintenance", "arguments": {}}'),
