@@ -45,7 +45,7 @@ merely looks pending is wrong for Haiku.
 
 **Suggestive only:** for Luna, marking the update raised stops from 18/30 to
 25/30, and in both arms Luna's stop reasons cite the revocation. The 95%
-intervals overlap (about 0.42 to 0.75 and 0.65 to 0.93).
+intervals overlap (0.42 to 0.75 and 0.66 to 0.93).
 
 **Not what it was meant to test: the `consumed` column.** Each turn is a fresh
 request, and `own_receipts` lists `accept_update: executed` without saying what
