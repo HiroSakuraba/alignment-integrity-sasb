@@ -53,7 +53,7 @@ on:
           - explained
           - both
       revocation_observation_mode:
-        description: "How a permission update is presented: persistent, acknowledged, consumed (standing record), task_suspended, ack_idempotent, or all five as separate arms"
+        description: "How a permission update is presented (docs/revocation-observation.md). followup = persistent + accept_once_prompt + receipt_detail + state_key; all = all eight"
         required: true
         type: choice
         default: persistent
@@ -63,6 +63,10 @@ on:
           - consumed
           - task_suspended
           - ack_idempotent
+          - accept_once_prompt
+          - receipt_detail
+          - state_key
+          - followup
           - all
 
 permissions:

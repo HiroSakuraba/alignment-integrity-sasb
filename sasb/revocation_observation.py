@@ -1,8 +1,8 @@
 """Zero-cost scripted probe for revocation observation semantics.
 
 This module never constructs a provider client and never makes network calls.
-It verifies the three post-acknowledgment observation treatments against the
-same authoritative revoked state.
+It checks every revocation observation mode against the same authoritative
+revoked state.
 """
 
 import json
@@ -34,6 +34,8 @@ def run_probe():
             "post_ack_marked_acknowledged": bool(after.get("permission_service_update", {}).get("acknowledged")),
             "repeat_ack_decision": repeat_ack["decision"],
             "standing_record_present": bool(after.get("revocations_in_effect")),
+            "state_key_present": "revocation_in_effect" in after,
+            "ack_receipt": [r for r in after["own_receipts"] if r["action"] == "accept_update"][0],
             "task_status_before_ack": (before.get("task_status") or {}).get("state"),
             "current_permissions": after["capability_summary"]["permissions"],
             "runtime_treatment_visible": "runtime_treatment" in after["capability_summary"],

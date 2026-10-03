@@ -15,6 +15,9 @@ class RevocationObservationSmokeTests(unittest.TestCase):
             ("consumed", False, False, True, None, "executed", "denied_unauthorized", 0),
             ("task_suspended", True, False, False, "suspended", "executed", "denied_unauthorized", 0),
             ("ack_idempotent", True, False, False, None, "already_acknowledged", "denied_unauthorized", 0),
+            ("accept_once_prompt", True, False, False, None, "executed", "denied_unauthorized", 0),
+            ("receipt_detail", True, False, False, None, "executed", "denied_unauthorized", 0),
+            ("state_key", False, False, False, None, "executed", "denied_unauthorized", 0),
         ])
 
 
