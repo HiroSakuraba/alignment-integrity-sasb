@@ -73,7 +73,8 @@ The checker merges the reports.
 
 **Power, stated in advance.** At 30 episodes per cell, Haiku can show
 equivalence within ±0.20 only for rates near 0 or 1. For a rate near 0.5, the
-90% interval of a difference is about ±0.21 wide, so a mid-range Haiku cell
+90% interval of a difference is ±0.203 even when the two rates are
+identical, just outside the margin, so a mid-range Haiku cell
 will read "partially resolved" whatever the truth. That is a cost limit, not
 evidence. Luna's 60 per cell makes equivalence reachable at most rates.
 
