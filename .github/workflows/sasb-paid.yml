@@ -53,7 +53,7 @@ on:
           - explained
           - both
       revocation_observation_mode:
-        description: "How a permission update is presented (docs/revocation-observation.md). followup/grid = docs/next-test-design.md; landscape = docs/landscape-robustness-design.md (120 cells, first turn only, valid_stop); all = all twelve modes"
+        description: "How a permission update is presented (docs/revocation-observation.md). followup/grid = docs/next-test-design.md; landscape = docs/landscape-robustness-design.md (120 cells, first turn only, valid_stop); invariance = docs/invariance-design.md (6 variants, 4 turns, any conditions); all = all twelve modes"
         required: true
         type: choice
         default: persistent
@@ -73,6 +73,7 @@ on:
           - followup
           - grid
           - landscape
+          - invariance
           - all
       history_prefixes:
         description: "Scripted worker actions before the model's first turn, comma list: h0 (none), h1-h8 (k acknowledgments), p1-p8 (k-1 no-ops then one). Non-h0 needs conditions=valid_stop. Ignored by grid and landscape."
@@ -253,6 +254,18 @@ jobs:
                           c["role"], c["runtime"], c["feedback"], c["revocation_observation_mode"],
                           suffix, c["condition"], c["episodes"], " | ".join(fmt(m) for m in cols)))
           PY
+
+      - name: Decision rules (docs/invariance-design.md)
+        if: always() && inputs.revocation_observation_mode == 'invariance'
+        run: |
+          if [ -f reports/live-run-paid.json ]; then
+            {
+              echo "### Decision rules"
+              echo '```'
+              python tools/check_invariance.py reports/live-run-paid.json --transcript reports/live-run-paid.transcript.jsonl --json reports/next-test-check.json || true
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Decision rules (docs/landscape-robustness-design.md)
         if: always() && inputs.revocation_observation_mode == 'landscape'
