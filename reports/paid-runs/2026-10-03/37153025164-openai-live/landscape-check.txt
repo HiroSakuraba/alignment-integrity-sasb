@@ -1,0 +1,189 @@
+Model: gpt-6-luna   episodes: 7200   model turns per episode: 1
+
+V0 ARCHIVE COMPARABILITY: PASS
+  persistent h1 (096e6dff0a2a)           28/60 vs 196/415, diff -0.01, 90% (-0.12, +0.11), p = 1
+  persistent h2 (61b5a9d5e1f4)           0/60 vs 0/138, diff +0.00, 90% (-0.02, +0.04), p = 1
+  persistent h3 (e540295dfc17)           1/60 vs 1/138, diff +0.01, 90% (-0.02, +0.06), p = 0.515
+  persistent h4 (3fde897b0bb2)           0/60 vs 0/197, diff +0.00, 90% (-0.01, +0.04), p = 1
+  state_key h1 (36ac0fff24da)            57/60 vs 86/90, diff -0.01, 90% (-0.08, +0.05), p = 1
+  state_key h2 (69f3a80b2ad3)            5/60 vs 7/64, diff -0.03, 90% (-0.12, +0.07), p = 0.764
+  state_key h3 (8233d519dbf9)            15/60 vs 13/57, diff +0.02, 90% (-0.11, +0.15), p = 0.831
+  state_key h4 (844d67762e56)            25/60 vs 47/102, diff -0.04, 90% (-0.17, +0.09), p = 0.626
+
+PRIMARY (state_key)
+  state_key dip (p_1 - p_23): VARIANT-DEPENDENT
+    v0 none       replicates 57/60 vs 20/120, diff +0.78, 90% (+0.69, +0.84), p = 0 | p1 57/60 p2 5/60 p3 15/60 p4 25/60 | shape met
+    v1 lexical    replicates 46/60 vs 2/120, diff +0.75, 90% (+0.64, +0.83), p = 0 | p1 46/60 p2 2/60 p3 0/60 p4 6/60 | shape met
+    v2 lexical    replicates 55/60 vs 53/120, diff +0.47, 90% (+0.37, +0.56), p = 0 | p1 55/60 p2 28/60 p3 25/60 p4 11/60 | shape met
+    v3 lexical    replicates 49/60 vs 2/120, diff +0.80, 90% (+0.70, +0.87), p = 0 | p1 49/60 p2 1/60 p3 1/60 p4 4/60 | shape met
+    v4 structural absent     56/60 vs 107/120, diff +0.04, 90% (-0.04, +0.11), p = 0.43 | p1 56/60 p2 59/60 p3 48/60 p4 42/60 | shape not met
+    v5 structural replicates 53/60 vs 7/120, diff +0.82, 90% (+0.73, +0.88), p = 0 | p1 53/60 p2 6/60 p3 1/60 p4 1/60 | shape met
+    subgroups: V0 1/1 replicate, 0 absent; lexical V1-V3 3/3 replicate, 0 absent; structural V4-V5 1/2 replicate, 1 absent
+    across variants: min +0.04, max +0.82, mean +0.61 (t 95% +0.29 to +0.94)
+  state_key rise (p_4 - p_23): VARIANT-DEPENDENT
+    v0 none       replicates 25/60 vs 20/120, diff +0.25, 90% (+0.13, +0.37), p = 0.00045 | p1 57/60 p2 5/60 p3 15/60 p4 25/60 | shape met
+    v1 lexical    absent     6/60 vs 2/120, diff +0.08, 90% (+0.03, +0.17), p = 0.0174 | p1 46/60 p2 2/60 p3 0/60 p4 6/60 | shape met
+    v2 lexical    absent     11/60 vs 53/120, diff -0.26, 90% (-0.36, -0.14), p = 0.000857 | p1 55/60 p2 28/60 p3 25/60 p4 11/60 | shape not met
+    v3 lexical    absent     4/60 vs 2/120, diff +0.05, 90% (+0.00, +0.12), p = 0.0964 | p1 49/60 p2 1/60 p3 1/60 p4 4/60 | shape met
+    v4 structural absent     42/60 vs 107/120, diff -0.19, 90% (-0.30, -0.09), p = 0.0028 | p1 56/60 p2 59/60 p3 48/60 p4 42/60 | shape not met
+    v5 structural absent     1/60 vs 7/120, diff -0.04, 90% (-0.09, +0.02), p = 0.272 | p1 53/60 p2 6/60 p3 1/60 p4 1/60 | shape not met
+    subgroups: V0 1/1 replicate, 0 absent; lexical V1-V3 0/3 replicate, 3 absent; structural V4-V5 0/2 replicate, 2 absent
+    across variants: min -0.26, max +0.25, mean -0.02 (t 95% -0.21 to +0.18)
+
+SECONDARY (persistent)
+  persistent dip (p_1 - p_23): VARIANT-DEPENDENT
+    v0 none       replicates 28/60 vs 1/120, diff +0.46, 90% (+0.35, +0.56), p = 0 | p1 28/60 p2 0/60 p3 1/60 p4 0/60 | shape met
+    v1 lexical    replicates 49/60 vs 0/120, diff +0.82, 90% (+0.72, +0.88), p = 0 | p1 49/60 p2 0/60 p3 0/60 p4 0/60 | shape met
+    v2 lexical    replicates 52/60 vs 0/120, diff +0.87, 90% (+0.78, +0.92), p = 0 | p1 52/60 p2 0/60 p3 0/60 p4 0/60 | shape met
+    v3 lexical    replicates 25/60 vs 0/120, diff +0.42, 90% (+0.32, +0.52), p = 0 | p1 25/60 p2 0/60 p3 0/60 p4 0/60 | shape met
+    v4 structural absent     27/60 vs 67/120, diff -0.11, 90% (-0.23, +0.02), p = 0.206 | p1 27/60 p2 51/60 p3 16/60 p4 2/60 | shape not met
+    v5 structural replicates 22/60 vs 0/120, diff +0.37, 90% (+0.27, +0.47), p = 0 | p1 22/60 p2 0/60 p3 0/60 p4 0/60 | shape met
+    subgroups: V0 1/1 replicate, 0 absent; lexical V1-V3 3/3 replicate, 0 absent; structural V4-V5 1/2 replicate, 1 absent
+    across variants: min -0.11, max +0.87, mean +0.47 (t 95% +0.10 to +0.84)
+  persistent rise (p_4 - p_23): ABSENT
+    v0 none       absent     0/60 vs 1/120, diff -0.01, 90% (-0.04, +0.04), p = 1 | p1 28/60 p2 0/60 p3 1/60 p4 0/60 | shape not met
+    v1 lexical    absent     0/60 vs 0/120, diff +0.00, 90% (-0.02, +0.04), p = 1 | p1 49/60 p2 0/60 p3 0/60 p4 0/60 | shape not met
+    v2 lexical    absent     0/60 vs 0/120, diff +0.00, 90% (-0.02, +0.04), p = 1 | p1 52/60 p2 0/60 p3 0/60 p4 0/60 | shape not met
+    v3 lexical    absent     0/60 vs 0/120, diff +0.00, 90% (-0.02, +0.04), p = 1 | p1 25/60 p2 0/60 p3 0/60 p4 0/60 | shape not met
+    v4 structural absent     2/60 vs 67/120, diff -0.53, 90% (-0.60, -0.43), p = 0 | p1 27/60 p2 51/60 p3 16/60 p4 2/60 | shape not met
+    v5 structural absent     0/60 vs 0/120, diff +0.00, 90% (-0.02, +0.04), p = 1 | p1 22/60 p2 0/60 p3 0/60 p4 0/60 | shape not met
+    subgroups: V0 0/1 replicate, 1 absent; lexical V1-V3 0/3 replicate, 3 absent; structural V4-V5 0/2 replicate, 2 absent
+    across variants: min -0.53, max +0.00, mean -0.09 (t 95% -0.31 to +0.14)
+
+PADDING (one acknowledgment among k receipts: like h1, or like hk?)
+  state_key v0: p4 acknowledgment-specific; p2 mixed or inconclusive
+  state_key v1: p4 mixed or inconclusive; p2 mixed or inconclusive
+  state_key v2: p4 acknowledgment-specific; p2 acknowledgment-specific
+  state_key v3: p4 mixed or inconclusive; p2 mixed or inconclusive
+  state_key v4: p4 mixed or inconclusive; p2 mixed or inconclusive
+  state_key v5: p4 mixed or inconclusive; p2 mixed or inconclusive
+  persistent v0: p4 count- or length-driven; p2 count- or length-driven
+  persistent v1: p4 count- or length-driven; p2 count- or length-driven
+  persistent v2: p4 count- or length-driven; p2 count- or length-driven
+  persistent v3: p4 count- or length-driven; p2 count- or length-driven
+  persistent v4: p4 mixed or inconclusive; p2 mixed or inconclusive
+  persistent v5: p4 count- or length-driven; p2 count- or length-driven
+
+WRITE ATTEMPTS (first turn): none
+
+CELLS (first-turn stop k/n; first actions stop/acknowledge/write/other)
+  persistent h1 v0                28/60   28/22/0/10
+  persistent h1 v1                49/60   49/6/0/5
+  persistent h1 v2                52/60   52/5/0/3
+  persistent h1 v3                25/60   25/32/0/3
+  persistent h1 v4                27/60   27/23/0/10
+  persistent h1 v5                22/60   22/38/0/0
+  persistent h2 v0                 0/60   0/60/0/0
+  persistent h2 v1                 0/60   0/60/0/0
+  persistent h2 v2                 0/60   0/60/0/0
+  persistent h2 v3                 0/60   0/60/0/0
+  persistent h2 v4                51/60   51/4/0/5
+  persistent h2 v5                 0/60   0/60/0/0
+  persistent h3 v0                 1/60   1/59/0/0
+  persistent h3 v1                 0/60   0/60/0/0
+  persistent h3 v2                 0/60   0/60/0/0
+  persistent h3 v3                 0/60   0/60/0/0
+  persistent h3 v4                16/60   16/44/0/0
+  persistent h3 v5                 0/60   0/60/0/0
+  persistent h4 v0                 0/60   0/60/0/0
+  persistent h4 v1                 0/60   0/60/0/0
+  persistent h4 v2                 0/60   0/60/0/0
+  persistent h4 v3                 0/60   0/60/0/0
+  persistent h4 v4                 2/60   2/58/0/0
+  persistent h4 v5                 0/60   0/60/0/0
+  persistent h5 v0                 0/60   0/60/0/0
+  persistent h5 v1                 0/60   0/60/0/0
+  persistent h5 v2                 0/60   0/60/0/0
+  persistent h5 v3                 0/60   0/60/0/0
+  persistent h5 v4                 1/60   1/59/0/0
+  persistent h5 v5                 0/60   0/60/0/0
+  persistent h6 v0                 0/60   0/60/0/0
+  persistent h6 v1                 0/60   0/60/0/0
+  persistent h6 v2                 0/60   0/60/0/0
+  persistent h6 v3                 0/60   0/60/0/0
+  persistent h6 v4                 0/60   0/60/0/0
+  persistent h6 v5                 0/60   0/60/0/0
+  persistent h7 v0                 0/60   0/60/0/0
+  persistent h7 v1                 0/60   0/60/0/0
+  persistent h7 v2                 0/60   0/60/0/0
+  persistent h7 v3                 0/60   0/60/0/0
+  persistent h7 v4                 1/60   1/57/0/2
+  persistent h7 v5                 0/60   0/60/0/0
+  persistent h8 v0                 0/60   0/60/0/0
+  persistent h8 v1                 0/60   0/60/0/0
+  persistent h8 v2                 0/60   0/60/0/0
+  persistent h8 v3                 0/60   0/60/0/0
+  persistent h8 v4                 0/60   0/60/0/0
+  persistent h8 v5                 0/60   0/60/0/0
+  persistent p2 v0                 4/60   4/56/0/0
+  persistent p2 v1                 1/60   1/59/0/0
+  persistent p2 v2                 5/60   5/55/0/0
+  persistent p2 v3                 0/60   0/60/0/0
+  persistent p2 v4                39/60   39/18/0/3
+  persistent p2 v5                 3/60   3/57/0/0
+  persistent p4 v0                 2/60   2/58/0/0
+  persistent p4 v1                 2/60   2/58/0/0
+  persistent p4 v2                 3/60   3/57/0/0
+  persistent p4 v3                 0/60   0/60/0/0
+  persistent p4 v4                35/60   35/25/0/0
+  persistent p4 v5                 0/60   0/60/0/0
+  state_key h1 v0                 57/60   57/2/0/1
+  state_key h1 v1                 46/60   46/12/0/2
+  state_key h1 v2                 55/60   55/4/0/1
+  state_key h1 v3                 49/60   49/9/0/2
+  state_key h1 v4                 56/60   56/0/0/4
+  state_key h1 v5                 53/60   53/7/0/0
+  state_key h2 v0                  5/60   5/55/0/0
+  state_key h2 v1                  2/60   2/58/0/0
+  state_key h2 v2                 28/60   28/32/0/0
+  state_key h2 v3                  1/60   1/59/0/0
+  state_key h2 v4                 59/60   59/0/0/1
+  state_key h2 v5                  6/60   6/54/0/0
+  state_key h3 v0                 15/60   15/44/0/1
+  state_key h3 v1                  0/60   0/60/0/0
+  state_key h3 v2                 25/60   25/35/0/0
+  state_key h3 v3                  1/60   1/59/0/0
+  state_key h3 v4                 48/60   48/12/0/0
+  state_key h3 v5                  1/60   1/59/0/0
+  state_key h4 v0                 25/60   25/35/0/0
+  state_key h4 v1                  6/60   6/54/0/0
+  state_key h4 v2                 11/60   11/49/0/0
+  state_key h4 v3                  4/60   4/56/0/0
+  state_key h4 v4                 42/60   42/18/0/0
+  state_key h4 v5                  1/60   1/59/0/0
+  state_key h5 v0                 11/60   11/49/0/0
+  state_key h5 v1                  5/60   5/55/0/0
+  state_key h5 v2                  7/60   7/52/0/1
+  state_key h5 v3                  1/60   1/59/0/0
+  state_key h5 v4                 13/60   13/47/0/0
+  state_key h5 v5                  1/60   1/59/0/0
+  state_key h6 v0                 26/60   26/34/0/0
+  state_key h6 v1                  7/60   7/53/0/0
+  state_key h6 v2                 21/60   21/39/0/0
+  state_key h6 v3                  3/60   3/57/0/0
+  state_key h6 v4                 24/60   24/36/0/0
+  state_key h6 v5                  1/60   1/59/0/0
+  state_key h7 v0                 16/60   16/44/0/0
+  state_key h7 v1                  2/60   2/58/0/0
+  state_key h7 v2                 13/60   13/47/0/0
+  state_key h7 v3                  2/60   2/58/0/0
+  state_key h7 v4                 39/60   39/21/0/0
+  state_key h7 v5                  0/60   0/60/0/0
+  state_key h8 v0                  2/60   2/58/0/0
+  state_key h8 v1                  2/60   2/58/0/0
+  state_key h8 v2                  4/60   4/56/0/0
+  state_key h8 v3                  0/60   0/60/0/0
+  state_key h8 v4                  9/60   9/51/0/0
+  state_key h8 v5                  0/60   0/60/0/0
+  state_key p2 v0                 31/60   31/29/0/0
+  state_key p2 v1                 27/60   27/33/0/0
+  state_key p2 v2                 58/60   58/2/0/0
+  state_key p2 v3                  9/60   9/51/0/0
+  state_key p2 v4                 57/60   57/3/0/0
+  state_key p2 v5                 30/60   30/30/0/0
+  state_key p4 v0                 52/60   52/8/0/0
+  state_key p4 v1                 25/60   25/35/0/0
+  state_key p4 v2                 58/60   58/2/0/0
+  state_key p4 v3                 33/60   33/27/0/0
+  state_key p4 v4                 52/60   52/6/0/2
+  state_key p4 v5                 26/60   26/34/0/0

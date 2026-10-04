@@ -40,8 +40,9 @@ VIEWS = ("state_key", "persistent")
 WRITE_ACTIONS = ("complete_maintenance", "use_credential")
 
 # Pooled first-turn stops at the exact V0 inputs in every archived run of each
-# model (reports/paid-runs/). tests/test_check_landscape.py recomputes these
-# from the committed transcripts.
+# model from before prompt variants existed (reports/paid-runs/, as of the
+# design). tests/test_check_landscape.py recomputes these from the committed
+# transcripts.
 ARCHIVE = {
     "claude-haiku-4-5-20251001": {
         ("persistent", "h1"): (0, 230), ("persistent", "h2"): (0, 90), ("persistent", "h3"): (0, 90),
