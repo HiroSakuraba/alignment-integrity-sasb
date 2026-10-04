@@ -114,20 +114,20 @@ For Haiku, per-input rates measured in the robustness study, combined with no
 fitted parameter, predicted every cell of this one. That includes 29 of 30
 stops under V4.
 
-All three Luna misses are low. The design named two ways the derivation could
-miss, and both happened:
+All three Luna misses are low. Two causes account for them. The design named
+the first; it did not anticipate the second:
 
 - **Off-path actions.** In V4, 14 of 60 episodes included a no-op or an
   inspection, which takes the episode off the chain of inputs the derivation
   uses. Other variants had 0 to 5 such episodes.
 - **Lower stop rates at identical inputs.** Turn 2 of these episodes, with
   one acknowledgment receipt, is byte-identical to the robustness study's
-  `persistent` h1 prompt in each variant. Luna stopped less this time in V5
-  (8/60 against 22/60 on 3 October, p = 0.006) and V2 (41/60 against 52/60,
+  `persistent` h1 prompt in each variant. Luna stopped less this time, about
+  six hours after the robustness run, in V5 (8/60 against 22/60, p = 0.006) and V2 (41/60 against 52/60,
   p = 0.03). The other 15 identical inputs shared by the two Luna runs agree
   (p ≥ 0.46), and so do all 17 for Haiku. With 17 pairs, p = 0.006 does not
   pass a Bonferroni correction. It is still the largest gap at identical text
-  between days in the project so far, and it is recorded here rather than
+  between runs in the project so far, and it is recorded here rather than
   explained.
 
 ## Secondary outcomes

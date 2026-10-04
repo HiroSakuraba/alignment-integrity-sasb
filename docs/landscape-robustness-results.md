@@ -32,7 +32,7 @@ revocation.
 | Haiku | **INCONCLUSIVE**: no pair differed (smallest p = 0.45). With 20 calls per cell, two intervals reached past the margin (+0.29 at `state_key` h1, −0.22 at h4) |
 
 This is the first archive gate in the project to pass outright. For Luna,
-the archived exact-string results reproduce in a new run on a later day.
+the archived exact-string results reproduce in a new run later the same day.
 
 ## Primary outcomes (`state_key`)
 

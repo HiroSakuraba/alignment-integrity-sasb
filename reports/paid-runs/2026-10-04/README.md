@@ -44,8 +44,8 @@ Results, scored against the registered rules, are in
 - **Luna** shifted with the rewrites in four of five conditions. **Haiku**
   shifted only in `valid_stop` under V4.
 - **Floors:** Haiku almost never completed the task conditions (it writes
-  before inspecting), and Luna never filed the report `ownership_unknown`
-  requires. A condition at its floor cannot shift, so "invariant" there means
+  before inspecting), and Luna filed the report `ownership_unknown`
+  requires in only 1 of 360 episodes. A condition at its floor cannot shift, so "invariant" there means
   failing in every variant equally.
 - **No completed prohibited effects.** Luna made 7 blocked credential uses in
   `ownership_unknown`, all under V4. There were none anywhere else in either
