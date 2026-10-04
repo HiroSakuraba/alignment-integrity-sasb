@@ -284,7 +284,11 @@ LANDSCAPE_VIEWS = ("state_key", "persistent")
 LANDSCAPE_PREFIXES = ("h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "p2", "p4")
 LANDSCAPE_CELLS = tuple((m, p, v) for m in LANDSCAPE_VIEWS for p in LANDSCAPE_PREFIXES for v in VARIANTS)
 LANDSCAPE_MODEL_TURNS = 1
-OBSERVATION_MODE_CHOICES = OBSERVATION_MODES + ("followup", "grid", "landscape", "all")
+# ``invariance``: docs/invariance-design.md. Plain presentation, no prefix, all
+# six prompt variants, 4 model turns, run against the conditions requested.
+INVARIANCE_CELLS = tuple(("persistent", "h0", v) for v in VARIANTS)
+INVARIANCE_MODEL_TURNS = 4
+OBSERVATION_MODE_CHOICES = OBSERVATION_MODES + ("followup", "grid", "landscape", "invariance", "all")
 
 
 def parse_prefixes(spec="h0"):
@@ -306,6 +310,8 @@ def _cells(observation_mode, history_prefixes="h0", variants="v0"):
     """(observation mode, history prefix, prompt variant) triples."""
     if observation_mode == "landscape":
         return LANDSCAPE_CELLS
+    if observation_mode == "invariance":
+        return INVARIANCE_CELLS
     if observation_mode == "grid":
         return tuple((m, p, "v0") for m, p in GRID_CELLS)
     return tuple((m, p, v) for m in _observation_modes(observation_mode) for p in parse_prefixes(history_prefixes)
@@ -544,6 +550,12 @@ def skipped_row(condition, role, runtime, mode, reachable, reason="unreachable",
     }
 
 
+# Live runs rewrite the report as a checkpoint every this many episodes (and on
+# any stop, and at the end). Every episode was quadratic: the 7,200-episode
+# robustness run spent most of its extra time rewriting a 15 MB report.
+CHECKPOINT_EVERY = 50
+
+
 def auto_max_requests(cells, mode, model_roles, format_retries, max_worker_steps=6):
     """Request ceiling large enough for every planned turn plus its retries.
 
@@ -579,6 +591,7 @@ def run_experiment(
     history_prefixes="h0",
     variants="v0",
     max_model_turns=None,
+    checkpoint_every=CHECKPOINT_EVERY,
 ):
     """Run every planned (repeat, condition, arm) cell.
 
@@ -594,7 +607,11 @@ def run_experiment(
     worker actions taken before the model's first turn; ``grid`` sets its own.
     ``variants`` (e.g. ``"v0,v3"``) crosses every cell with prompt variants
     (sasb.variants). ``max_model_turns`` caps the model's turns per episode:
-    6 by default, 1 for the ``landscape`` preset, which sets its own cells.
+    6 by default, 1 for the ``landscape`` preset and 4 for ``invariance``;
+    both presets set their own cells.
+    ``checkpoint_every``: with ``checkpoint_path``, the report is rewritten
+    every that many episodes, on any stop, and at the end. Rewriting it after
+    every episode made long runs quadratic.
     """
     if runtime not in {DEFAULT, PROPOSED}:
         raise ValueError("unknown runtime")
@@ -615,7 +632,8 @@ def run_experiment(
             conditions = tuple(c for c in CONDITIONS if c in replay.header["conditions"])
     if max_model_turns is None:
         max_model_turns = (int(replay.header.get("max_model_turns") or 6) if replay is not None
-                           else LANDSCAPE_MODEL_TURNS if revocation_observation_mode == "landscape" else 6)
+                           else LANDSCAPE_MODEL_TURNS if revocation_observation_mode == "landscape"
+                           else INVARIANCE_MODEL_TURNS if revocation_observation_mode == "invariance" else 6)
     if type(max_model_turns) is not int or max_model_turns < 1:
         raise ValueError("max_model_turns must be a positive int")
     arm_list = (parse_arms(arms, feedback, revocation_observation_mode, history_prefixes, variants) if arms
@@ -736,7 +754,7 @@ def run_experiment(
             if not pay:
                 rows.append(skipped_row(condition, role, arm_runtime, mode, reachable, "unreachable", mode_fb, rep,
                                         obs_mode, prefix, variant))
-                if checkpoint_path:
+                if checkpoint_path and len(rows) % checkpoint_every == 0:
                     write_report(snapshot(stop), checkpoint_path)
                 continue
             objective = objective_for(role, obs_mode)
@@ -787,13 +805,16 @@ def run_experiment(
         scores.append(episode["score"])
         blocked = budget.blocked if budget is not None else None
         stop = stop_status(spent, cap_usd, reason=blocked)
-        if checkpoint_path:
+        if checkpoint_path and len(rows) % checkpoint_every == 0:
             write_report(snapshot(stop), checkpoint_path)
         if budget is not None and (spent >= cap_usd or blocked):
             break
     else:
         stop = stop_status(spent, cap_usd, finished=True)
-    return snapshot(stop)
+    final = snapshot(stop)
+    if checkpoint_path:
+        write_report(final, checkpoint_path)
+    return final
 
 
 CLAIMS = {
@@ -958,7 +979,7 @@ def main(argv=None):
     parser.add_argument("--variants", default="v0",
                         help="Comma list of prompt variants v0-v5 (sasb.variants); the landscape preset sets its own")
     parser.add_argument("--max-model-turns", type=int, default=None,
-                        help="Model turns per episode (default 6; 1 for the landscape preset)")
+                        help="Model turns per episode (default 6; 1 for the landscape preset, 4 for invariance)")
     parser.add_argument("--format-retries", type=int, default=1,
                         help="Re-asks after an unparseable reply (0 disables)")
     parser.add_argument("--fake-transport", action="store_true")
