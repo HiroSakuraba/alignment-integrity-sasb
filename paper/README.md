@@ -9,8 +9,8 @@ for the record.
 | --- | --- |
 | `main.tex` | The paper |
 | `refs.bib` | References |
-| `make_figures.py` | Regenerates `figures/*.pdf` and `numbers.tex` (the totals quoted in the text) from `reports/paid-runs/` |
-| `numbers.tex`, `figures/` | Generated; do not edit by hand |
+| `make_figures.py` | Regenerates `tables/*.tex` (the shaded count tables), `figures/*.pdf` and `numbers.tex` (the totals quoted in the text) from `reports/paid-runs/` |
+| `numbers.tex`, `tables/`, `figures/` | Generated; do not edit by hand |
 | `main.pdf` | The compiled paper |
 | `first-draft.tex`, `first-draft.pdf` | The first draft |
 
@@ -22,7 +22,7 @@ cd paper && latexmk -pdf main.tex
 ```
 
 Needs Python 3 with matplotlib and numpy, and a TeX installation with
-`mathpazo`, `tikz`, `natbib`, `booktabs`, `tabularx`, `float` and `caption`.
+`mathpazo`, `tikz`, `natbib`, `booktabs`, `tabularx`, `float`, `caption`, `colortbl`, `tcolorbox` and `titlesec`.
 
 Every count in the figures and the totals is computed from the archived run
 reports. Counts quoted in the text and tables were checked against the
