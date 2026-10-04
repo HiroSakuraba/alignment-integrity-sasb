@@ -1,6 +1,9 @@
-# Paper: Same Authority, Different Text
+# Paper: Authority Should Survive Rewording
 
 LaTeX source for the paper written from the studies in this repository.
+`main.tex` is the current version, rebuilt from the author's rewrite.
+`first-draft.tex` (*Same Authority, Different Text*) is the first draft, kept
+for the record.
 
 | File | What it is |
 | --- | --- |
@@ -9,6 +12,7 @@ LaTeX source for the paper written from the studies in this repository.
 | `make_figures.py` | Regenerates `figures/*.pdf` and `numbers.tex` (the totals quoted in the text) from `reports/paid-runs/` |
 | `numbers.tex`, `figures/` | Generated; do not edit by hand |
 | `main.pdf` | The compiled paper |
+| `first-draft.tex`, `first-draft.pdf` | The first draft |
 
 Build, from the repository root:
 
