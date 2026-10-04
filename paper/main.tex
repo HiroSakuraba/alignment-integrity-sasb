@@ -41,19 +41,16 @@
 \maketitle
 
 \begin{abstract}
-A tool-using language-model agent may be protected by a correct permission system and still behave unreliably if its decisions depend on superficial details of how authority is described.
-We study that distinction in a deterministic maintenance environment in which a model must act only within its current authority.
-The runtime enforces permissions; the model receives a structured observation describing its task, capability, ownership state, revocation notices, and its own action receipts.
-We evaluate Claude Haiku 4.5 and GPT-6 Luna across \TotalEpisodes{} paid episodes (\TotalSpend{}), including a pilot, exploratory studies, and four studies whose predictions and decision rules were committed before the paid runs.
-The central experimental question is whether behavior is invariant to meaning-preserving changes in representation while remaining sensitive to genuine changes in authority.
-The answer is mixed.
-Runtime enforcement prevented every prohibited write in the enforcing condition, but model behavior was often representation-sensitive.
-Haiku repeatedly acknowledged a valid revocation without stopping until particular presentation cues were introduced; reversing JSON field order later changed its revocation decision from 0/30 correct stops to 29/30.
-Luna's apparent four-receipt stopping effect disappeared under all five registered rewrites, while its one-receipt effect survived five of six.
-In the final invariance study, both models discriminated write-permitted from write-prohibited situations in all six representations, yet correct decisions shifted under meaning-preserving rewrites: four of five conditions for Luna and the revocation condition for Haiku.
-These results separate three properties that are often conflated: enforcement, authority discrimination, and reliable task completion.
-They also show why single-prompt evaluations can overstate behavioral robustness.
-For agent safety, authority must be both consequential in the runtime and legible to the model in a form that remains stable under benign changes of representation.
+AI agents that act through software tools are usually given permissions, and a separate system blocks anything they are not allowed to do.
+That stops them from causing harm, but it does not make them behave well.
+We asked a simple question: does an agent's decision follow what it is allowed to do, or how that permission happens to be written?
+We gave two AI models, Claude Haiku 4.5 and GPT-6 Luna, a small maintenance job and changed their situation in two ways: by changing what they were allowed to do, and by rewriting the same information in ways that should not matter, such as renaming things or putting the same facts in a different order.
+We wrote down our predictions before each main experiment.
+Across \TotalEpisodes{} test runs, the blocking system stopped every forbidden action wherever it was switched on, and the models mostly tried to act only when they were allowed to.
+But whether they made the right decision often changed with the rewording alone.
+In one case, reordering the facts took a model from never stopping after being told to stop to stopping 29 times out of 30.
+Results that held for one exact wording often disappeared when the wording changed.
+Systems built on AI agents should enforce permissions outside the model, and test the agent across many equivalent wordings before trusting it.
 \end{abstract}
 
 \section{Introduction}
