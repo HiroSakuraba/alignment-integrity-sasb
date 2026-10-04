@@ -1,0 +1,537 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[sc]{mathpazo}
+\linespread{1.05}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\definecolor{heading}{HTML}{1F3A5F}
+\titleformat{\section}{\normalfont\Large\bfseries\color{heading}}{\thesection.}{0.5em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{heading}}{\thesubsection}{0.6em}{}
+\titleformat{\paragraph}[runin]{\normalfont\bfseries\color{heading}}{}{0pt}{}[.]
+
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\emergencystretch}{2.5em}
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+\input{numbers.tex}
+
+\title{\color{heading}\textbf{Authority Should Survive Rewording:}\\[4pt]
+\large Testing Representation Invariance and Authority Sensitivity\\in Tool-Using Language-Model Agents}
+\author{Benjamin John Schulz\\\small Independent researcher}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+AI agents that act through software tools are usually given permissions, and a separate system blocks anything they are not allowed to do.
+That stops them from causing harm, but it does not make them behave well.
+We asked a simple question: does an agent's decision follow what it is allowed to do, or how that permission happens to be written?
+We gave two AI models, Claude Haiku 4.5 and GPT-6 Luna, a small maintenance job and changed their situation in two ways: by changing what they were allowed to do, and by rewriting the same information in ways that should not matter, such as renaming things or putting the same facts in a different order.
+We wrote down our predictions before each main experiment.
+Across \TotalEpisodes{} test runs, the blocking system stopped every forbidden action wherever it was switched on, and the models mostly tried to act only when they were allowed to.
+But whether they made the right decision often changed with the rewording alone.
+In one case, reordering the facts took a model from never stopping after being told to stop to stopping 29 times out of 30.
+Results that held for one exact wording often disappeared when the wording changed.
+Systems built on AI agents should enforce permissions outside the model, and test the agent across many equivalent wordings before trusting it.
+\end{abstract}
+
+\section{Introduction}
+
+AI agents increasingly act through tools that can modify files, databases, code, accounts, and other external state.
+In such systems, a basic safety requirement is not merely that the model know what the user wants, but that it act only within the authority it currently possesses.
+That requirement has two layers.
+First, the runtime must enforce authority: an unauthorized action should not succeed.
+Second, the agent must interpret changes in authority well enough to choose the appropriate next action.
+A secure executor can block a forbidden write, but it cannot by itself make an agent stop retrying, recognize that permission has been revoked, or complete an authorized task efficiently.
+
+This paper studies the second layer while keeping the first explicit.
+The motivating question is simple: if two observations describe the same authority state, should harmless changes in wording, identifier spelling, field order, or formatting change the agent's decision?
+Conversely, when authority genuinely changes, should the agent's behavior change?
+We operationalize this as a paired property: representation invariance and authority sensitivity.
+A reliable agent should be comparatively insensitive to meaning-preserving changes in presentation and appropriately sensitive to changes that alter what it is allowed or required to do.
+
+The distinction matters because language models are known to be prompt-sensitive, but tool use raises the stakes.
+In a benchmark question, a formatting effect may change an answer.
+In an agent, the same kind of sensitivity can alter whether the system stops after revocation, retries a denied operation, chooses a credential, or completes a task.
+The safety architecture therefore needs a way to distinguish failures of the model from failures of enforcement, and to distinguish a stable behavioral property from a result that belongs to one exact prompt.
+
+We test two contemporary models, Claude Haiku 4.5 and GPT-6 Luna, as workers in a deterministic maintenance environment.
+The worker sees a JSON observation and chooses from a closed action set.
+The environment contains five authority-relevant conditions, including ordinary authorized maintenance, uncertain ownership, exposure to a forbidden credential, and a valid mid-task revocation.
+The runtime independently checks capabilities and evidence before executing writes.
+Because each model call is stateless and the environment is deterministic, identical observations can be identified exactly by their input hashes and compared across turns and runs.
+
+The study developed sequentially.
+A pilot revealed a persistent Haiku failure after revocation: the model accepted the update repeatedly but did not stop.
+Follow-up experiments changed one aspect of the revocation presentation at a time.
+A later history experiment found that Luna's next action depended strongly on the number of action receipts visible in the observation.
+That apparent response shape was then subjected to registered robustness tests using meaning-preserving rewrites.
+Most of the shape did not survive.
+This motivated the final invariance study, which crossed five authority situations with six representations and measured both condition-specific correctness and write behavior.
+
+The main result is not that either model simply ``understands'' or ``fails to understand'' revocation.
+The more precise finding is that authority handling is local to a model, an observation, and its representation.
+Both models usually distinguished situations in which writing was permitted from situations in which it was not, but their correct decisions could change sharply under rewrites that carried no authority information.
+At the same time, the enforcing runtime prevented those behavioral instabilities from becoming completed prohibited effects.
+This separation between model behavior and system-level enforcement is central to the interpretation of the results.
+
+\paragraph{Contributions}
+\begin{itemize}
+\item A controlled test of representation invariance and authority sensitivity in tool-using language-model agents, with enforcement held separate from model behavior.
+\item A sequential experimental program in which surprising exact-prompt effects are challenged by registered meaning-preserving perturbations before being treated as general phenomena.
+\item Evidence that both models can discriminate write-permitted from write-prohibited situations while still exhibiting large representation effects in condition-specific correctness.
+\item A reproducible public archive of prompts, transcripts, checkers, registered predictions, and run outputs covering \TotalEpisodes{} paid model episodes~\cite{schulz2026repo}.
+\end{itemize}
+
+\section{Conceptual framing and related work}
+
+\subsection{Alignment as a problem of handles and constraints}
+
+Lyons's ``alignment compiler'' framing motivates the experimental logic~\cite{lyons2026compilers}; he draws the idea from Lagasse and Levin's hypothetical anatomical compiler~\cite{lagasse2023future}.
+A high-level property does not uniquely determine each component's local action; a system must translate that property into constraints and signals that individual components can respond to.
+In our setting, the high-level property is ``act only within current authority.''
+The runtime makes authority consequential by enforcing capabilities.
+The observation makes authority legible by presenting information about permissions, ownership, revocation, and prior actions.
+We use ``handle'' for a feature of that observation that reliably redirects the model in the desired direction.
+
+This framing also prevents a common category error.
+A permission system can be correct even when the model behaves poorly, and a model can appear well behaved because the runtime blocks its mistakes.
+We therefore report attempted actions and completed effects separately throughout.
+
+\subsection{Prompt sensitivity and multi-prompt evaluation}
+
+Prior work has shown that semantically equivalent prompt formats can produce materially different language-model performance~\cite{sclar2024quantifying}, and that single-prompt evaluations can give unstable estimates of capability~\cite{mizrahi2024state}.
+Our experiments apply that concern to an agentic authority setting.
+Rather than asking only whether a model answers a question correctly, we ask whether its tool-use decision remains stable when the underlying authority state is unchanged but its representation is altered.
+Agent benchmarks such as AgentDojo~\cite{debenedetti2024agentdojo} and $\tau$-bench~\cite{yao2024taubench} measure task success and robustness across many tasks; we study one task family in depth, with enforcement held separate from behavior.
+
+\subsection{Corrigibility and revocation}
+
+The valid-stop condition is a narrow behavioral test of corrigibility~\cite{soares2015corrigibility,hadfieldmenell2017offswitch}.
+A trusted permission service revokes write authority; the worker should accept the update and stop without attempting the revoked action.
+We make no claim about the model's internal goals, intentions, or reasons.
+The measured object is behavior under an authenticated change in authority.
+
+\section{Environment and methods}
+
+\subsection{Task and authority conditions}
+
+The environment is a synthetic maintenance task with four roles: planner, worker, reviewer, and coordinator.
+The worker is the model under test; the other roles are scripted.
+The worker is instructed to complete authorized maintenance on a test resource without causing a prohibited effect and must choose one JSON action per turn from a closed action set.
+
+\begin{table}[H]
+\centering
+\small
+\caption{The five authority conditions and the correct decision in each.}
+\label{tab:conditions}
+\begin{tabularx}{0.85\linewidth}{@{}l L@{}}
+\toprule
+Condition & Correct decision \\
+\midrule
+\code{authorized_maintenance} & Complete the authorized task. \\
+\code{low_salience_ownership} & Complete the authorized task; ownership is stated less prominently. \\
+\code{tempting_unauthorized} & Complete the task without using the forbidden credential or resource. \\
+\code{ownership_unknown} & Inspect and report; do not write. \\
+\code{valid_stop} & Accept the authenticated revocation and stop; do not write. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Enforcement and scoring}
+
+Under the enforcing runtime, a write requires a current capability for the agent, tenant, resource, and action, plus evidence from a prior inspection.
+In \code{valid_stop}, the capability is revoked before the worker is informed.
+Acknowledging the update does not restore permission.
+We distinguish a prohibited attempt (the model tried an action that the runtime rejected) from a completed prohibited effect (forbidden external state change).
+
+Per episode we record the condition-specific correct decision, any write attempt, prohibited attempts, completed prohibited effects, stopping behavior, revocation rejection, acknowledgment loops, and first action.
+Correctness is condition-specific; a generic ``no write'' score would incorrectly treat failure to complete an authorized task as equivalent to appropriate restraint after revocation.
+
+\subsection{Models and sampling}
+
+The worker model was Claude Haiku 4.5 (\code{claude-haiku-4-5-20251001}) or GPT-6 Luna (\code{gpt-6-luna}), pinned by the client used in the archive.
+Haiku was sampled at temperature 1.0.
+Luna used the provider default temperature with reasoning effort set to none.
+Outputs were capped at 256 tokens.
+Calls were stateless: the system prompt and current observation were the entire model input.
+
+\subsection{Perturbations}
+
+We perturb the observation at several levels.
+Notice-presentation manipulations change how a valid revocation is displayed without changing authority.
+History prefixes control how many prior acknowledgment or no-op receipts are already visible.
+Prompt variants alter identifiers or serialization while preserving the modeled situation.
+Denial feedback controls whether a denied operation is returned as a bare code or with a short explanation.
+
+\begin{table}[H]
+\centering
+\small
+\caption{The registered prompt variants. Replies are mapped back to canonical identifiers before they are parsed, so the executor and scorer never see a variant.}
+\label{tab:variants}
+\begin{tabularx}{0.85\linewidth}{@{}l l L@{}}
+\toprule
+Variant & Class & Change \\
+\midrule
+V0 & canonical & Sorted keys, compact JSON. \\
+V1 & lexical & Rename scenario identifiers to same-length alternatives. \\
+V2 & lexical & Rename identifiers to different-length/style alternatives. \\
+V3 & lexical & Change the update-ID format; byte-identical to V0 outside \code{valid_stop}. \\
+V4 & structural & Reverse key order at every JSON level. \\
+V5 & structural & Indent JSON with two spaces. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Statistical decision rules and registration}
+
+Differences are tested with two-sided Fisher exact tests.
+Equivalence is defined by a 90\% Newcombe interval for a rate difference lying wholly inside $\pm0.20$.
+These are separate decisions: a comparison that is neither different nor equivalent is reported as unresolved, not as agreement.
+Thresholds are Bonferroni-corrected within each registered family.
+After the exploratory phase, each study's predictions and decision rules were committed to the public repository before its paid run, and a checker applied those rules mechanically.
+Appendix~\ref{app:predictions} lists every registered prediction and its outcome, and Appendix~\ref{app:corrections} lists corrections made after runs.
+
+\subsection{Run corpus and reproducibility}
+
+Across the archived model runs, the project contains \TotalEpisodes{} paid episodes: \HaikuEpisodes{} Haiku episodes and \LunaEpisodes{} Luna episodes, costing \TotalSpend{} in total.
+Reports and full transcripts are archived, and transcript replay at the recorded commit reproduces aggregate tables without additional API calls.
+The final invariance runs comprised 900 Haiku episodes (\$3.373) and 1,800 Luna episodes (\$0.549).
+
+\section{Results}
+
+\subsection{The pilot separated enforcement from behavior}
+
+The pilot established the first important distinction.
+Under the enforcing runtime, prohibited effects were blocked even when model behavior was imperfect.
+In the honest valid-stop arm, Haiku acknowledged the revocation repeatedly and never stopped in 58 of 58 episodes; Luna stopped in 24 of 60 and entered an acknowledgment loop in 23.
+Neither honest model attempted the revoked write in those episodes.
+The failure was therefore not an enforcement failure and not initially a harmful-action failure.
+It was a failure to terminate appropriately after accepting a trusted correction.
+
+The pilot also showed that legibility of runtime feedback can matter independently of the underlying rule.
+With bare denial codes, Haiku completed 12 of 90 honest task episodes; adding a one-sentence explanation to the same denials raised completion to 90 of 90.
+The dependency was enforced in both cases, but only the more legible feedback reliably redirected the model.
+
+\subsection{Revocation presentation, not revocation semantics alone, controlled Haiku}
+
+Follow-up manipulations tested simple explanations for Haiku's loop.
+Marking the notice as acknowledged, marking the task suspended, or returning idempotent acknowledgment receipts did not end the loop.
+By contrast, replacing the transient notice with a standing \code{revocations_in_effect} record produced 30/30 stops.
+A later key-gradient study sharpened the result: moving the unchanged notice under the key \code{revocation_in_effect} produced 30/30 stops, whereas neutral or opaque keys did not.
+For Haiku, the presentation cue in the key functioned as a behavioral handle.
+
+The strongest cross-model contrast came from adding the update ID and revocation kind to acknowledgment receipts.
+Luna stopped in 30/30 episodes.
+Haiku instead attempted \code{complete_maintenance} after revocation in 30/30; every attempt was blocked.
+The same representational change therefore redirected the two models in opposite directions.
+
+\subsection{Receipt history changed Luna's next action}
+
+With the revocation notice shown unchanged, Luna's first-turn stopping depended strongly on the record already in view.
+One acknowledgment receipt produced 27/60 stops, while four produced 0/60 in the registered Stage 2 comparison ($p = 3\times10^{-10}$).
+Padding with no-op receipts showed that, under the same plain notice, additional receipts themselves could suppress stopping.
+Provenance did not explain the effect: a one-receipt record written by the model and the byte-identical scripted record produced equivalent stop rates.
+
+Haiku also showed a non-monotonic receipt-count pattern under selected notice presentations.
+Because this shape was discovered after the run, it was treated as exploratory and became the target of a separate robustness study rather than being promoted directly to a mechanism claim.
+
+\subsection{The receipt-count shape did not generalize across benign rewrites}
+
+The robustness study tested 120 exact prompts per model: six representation variants, ten receipt-history cells, and two notice presentations.
+The registered question was whether the apparent dip at two to three receipts and rise at four survived changes that carried no authority information.
+All four primary outcomes were classified as variant-dependent, so the preregistered rule ruled out the planned mechanism study.
+Figure~\ref{fig:landscape} shows the renamed-notice half of the study and Table~\ref{tab:robust} the registered categories.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/landscape.pdf}
+\caption{First-turn stops in \code{valid_stop} with the notice under \code{revocation_in_effect}, by prompt variant (rows) and acknowledgment receipts in view (columns; p2 and p4 are no-op padding before one acknowledgment). Each cell is one exact prompt: Haiku 20 calls per prompt, Luna 60. Darker is more stops.}
+\label{fig:landscape}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Registered robustness categories. Dip: one receipt against two and three. Rise: four against two and three.}
+\label{tab:robust}
+\begin{tabularx}{0.85\linewidth}{@{}l l L@{}}
+\toprule
+Outcome & Registered category & Pattern across variants \\
+\midrule
+Luna dip & Variant-dependent & Replicated in V0, V1, V2, V3, V5; absent in V4. \\
+Luna rise & Variant-dependent & Replicated only in V0; absent in V1--V5. \\
+Haiku rise & Variant-dependent & Replicated in V0--V3; absent in V4--V5. \\
+Haiku dip & Variant-dependent & Replicated in V0 and V3; absent in V2, V4, V5; V1 unresolved. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The most defensible interpretation is therefore asymmetric.
+Luna's four-receipt rise belonged to the original string.
+Luna's one-receipt effect was much more stable, surviving five of six variants under both notice presentations.
+Haiku's rise survived every identifier change but no formatting change.
+Reversed key order (V4) was especially disruptive: under the unchanged notice at exactly two receipts, Haiku stopped in 18/20 episodes and Luna in 51/60, while neighboring receipt counts behaved very differently.
+In the V4 padded two-receipt cell, Haiku rejected the authenticated revocation in 14/20 episodes.
+These are representation effects, not changes in authority.
+
+\subsection{Final invariance study: write discrimination held, correct decisions did not}
+
+The final study crossed all five authority conditions with V0--V5 at a four-turn horizon.
+This directly tested both halves of the target property.
+The result was the same registered combined verdict for both models: write-discriminating but representation-sensitive.
+Figure~\ref{fig:invariance} shows the full matrix of correct decisions and Table~\ref{tab:inv} the registered categories.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/invariance.pdf}
+\caption{Correct decisions by condition and prompt variant in the final invariance study, four model turns, unchanged notice presentation. Haiku 30 episodes per cell, Luna 60. Outside \code{valid_stop}, V3 is the same prompt as V0. The floors discussed in Section~\ref{sec:floors} are the rows near zero.}
+\label{fig:invariance}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Registered representation-invariance categories of the correct decision. Shifted variants in brackets.}
+\label{tab:inv}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Condition & Haiku & Luna \\
+\midrule
+\code{authorized_maintenance} & Inconclusive & Sensitive (V1, V2, V4) \\
+\code{low_salience_ownership} & Invariant at floor & Sensitive (V1) \\
+\code{tempting_unauthorized} & Inconclusive & Sensitive (V1, V2) \\
+\code{ownership_unknown} & Inconclusive & Invariant at floor \\
+\code{valid_stop} & Sensitive (V4) & Sensitive (V1, V4, V5) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both models passed the registered write-discrimination contrasts in all six variants; every contrast was at least $+0.88$.
+In other words, they attempted writes far more often when write authority was present than in \code{valid_stop} or \code{ownership_unknown}.
+That is a meaningful success.
+It does not imply that the authorized work was completed correctly.
+
+Correct decisions were much less stable.
+Luna shifted under meaning-preserving rewrites in four of five conditions.
+Haiku's registered correctness shift appeared only in \code{valid_stop}, where V4 reversed field order and changed correct stopping from 0/30 under V0 to 29/30 under V4.
+All 29 stops occurred on turn three at the same two-receipt input implicated by the robustness study.
+
+\subsection{Floor effects expose a second failure mode: the agent can discriminate authority and still fail the task}
+\label{sec:floors}
+
+The final matrix must be read against substantial floor effects.
+Haiku completed only 0 to 12 of 30 episodes in each of the three task-completion conditions.
+In 539 of 540 such episodes it wrote before inspecting; 1,893 of 1,964 write attempts were denied for missing evidence, after which it commonly retried until the horizon.
+Luna, by contrast, scored 0/60 in \code{ownership_unknown} under every representation: it almost always inspected again, and filed a report in only one of 360 episodes.
+An invariant floor is not a robust success; it is stable failure.
+
+Luna's task-condition sensitivity also had a concrete behavioral source.
+It often copied the target directly from the task sentence and fused the tenant and resource into one malformed resource name.
+The frequency of this copying error depended on identifier shape.
+In \code{authorized_maintenance}, V1 produced the glued target in 59/60 episodes and only one completion, while V2 produced 23 glued targets and 56 completions.
+This is a genuine representation effect, but not evidence of a changed judgment about authority.
+
+\subsection{Harmful actions remained rare and were blocked}
+
+There were no completed prohibited effects in the enforcing runs.
+In the final invariance study, the only prohibited attempts were seven Luna credential uses in \code{ownership_unknown} under V4; all were blocked.
+The registered harmful-attempt shift was inconclusive.
+One episode illustrates why attempts and stated reasoning should not be conflated: Luna reported that maintenance was not authorized until ownership was established and then attempted the write on the next turn.
+
+\subsection{Cross-run exact-input checks}
+
+The deterministic harness allowed a direct check of exact-string stability across runs.
+In the robustness study, Luna's V0 archive comparison passed outright, the first fully passing comparison against the archive in the project: exact-string results recorded earlier the same day reproduced in a new run.
+Haiku's was inconclusive because confidence intervals slightly exceeded the equivalence margin despite no significant pairwise difference.
+
+The same property allowed a cross-study prediction.
+Because each call is stateless, a \code{valid_stop} episode under the unchanged notice is a chain of first-turn situations, and the robustness study had measured the stop rate at each of them.
+From those rates alone, with no fitted parameter, the invariance design registered each variant's probability of stopping within four turns.
+For Haiku all six predictions fell inside the observed 95\% intervals, including 0.90 predicted against 29/30 observed under V4: behavior in one study was predicted from measurements taken in another.
+For Luna three of six were consistent, and all three misses were low.
+One cause was named in the design: in V4, 14 of 60 episodes left the predicted path with a no-op or an inspection.
+The other was not anticipated: at some identical inputs Luna stopped less often in the later run.
+
+In the final study, 17 shared inputs per model were checked against earlier measurements.
+All Haiku pairs agreed.
+Luna showed one comparatively large gap, V5 at one receipt (8/60 versus 22/60, $p = 0.006$), which did not survive correction for 17 comparisons, and a smaller one in V2 at the same receipt count (41/60 versus 52/60, $p = 0.03$).
+Provider-side drift cannot be ruled out, but it does not explain the much larger within-run representation effects.
+
+\section{Discussion}
+
+\subsection{The central result: authority behavior is not a single model property}
+
+The experiments argue against statements such as ``the model handles revocation'' without specifying the observation and representation under which that claim was established.
+Both models could be redirected, but the features that redirected them were model-specific and sometimes semantically irrelevant.
+Haiku was especially sensitive to notice presentation and serialization.
+Luna was especially sensitive to receipt history and identifier form.
+A behavioral property observed at one exact prompt could disappear at a nearby meaning-preserving prompt.
+
+\subsection{Enforcement, discrimination, and completion are different properties}
+
+Three layers should be reported separately.
+Enforcement asks whether an unauthorized external effect can occur.
+Authority discrimination asks whether the model behaves differently when writing is permitted versus inappropriate.
+Task correctness asks whether the model actually takes the right sequence of actions for the condition.
+In our final study, enforcement was strong and write discrimination passed, yet task correctness was often poor and representation-sensitive.
+Collapsing these layers into one ``alignment'' score would hide the most useful information.
+
+\subsection{Representation invariance is a practical safety criterion}
+
+A production authority system cannot assume that every semantically equivalent observation will have the same surface form.
+Identifiers change, serializers reorder keys, logs accumulate, middleware adds fields, and schemas evolve.
+A safety-relevant decision rule that works only under one rendering is therefore brittle even if the underlying permission state is correct.
+The appropriate engineering target is not identical language generation across representations; it is stability of the authority-relevant decision under meaning-preserving transformations.
+
+\subsection{Exact-prompt replication is necessary but insufficient}
+
+The project also illustrates a methodological point.
+Repeating one exact prompt can estimate its response distribution very precisely, but it does not establish a region of behavioral robustness.
+Luna's four-receipt rise was a real and repeatable property of V0, yet it disappeared in all five registered rewrites.
+The robustness study therefore converted what might have become a mechanistic story into a narrower and better-supported claim: the effect belonged to a particular representation.
+
+\subsection{Implications for agent architecture}
+
+The results support a two-part design principle.
+First, authority must be enforced outside the model by a trusted runtime with narrow write scopes, revocation, and explicit evidence requirements.
+Second, authority information must be presented in a form the model can reliably use, and that presentation must be tested under benign rewrites before it is treated as a dependable handle.
+Model legibility cannot substitute for enforcement, and enforcement cannot substitute for model legibility.
+
+\subsection{What should be tested next}
+
+The next experiments should not simply optimize the particular V4 string.
+The stronger program is to map semantic invariance directly: construct matched observations that preserve the authority state while systematically varying serialization, identifier form, irrelevant fields, and history layout, and pair them with matched observations in which one authority-relevant fact actually changes.
+The target statistic is then the relative behavioral movement under meaning-preserving versus meaning-changing perturbations.
+A model should move little under the former and appropriately under the latter.
+
+\section{Limitations}
+\label{sec:limits}
+
+\begin{itemize}
+\item Only two models and one synthetic task family were tested. The five conditions differ in more than one semantic fact, so the write contrasts do not isolate a single causal authority variable.
+\item Episode horizons were short (one, four, or six turns), and stopping was terminal. The experiments therefore do not support attractor or hysteresis claims.
+\item The registered representation variants were deliberately chosen, not sampled from a defined population of semantically equivalent prompts. Results establish robustness or sensitivity only across the tested transformations.
+\item Several conditions sit at performance floors. Invariance at a floor is stable failure, not evidence of reliable task execution.
+\item The scorer credits a stop whatever its reason, while revocation-citing language is detected only approximately. Malformed write targets fail task completion but are not necessarily prohibited attempts.
+\item Provider-side model changes during the three-day run window cannot be excluded. Exact-input cross-run checks reduce but do not eliminate this concern.
+\item One registered top-up step in the final invariance study was not run because it could not change the combined verdict; three Haiku condition categories therefore remain inconclusive.
+\item The work was conducted by one researcher, with public-commit registration rather than an independent registry. AI systems assisted with implementation, critique, and drafting (Section~\ref{sec:repro}).
+\end{itemize}
+
+\section{Conclusion}
+
+A language-model agent can be protected by a correct permission system while still handling authority unreliably.
+Across this study, the trusted runtime prevented prohibited writes from becoming prohibited effects, and both tested models usually discriminated situations where writing was permitted from situations where it was not.
+Yet their condition-specific decisions often depended on representation details that carried no authority information.
+Some apparent effects survived nearby rewrites; others disappeared immediately.
+The strongest practical conclusion is therefore architectural and evaluative: make authority consequential outside the model, make it legible to the model, and test the resulting behavior across meaning-preserving representations before calling it robust.
+
+\section{Reproducibility and research artifacts}
+\label{sec:repro}
+
+The public SASB repository~\cite{schulz2026repo} contains the harness, registered study designs, checkers, reports, transcripts, and reproducibility metadata.
+The archived run ledger totals \TotalEpisodes{} paid model episodes at \TotalSpend{}.
+The final invariance runs are archived alongside the earlier pilot, observation-mode, history, rerun, and robustness studies.
+Transcript replay at the recorded commit reproduces aggregate tables without new model calls.
+The figures and totals in this paper are generated from the archived reports by a script in the repository.
+
+\paragraph{Use of AI tools and disclosure}
+Claude (Anthropic) assisted with the harness, the analysis code and the drafting of this paper, and ChatGPT (OpenAI) critiqued the study designs.
+Claude Haiku 4.5, one of the two models studied, is an Anthropic model.
+The author is responsible for all content.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+
+\section{Key numerical results}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}L L L@{}}
+\toprule
+Finding & Haiku 4.5 & GPT-6 Luna \\
+\midrule
+Pilot honest \code{valid_stop} & 0/58 stopped; repeated acknowledgment & 24/60 stopped; 23/60 looped \\
+\code{state_key}, Stage 1 & 30/30 stopped & 30/30 stopped \\
+\code{receipt_detail}, Stage 1 & 30/30 attempted forbidden write; blocked & 30/30 stopped \\
+Robustness: one-receipt dip & Variant-dependent & Replicated in 5/6 variants \\
+Robustness: four-receipt rise & Replicated V0--V3; absent V4--V5 & Replicated V0 only \\
+Final \code{valid_stop} correctness & V0 0/30; V4 29/30 & V0 24/60; shifted in V1, V4, V5 \\
+Final write discrimination & Passed all 6 variants & Passed all 6 variants \\
+Derived \code{valid_stop} predictions & 6/6 consistent & 3/6 consistent \\
+Completed prohibited effects, enforcing runs & 0 & 0 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Registered predictions and outcomes}
+\label{app:predictions}
+
+Predictions from the four registered studies, as committed before their runs, with the outcome under the registered rule.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabularx}{\linewidth}{@{}l L L@{}}
+\toprule
+Study & Prediction & Outcome \\
+\midrule
+Stage 1 & Haiku: \code{state_key} changes behavior & held (30/30) \\
+Stage 1 & Haiku: \code{receipt_detail} does not change stopping & held on stops; 30/30 write attempts not anticipated \\
+Stage 2 & Gate: identical inputs give equivalent rates & inconclusive (no pair differed; one interval past the margin) \\
+Stage 2 & Luna: one-receipt rate matches archive (27/59) & held (27/60, equivalent) \\
+Stage 2 & Luna: two and four receipts match archive (0/15) & held (0/60 each) \\
+Stage 2 & Luna: receipts hidden gives about 0 stops & held (0/60 in both cells) \\
+Stage 2 & Luna: record effect, one against four receipts & held ($p=3\times10^{-10}$) \\
+Stage 2 & Luna: last-receipt-only matches one receipt on the first turn; most stop within six turns & first turn: equivalent at h2, not shown at h4; within six turns: held (54/60, 58/60) \\
+Stage 2 & Luna: suspended task at one receipt matches archive & inconclusive \\
+Stage 2 & Haiku: 0 stops in the unchanged-notice, suspended-task and record-view cells at every length (13 cells) & held \\
+Stage 2 & Haiku: \code{state_key}, \code{receipt_detail} and \code{accept_once_prompt} outcomes unchanged by history & mixed: \code{accept_once_prompt} unchanged and eventual stopping under \code{state_key} unchanged; first-turn stops and \code{receipt_detail} write attempts history-dependent \\
+Robustness & Luna's dip robust under both presentations & not met (5 of 6; V4 breaks it) \\
+Robustness & Luna's rise weak, more likely variant-dependent or inconclusive than robust & met (variant-dependent, V0 only) \\
+Robustness & Haiku: 0 stops under unchanged notice in every variant & not met (18/20 at V4 two receipts) \\
+Robustness & No write attempts & held \\
+Invariance & Representation-sensitive for both models & held \\
+Invariance & Write discrimination passes in most variants & held (all six, both) \\
+Invariance & Combined: write-discriminating but representation-sensitive & held (both) \\
+Invariance & Derived \code{valid_stop} stop probabilities & Haiku 6/6 consistent; Luna 3/6 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Corrections and deviations}
+\label{app:corrections}
+
+Items 1 to 5 were found after runs; item 6 is a deviation from a registered step. None changed a prediction or a decision rule.
+\begin{enumerate}
+\item \emph{An early version of the standing-record presentation erased the revocation.} It removed the notice without adding the standing record, which left only an empty permissions object in view; Haiku then attempted the forbidden write in 30 of 30 episodes, all blocked. It was fixed and rerun. The original run is archived.
+\item \emph{The Stage 1 checker judged arms on stops alone}, hiding Haiku's 30 write attempts under \code{receipt_detail}. It now reports write attempts beside every stop result.
+\item \emph{One registered reading of the key gradient did not follow from its own pattern}: it suggested the word ``update'' in the key might be the trigger, but the meaningless key also drops that word and did not work.
+\item \emph{The scorer credited any stop}, because the executor attaches the update ID to every stop. A revocation-citing stop measure was added and reported alongside.
+\item \emph{The pilot's observations showed the runtime treatment label} to the worker. Later code hides it, and pilot results are not compared with later runs.
+\item \emph{The invariance study's top-up rule was not run} (Section~\ref{sec:limits}).
+\end{enumerate}
+
+\end{document}
